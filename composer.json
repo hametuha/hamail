@@ -1,0 +1,16 @@
+{
+    "name": "hametuha/hamail",
+    "description": "A WordPress plugin to send email",
+    "type": "plugin",
+    "license": "GPL-3.0",
+    "authors": [
+        {
+            "name": "hametuha",
+            "email": "info@hametuha.co.jp"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "sendgrid/sendgrid": "~5.1"
+    }
+}
