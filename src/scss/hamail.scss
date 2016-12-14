@@ -1,0 +1,59 @@
+.hamail-address{
+  .block{
+    display: block;
+    margin: 5px 0;
+  }
+  &-textarea{
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+}
+
+.hamail-success{
+  color: green;
+  .dashicons{
+    color: #00a500;
+  }
+  &-log{
+    margin: 10px 0;
+    padding: 10px;
+    overflow-x: scroll;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    white-space: normal;
+  }
+}
+
+.hamail-instruction{
+  padding: 20px 0;
+  &-table{
+    table-layout: auto;
+    width: 100%;
+    border-collapse: collapse;
+    caption{
+      padding: 10px;
+      color: #888;
+    }
+    th, td{
+      padding: 5px;
+      border: 1px solid #ddd;
+    }
+    thead{
+      th{
+        border-bottom: 3px double #ddd;
+        text-align: left;
+      }
+    }
+    tbody{
+      th{
+        white-space:nowrap;
+        font-family: monospace;
+        text-align: left;
+        font-weight: normal;
+        color: #666;
+      }
+    }
+  }
+}

@@ -45,9 +45,6 @@ try {
 			}
 		}
 	}
-
-	// Call bootstrap
-//	add_action( 'plugins_loaded', array( 'Hametuha\\Hamail\\Bootstrap', 'instance' ) );
 } catch ( Exception $e ) {
 	$error = sprintf( '<div class="error"><p>%s</p></div>', $e->getMessage() );
 	add_action( 'admin_notices', create_function( '', sprintf( 'echo \'%s\';', str_replace( '\'', '\\\'', $error ) ) ) );
