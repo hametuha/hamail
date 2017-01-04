@@ -47,6 +47,11 @@ add_action( 'save_post_hamail', function ( $post_id, $post ) {
 			$roles = isset( $_POST['hamail_roles'] ) ? implode( ',', $_POST['hamail_roles'] ) : '';
 			update_post_meta( $post->ID, '_hamail_roles', $roles );
 			// Save users
+            $users_ids = implode( ',', array_filter( array_map( function( $id ) {
+                $id = trim($id);
+                return is_numeric( $id ) ? $id : false;
+            }, explode( ',', $_POST['hamail_recipients_id'] ) ) ));
+            update_post_meta( $post_id, '_hamail_recipients_id', $users_ids );
 
 			// Save each address
 			update_post_meta( $post->ID, '_hamail_raw_address', $_POST['hamail_raw_address'] );
@@ -61,9 +66,9 @@ add_action( 'save_post_hamail', function ( $post_id, $post ) {
 /**
  * Show place holders
  *
- * @param WP_Post $psot
+ * @param WP_Post $post
  */
-add_action( 'edit_form_after_editor', function( $post ) {
+add_action( 'edit_form_after_title', function( $post ) {
 	if ( 'hamail' == $post->post_type ) {
 		$place_holders = hamail_placeholders();
 		if ( ! $place_holders ) {
@@ -94,14 +99,76 @@ add_action( 'edit_form_after_editor', function( $post ) {
 } );
 
 /**
+ * Search user via Ajax
+ */
+add_action( 'wp_ajax_hamail_search', function () {
+	try {
+		if ( ! hamail_allowed() ) {
+			throw new Exception( __( 'You have no permission', 'hamail' ), 403 );
+		}
+		if ( ! isset( $_GET['term'] ) || ! $_GET['term'] ) {
+			throw new Exception( __( 'Search query is not set.', 'hamail' ), 400 );
+		}
+		wp_send_json( hamail_search( $_GET['term'] ) );
+	} catch ( \Exception $e ) {
+		status_header( $e->getCode() );
+		wp_send_json_error( [
+			'message' => $e->getMessage(),
+		] );
+	}
+} );
+
+/**
+ * Search user with term_id
+ */
+add_action( 'wp_ajax_hamail_term_authors', function () {
+	try {
+		if ( ! hamail_allowed() ) {
+			throw new Exception( __( 'You have no permission', 'hamail' ), 403 );
+		}
+		if ( ! isset( $_GET['term_id'] ) || ! $_GET['term_id'] ) {
+			throw new Exception( __( 'Term ID is not set.', 'hamail' ), 400 );
+		}
+		$term = get_term( $_GET['term_id'] );
+		if ( ! $term || is_wp_error( $term ) ) {
+			throw new Exception( __( 'Term not found.', 'hamail' ), 404 );
+		}
+		wp_send_json( hamail_term_authors( $term->term_taxonomy_id ) );
+	} catch ( \Exception $e ) {
+		status_header( $e->getCode() );
+		wp_send_json_error( [
+			'message' => $e->getMessage(),
+		] );
+	}
+} );
+
+/**
  * Register meta box
  */
 add_action( 'add_meta_boxes', function ( $post_type ) {
 	if ( 'hamail' == $post_type ) {
 		// Enqueue scripts
 		wp_enqueue_style( 'hamail-sender' );
+		wp_enqueue_script( 'hamail-sender' );
 		// Recipients
 		add_meta_box( 'hamail-recipients', __( 'Recipients', 'hamail' ), function ( $post ) {
+		    $users = [];
+			$user_ids   = get_post_meta( $post->ID, '_hamail_recipients_id', true );
+			$user_query = new WP_User_Query( [
+				'include' => explode( ',', $user_ids ),
+			] );
+			$users      = array_map( function ( $user ) {
+				return [
+					'user_id'      => $user->ID,
+					'display_name' => $user->display_name,
+					'user_email'   => $user->user_email,
+				];
+			}, $user_query->get_results() );
+			wp_localize_script( 'hamail-sender', 'HamailRecipients', [
+                'search_endpoint' => admin_url( 'admin-ajax.php?action=hamail_search' ),
+                'term_endpoint'   => admin_url( 'admin-ajax.php?action=hamail_term_authors' ),
+                'users' => $users,
+            ] );
 			if ( ! hamail_is_sent( $post ) ) {
 				wp_nonce_field( 'hamail_recipients', '_hamail_recipients', false );
 			}
@@ -122,9 +189,24 @@ add_action( 'add_meta_boxes', function ( $post_type ) {
                         </label>
 					<?php endforeach; ?>
                 </div>
+                <hr />
                 <div class="hamail-address-users">
                     <h4 class="hamail-address-title"><?php _e( 'Users', 'hamail' ) ?></h4>
+                    <div id="hamail-users">
+
+                        <input type="hidden" name="hamail_recipients_id" id="hamail-address-users-id" value="" />
+                        <input type="text" class="regular-text" id="hamail-address-search" value="" placeholder="<?php esc_attr_e( 'Type and search user...', 'hamail' ) ?>" />
+                        <ul id="hamail-address-list" class="hamail-address-list">
+
+                        </ul>
+                        <script type="text/template" id="hamail-user-card">
+                            <span class="hamail-address-user-name" title="<%- user_email %>"><%- display_name %></span>
+                            <a href="#" class="remove"><i class="dashicons dashicons-no"></i></a>
+                        </script>
+
+                    </div>
                 </div>
+                <hr />
                 <div class="hamail-address-raw">
                     <h4 class="hamail-address-title"><?php _e( 'Specified Address', 'hamail' ) ?></h4>
                     <label for="hamail_raw_address" class="block">

@@ -203,7 +203,7 @@ function hamail_simple_mail( $recipients, $subject, $body, $additional_headers =
 		foreach ( $recipient['substitutions'] as $key => $val ) {
 			$personalization->addSubstitution( $key, (string) $val );
 		}
-		if ( isset( $recipients['custom_arg'] ) ) {
+		if ( isset( $recipient['custom_arg'] ) ) {
 			$personalization->addCustomArg( 'userId', (string) $recipient['custom_arg'] );
 		}
 		if ( isset( $headers['post_id'] ) ) {
@@ -274,8 +274,19 @@ function hamail_send_message( $post = null ) {
 			$to += $query->results;
 		}
 	}
-	// TODO: users
+	// Users
+	if ( $user_ids = get_post_meta( $post->ID, '_hamail_recipients_id', true ) ) {
+		$user_ids = explode( ',', $user_ids );
 
+		$query = new WP_User_Query( [
+			'include' => $user_ids,
+			'number'   => - 1,
+			'fields'   => 'ID',
+		] );
+		if ( ! empty( $query->results ) ) {
+			$to += $query->results;
+		}
+	}
 	// Send
 	$result = hamail_simple_mail( $to, $subject, $body, $headers );
 	if ( is_wp_error( $result ) ) {

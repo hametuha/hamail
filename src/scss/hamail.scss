@@ -1,22 +1,80 @@
-.hamail-address{
-  .block{
+.hamail-address {
+  .block {
     display: block;
     margin: 5px 0;
   }
-  &-textarea{
+  &-textarea {
     display: block;
     width: 100%;
     box-sizing: border-box;
   }
+  hr {
+    margin: 10px 0;
+    border-color: #ddd;
+  }
+  .regular-text {
+    width: 100%;
+    box-sizing: border-box;
+  }
+  &-list {
+    display: block;
+    padding: 10px;
+    margin: 10px 0;
+    min-width: 80px;
+    background: #f9f9f9;
+    &.loading{
+      position: relative;
+      &:before{
+        content: "Loading...";
+        position: absolute;
+        display: block;
+        z-index: 21;
+        top: 50%;
+        left: 50%;
+        color: #888;
+        transform: translate(-50%, -50%);
+        font-size: 18px;
+      }
+      &:after{
+        position: absolute;
+        display: block;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        content: "";
+        text-align: center;
+        line-height: 100%;
+        z-index: 20;
+        background: rgba(255, 255, 255, .8);
+      }
+    }
+    li {
+      display: inline-block;
+      margin: 5px 5px 5px 0;
+      padding: 5px;
+      border: 1px solid #ddd;
+      border-radius: 2px;
+      background: #fff;
+      a {
+        &:link, &:visited {
+          color: #ccc;
+        }
+        &:hover, &:active {
+          color: red;
+        }
+      }
 
+    }
+  }
 }
 
-.hamail-success{
+.hamail-success {
   color: green;
-  .dashicons{
+  .dashicons {
     color: #00a500;
   }
-  &-log{
+  &-log {
     margin: 10px 0;
     padding: 10px;
     overflow-x: scroll;
@@ -26,29 +84,29 @@
   }
 }
 
-.hamail-instruction{
+.hamail-instruction {
   padding: 20px 0;
-  &-table{
+  &-table {
     table-layout: auto;
     width: 100%;
     border-collapse: collapse;
-    caption{
+    caption {
       padding: 10px;
       color: #888;
     }
-    th, td{
+    th, td {
       padding: 5px;
       border: 1px solid #ddd;
     }
-    thead{
-      th{
+    thead {
+      th {
         border-bottom: 3px double #ddd;
         text-align: left;
       }
     }
-    tbody{
-      th{
-        white-space:nowrap;
+    tbody {
+      th {
+        white-space: nowrap;
         font-family: monospace;
         text-align: left;
         font-weight: normal;

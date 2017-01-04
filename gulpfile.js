@@ -26,23 +26,21 @@ gulp.task('sass', function () {
 });
 
 
-// Build JSX
-gulp.task('jsx', function () {
-  return gulp.src(['./src/js/**/*.jsx'])
-    .pipe($.sourcemaps.init({
-      loadMaps: true
+// Build JS
+gulp.task('jsBundle', function () {
+  return gulp.src(['./src/js/*.js'])
+    .pipe($.plumber({
+      errorHandler: $.notify.onError('<%= error.message %>')
     }))
-    .pipe($.babel({
-      presets: ['es2015', 'react']
-    }))
+    .pipe($.include())
     .pipe($.uglify())
     .on('error', $.util.log)
-    .pipe($.sourcemaps.write('./map'))
     .pipe(gulp.dest('./assets/js/'));
 });
 
+// List JS
 gulp.task('eslint', function(){
-  return gulp.src(['./src/js/**/*.jsx'])
+  return gulp.src(['./src/js/**/*.js'])
     .pipe($.plumber({
       errorHandler: $.notify.onError('<%= error.message %>')
     }))
@@ -54,15 +52,14 @@ gulp.task('eslint', function(){
 
 // Build Libraries
 gulp.task('copylib', function () {
-  return eventStream.merge(
-    // Build unpacked Libraries.
-    gulp.src([
-      './node_modules/react/dist/react.js',
-      './node_modules/react-dom/dist/react-dom.js'
-    ])
-      .pipe($.uglify())
-      .pipe(gulp.dest('./assets/js/'))
-  );
+  // return eventStream.merge(
+  //   // Build unpacked Libraries.
+  //   gulp.src([
+  //     './node_modules/react/dist/react.min.js',
+  //     './node_modules/react-dom/dist/react-dom.min.js'
+  //   ])
+  //     .pipe(gulp.dest('./assets/js/'))
+  // );
 });
 
 // Image min
@@ -82,7 +79,7 @@ gulp.task('watch', function () {
   // Make SASS
   gulp.watch('./src/scss/**/*.scss', ['sass']);
   // JSX
-  gulp.watch(['./src/js/**/*.jsx'], ['jsx']);
+  gulp.watch(['./src/js/**/*.js'], ['jsBundle']);
   // ESLint
   gulp.watch(['./src/js/**/*.jsx'], ['eslint']);
   // Minify Image
@@ -91,7 +88,7 @@ gulp.task('watch', function () {
 
 
 // Build
-gulp.task('build', ['copylib', 'jsx', 'sass', 'imagemin']);
+gulp.task('build', ['jsBundle', 'sass', 'imagemin']);
 
 // Default Tasks
 gulp.task('default', ['watch']);
