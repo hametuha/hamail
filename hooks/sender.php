@@ -182,7 +182,7 @@ add_action( 'add_meta_boxes', function ( $post_type ) {
                 <div class="hamail-address-roles">
                     <h4 class="hamail-address-title"><?php _e( 'Roles', 'hamail' ) ?></h4>
 					<?php foreach ( get_editable_roles() as $key => $role ) : ?>
-                        <label class="block">
+                        <label class="inline-block">
                             <input type="checkbox" name="hamail_roles[]"
                                    value="<?php echo esc_attr( $key ) ?>" <?php checked( hamail_has_role( $key, $post ) ) ?> />
 							<?php echo translate_user_role( $role['name'] ) ?>
@@ -197,7 +197,6 @@ add_action( 'add_meta_boxes', function ( $post_type ) {
                         <input type="hidden" name="hamail_recipients_id" id="hamail-address-users-id" value="" />
                         <input type="text" class="regular-text" id="hamail-address-search" value="" placeholder="<?php esc_attr_e( 'Type and search user...', 'hamail' ) ?>" />
                         <ul id="hamail-address-list" class="hamail-address-list">
-
                         </ul>
                         <script type="text/template" id="hamail-user-card">
                             <span class="hamail-address-user-name" title="<%- user_email %>"><%- display_name %></span>

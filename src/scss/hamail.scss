@@ -1,7 +1,26 @@
+.column-status{
+  width: 4em;
+  text-align: center;
+  vert-align: middle;
+  .dashicons{
+    &-yes{
+      color: #00bc00;
+    }
+    &-no{
+      color: #ddd;
+    }
+  }
+}
+
+
 .hamail-address {
   .block {
     display: block;
     margin: 5px 0;
+  }
+  .inline-block {
+    display: inline-block;
+    margin: 5px 10px 5px 0;
   }
   &-textarea {
     display: block;
