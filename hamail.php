@@ -21,10 +21,13 @@ load_plugin_textdomain( 'hamail', true, 'hamail/languages' );
 $info = get_file_data( __FILE__, array(
 	'version' => 'Version',
 	'php_version' => 'PHP Version',
+	'domain' => 'Text Domain',
 ) );
 
 
 define( 'HAMAIL_VERSION', $info['version'] );
+
+load_plugin_textdomain( $info['domain'], false, 'hamail/languages' );
 
 try {
 	if ( version_compare( phpversion(), $info['php_version'], '<' ) ) {
