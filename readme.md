@@ -17,6 +17,7 @@ No more long **to** or BCCs.
 
 ## Install
 
+
 ### From Plugin Repository
 
 Click install and activate it.
