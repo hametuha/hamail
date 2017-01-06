@@ -1,7 +1,73 @@
 <?php
 /**
  * Mail functions
+ *
+ * @package hamail
  */
+
+if ( get_option( 'hamail_template_id' ) ) {
+
+	/**
+	 * Override wp_mail
+	 *
+	 * @param string|array $to          Array or comma-separated list of email addresses to send message.
+	 * @param string       $subject     Email subject
+	 * @param string       $message     Message contents
+	 * @param string|array $headers     Optional. Additional headers.
+	 * @param string|array $attachments Optional. Files to attach.
+	 * @return bool Whether the email contents were sent successfully.
+	 */
+	function wp_mail( $to, $subject, $message, $headers = '', $attachments = [] ) {
+		$attachments = (array) $attachments;
+		// Filter vars
+		$arguments = apply_filters( 'wp_mail', compact( 'to', 'subject', 'message', 'headers', 'attachments' ) );
+		$filtered = [];
+		foreach ( [
+			'to' => [],
+			'subject' => '',
+			'message' => '',
+			'headers' => [],
+			'attachments' => [],
+		] as $key => $default ) {
+			$filtered[ $key ] = isset( $arguments[ $key ] ) ? $arguments[ $key ] : $default;
+		}
+		$to = array_filter( array_map( 'trim', explode( ',', $filtered['to'] ) ) );
+		$subject = $filtered['subject'];
+		$message = $filtered['message'];
+		$headers = $filtered['headers'];
+		$attachments = $filtered['attachments'];
+		if ( ! $to || ! $subject || ! $message ) {
+			return false;
+		}
+		$additional_header = [];
+		$headers = (array) $headers;
+		foreach ( $headers as $header ) {
+			foreach ( array_filter( explode( "\n", str_replace( "\r\n", "\n", $header ) ) ) as $line ) {
+				$parts = array_map( 'trim', explode( ':', $line ) );
+				$type = strtolower( array_shift( $parts ) );
+				$parts = implode( ':', $parts );
+				switch ( $type ) {
+					case 'reply-to':
+						if ( preg_match( '#<(.*@.*)>#', $parts, $match ) ) {
+							$additional_header['from'] = $match[1];
+						} else {
+							$additional_header['from'] = $parts;
+						}
+						break;
+					default:
+						// Do nothing
+						break;
+				}
+			}
+		}
+		if ( ! is_array( $to ) ) {
+			$to = explode( ',', $to );
+		}
+		$result = hamail_simple_mail( $to, $subject, $message, $additional_header, $attachments );
+		return $result && ! is_wp_error( $result );
+	}
+
+}
 
 /**
  * Get placeholders
@@ -92,10 +158,11 @@ function hamail_default_headers( $context = 'simple' ) {
  * @param string $subject
  * @param string $body
  * @param array $additional_headers
+ * @param array $attachments
  *
  * @return bool|WP_Error
  */
-function hamail_simple_mail( $recipients, $subject, $body, $additional_headers = [] ) {
+function hamail_simple_mail( $recipients, $subject, $body, $additional_headers = [], $attachments = [] ) {
 	// Parse recipients
 	$recipients   = (array) $recipients;
 	$id_or_emails = [];
@@ -193,6 +260,18 @@ function hamail_simple_mail( $recipients, $subject, $body, $additional_headers =
 	} else {
 		$content = new SendGrid\Content( 'text/plain', strip_tags( $body ) );
 		$mail->addContent( $content );
+	}
+	// Add attachment if exists.
+	foreach ( $attachments as $path ) {
+		if ( ! file_exists( $path ) ) {
+			continue;
+		}
+		$attachment = [
+			'content'  => base64_encode( file_get_contents( $path ) ),
+			'type'     => mime_content_type( $path ),
+			'filename' => basename( $path ),
+		];
+		$mail->addAttachment( $attachment );
 	}
 	// Add recipients
 	foreach ( $recipient_data as $recipient ) {
