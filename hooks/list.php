@@ -5,7 +5,7 @@
  * @package hamail
  */
 
-
+// Mail column
 add_filter( 'manage_hamail_posts_columns', function ( $columns ) {
 	wp_enqueue_style( 'hamail-sender' );
 	$new_columns = [];
@@ -19,6 +19,7 @@ add_filter( 'manage_hamail_posts_columns', function ( $columns ) {
 	return $new_columns;
 }, 10, 2 );
 
+// Column content.
 add_action( 'manage_hamail_posts_custom_column', function( $column, $post_id ) {
 	switch ( $column ) {
 		case 'status':
