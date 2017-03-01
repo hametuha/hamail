@@ -179,6 +179,7 @@ function hamail_simple_mail( $recipients, $subject, $body, $additional_headers =
 		}
 	}
 	$id_or_emails     = array_unique( $id_or_emails );
+
 	$recipient_data   = [];
 	/**
 	 * hamail_guest_name
@@ -239,6 +240,7 @@ function hamail_simple_mail( $recipients, $subject, $body, $additional_headers =
 			];
 		}
 	}
+
 	if ( ! $recipient_data ) {
 		return new WP_Error( 'no_recipients', __( 'No recipient set.', 'hamail' ) );
 	}
@@ -248,6 +250,7 @@ function hamail_simple_mail( $recipients, $subject, $body, $additional_headers =
 	// From
 	$from = new SendGrid\Email( get_bloginfo( 'name' ), get_option( 'admin_email' ) );
 	$mail->setFrom( $from );
+
 	// Reply To
 	$reply_to = new SendGrid\ReplyTo( $headers['from'] );
 	$mail->setReplyTo( $reply_to );

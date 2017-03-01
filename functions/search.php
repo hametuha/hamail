@@ -67,21 +67,26 @@ SQL;
 	 * @return string
 	 */
 	$query = apply_filters( 'hamail_search_query', $query, $string );
-	return array_map( function( $result ) {
+	$results = [];
+	foreach ( $wpdb->get_results( $query ) as $result ) {
 		switch ( $result->type ) {
 			case 'post':
-				$result->label = sprintf( __( 'Author of "%s"', 'hamail' ), $result->label );
 				$user = get_userdata( $result->data );
-				$result->id = $user->ID;
-				$result->display_name = $user->display_name;
-				$result->data = $user->user_email;
+				$results[] = (object) [
+					'label' => sprintf( __( 'Author of "%s"', 'hamail' ), $result->label ),
+				    'id'    => $user->ID,
+				    'display_name' => $user->display_name,
+				    'data' => $user->user_email,
+				];
 				break;
 			case 'term':
 				$result->label = sprintf( __( 'Authors of posts in "%s"', 'hamail' ), $result->label );
+				$results[] = $result;
 				break;
 			case 'user':
 				$result->display_name = $result->label;
 				$result->label = sprintf( __( '%s (User)', 'hamail' ), $result->label );
+				$results[] = $result;
 				break;
 			default:
 				/**
@@ -93,10 +98,20 @@ SQL;
 				 * @return stdClass
 				 */
 				$result = apply_filters( 'hamail_search_result', $result );
+				$results[] = $result;
 				break;
 		}
-		return $result;
-	}, $wpdb->get_results( $query ) );
+	}
+	/**
+	 * hamail_search_query
+	 *
+	 * Search query for incremental search
+	 * @filter hamail_search_query
+	 * @param string $query
+	 * @param string $search_term
+	 * @return string
+	 */
+	return apply_filters( 'hamail_search_results', $results, $string );
 }
 
 /**

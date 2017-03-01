@@ -4,7 +4,7 @@ Plugin Name: Hamail
 Plugin URI: https://wordpress.org/extend/plugins/hamail/
 Description: A WordPress plugin for sending e-mail
 Author: hametuha
-Version: 1.0
+Version: 1.0.0
 PHP Version: 5.6
 Author URI: https://hametuha.co.jp/
 License: GPL3 or later

@@ -83,25 +83,27 @@ var UserController = Backbone.View.extend({
   userFound: function(e, data){
     var $collection = this.collection;
     var $area = this.$el.find('#hamail-address-list');
+    var query = '';
     switch ( data.type ) {
       case 'term':
-        $area.addClass('loading');
-        jQuery.get(HamailRecipients.term_endpoint + '&term_id=' + data.id).done(function(users){
-          _.each(users, function(user){
-            var model = new User(user);
-            $collection.add(model);
-          });
-        }).fail(function(err){
-          if ( window.console ) {
-            console.log(err);
-          }
-        }).always(function(){
-          $area.removeClass('loading');
-        });
+        query = '&term_id=' + data.id;
         break;
       default:
-        // Do nothing
+        query = '&type=' + data.type + '&term_id=' + data.id;
         break;
     }
+    $area.addClass('loading');
+    jQuery.get(HamailRecipients.term_endpoint + query).done(function (users) {
+      _.each(users, function (user) {
+        var model = new User(user);
+        $collection.add(model);
+      });
+    }).fail(function (err) {
+      if (window.console) {
+        console.log(err);
+      }
+    }).always(function () {
+      $area.removeClass('loading');
+    });
   }
 });

@@ -9,7 +9,6 @@ var UserList = Backbone.Collection.extend({
   },
 
   sync: function(){
-    console.log(this);
   }
 
 

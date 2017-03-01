@@ -9,7 +9,6 @@ var User = Backbone.Model.extend({
   },
 
   sync: function(){
-    console.log(this.toJSON());
   }
 
 });

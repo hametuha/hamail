@@ -55,6 +55,7 @@ add_action( 'save_post_hamail', function ( $post_id, $post ) {
 
 			// Save each address
 			update_post_meta( $post->ID, '_hamail_raw_address', $_POST['hamail_raw_address'] );
+
 		}
 		// Send
 		if ( 'publish' === $post->post_status ) {
@@ -129,11 +130,26 @@ add_action( 'wp_ajax_hamail_term_authors', function () {
 		if ( ! isset( $_GET['term_id'] ) || ! $_GET['term_id'] ) {
 			throw new Exception( __( 'Term ID is not set.', 'hamail' ), 400 );
 		}
-		$term = get_term( $_GET['term_id'] );
-		if ( ! $term || is_wp_error( $term ) ) {
-			throw new Exception( __( 'Term not found.', 'hamail' ), 404 );
+		if ( isset( $_GET['type'] ) && 'term' != $_GET['type'] ) {
+			/**
+			 * hamail_extra_search
+			 *
+			 * Filter for extra types
+			 * @since 1.0.0
+			 * @package hamail
+			 * @param array  $result Default emmpty
+			 * @param string $type   Custom type name
+			 * @param string $id     ID
+			 */
+			$result = apply_filters( 'hamail_extra_search', [], $_GET['type'], $_GET['term_id'] );
+		} else {
+			$term = get_term( $_GET['term_id'] );
+			if ( ! $term || is_wp_error( $term ) ) {
+				throw new Exception( __( 'Term not found.', 'hamail' ), 404 );
+			}
+			$result = hamail_term_authors( $term->term_taxonomy_id );
 		}
-		wp_send_json( hamail_term_authors( $term->term_taxonomy_id ) );
+		wp_send_json( $result );
 	} catch ( \Exception $e ) {
 		status_header( $e->getCode() );
 		wp_send_json_error( [
