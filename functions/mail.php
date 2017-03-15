@@ -5,7 +5,7 @@
  * @package hamail
  */
 
-if ( get_option( 'hamail_template_id' ) ) {
+if ( get_option( 'hamail_template_id' ) && ! function_exists( 'wp_mail' ) ) {
 
 	/**
 	 * Override wp_mail
