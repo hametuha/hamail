@@ -5,6 +5,19 @@
  * @package hamail
  */
 
+/**
+ * Get SendGrid client.
+ *
+ * @return SendGrid
+ */
+function hamail_client() {
+	static $instance = null;
+	if ( is_null( $instance ) ) {
+		$instance = new \SendGrid( get_option( 'hamail_api_key' ) );
+	}
+	return$instance;
+}
+
 if ( get_option( 'hamail_template_id' ) && ! function_exists( 'wp_mail' ) ) {
 
 	/**
@@ -99,6 +112,15 @@ function hamail_placeholders( $user = null ) {
 	 * @return array
 	 */
 	return apply_filters( 'hamail_placeholders', $place_holders, $user );
+}
+
+/**
+ * Check if current version is debug mode.
+ *
+ * @return bool
+ */
+function hamail_is_debug() {
+	return defined( 'HAMAIL_DEBUG' ) && HAMAIL_DEBUG;
 }
 
 /**
@@ -245,6 +267,7 @@ function hamail_simple_mail( $recipients, $subject, $body, $additional_headers =
 		return new WP_Error( 'no_recipients', __( 'No recipient set.', 'hamail' ) );
 	}
 	// Create request body
+	// TODO: Attachment files.
 	$headers      = wp_parse_args( $additional_headers, hamail_default_headers( 'simple' ) );
 	$mail = new SendGrid\Mail();
 	// From
@@ -302,7 +325,10 @@ function hamail_simple_mail( $recipients, $subject, $body, $additional_headers =
 		$mail->addCategory( 'personal' );
 	}
 	// Execute
-	$sg       = new \SendGrid( get_option( 'hamail_api_key' ) );
+	if ( hamail_is_debug() ) {
+		return true;
+	}
+	$sg = hamail_client();
 	$response = $sg->client->mail()->send()->post( $mail );
 	// Get response
 	$code = $response->statusCode();

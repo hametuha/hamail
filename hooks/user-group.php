@@ -19,9 +19,10 @@ add_action( 'admin_menu', function() {
 	);
 } );
 
-/**
- *
- */
-add_action( 'rest_api_init', function() {
 
-} );
+// Register sync command.
+if ( defined( 'WP_CLI' ) && WP_CLI ) {
+	WP_CLI::add_command( 'hamail', \Hametuha\Hamail\Commands\HamailCommands::class );
+}
+
+// Update email if user updated.

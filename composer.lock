@@ -4,21 +4,58 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "4ad4edcfb883697c9833613c166afbf4",
-    "content-hash": "6153c438cad5febf6ae4feaa5ab36d88",
+    "content-hash": "778074f5c048370ec6c5b2ad35453e61",
     "packages": [
         {
-            "name": "sendgrid/php-http-client",
-            "version": "3.5.1",
+            "name": "hametuha/pattern",
+            "version": "v0.8.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/sendgrid/php-http-client.git",
-                "reference": "3c4c35eafd364ebcfdbb0a37f655417beed8ee0f"
+                "url": "https://github.com/hametuha/pattern.git",
+                "reference": "c4b81a95d34bada8c631486501d16009e5dd4eb9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sendgrid/php-http-client/zipball/3c4c35eafd364ebcfdbb0a37f655417beed8ee0f",
-                "reference": "3c4c35eafd364ebcfdbb0a37f655417beed8ee0f",
+                "url": "https://api.github.com/repos/hametuha/pattern/zipball/c4b81a95d34bada8c631486501d16009e5dd4eb9",
+                "reference": "c4b81a95d34bada8c631486501d16009e5dd4eb9",
+                "shasum": ""
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.8",
+                "squizlabs/php_codesniffer": "~2.8",
+                "wp-coding-standards/wpcs": "~0.11"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Hametuha\\Pattern": "app/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-3.0"
+            ],
+            "authors": [
+                {
+                    "name": "Hametuha INC.",
+                    "email": "info@hametuha.co.jp"
+                }
+            ],
+            "description": "WordPress Pattern Library",
+            "time": "2017-10-27T04:38:50+00:00"
+        },
+        {
+            "name": "sendgrid/php-http-client",
+            "version": "3.8.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/sendgrid/php-http-client.git",
+                "reference": "929018c62b7fcd99b3b356216ae75fff4d47b5a1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/sendgrid/php-http-client/zipball/929018c62b7fcd99b3b356216ae75fff4d47b5a1",
+                "reference": "929018c62b7fcd99b3b356216ae75fff4d47b5a1",
                 "shasum": ""
             },
             "require": {
@@ -57,25 +94,25 @@
                 "rest",
                 "sendgrid"
             ],
-            "time": "2016-11-17 22:45:31"
+            "time": "2017-09-13T16:52:38+00:00"
         },
         {
             "name": "sendgrid/sendgrid",
-            "version": "5.1.2",
+            "version": "5.6.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sendgrid/sendgrid-php.git",
-                "reference": "46f85e69ec6a36d4674e7131e442fbecdaa5d183"
+                "reference": "bed6a418706b09188fad2755de2e1c231ba74e69"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sendgrid/sendgrid-php/zipball/46f85e69ec6a36d4674e7131e442fbecdaa5d183",
-                "reference": "46f85e69ec6a36d4674e7131e442fbecdaa5d183",
+                "url": "https://api.github.com/repos/sendgrid/sendgrid-php/zipball/bed6a418706b09188fad2755de2e1c231ba74e69",
+                "reference": "bed6a418706b09188fad2755de2e1c231ba74e69",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.6",
-                "sendgrid/php-http-client": "~3.5"
+                "sendgrid/php-http-client": "~3.7"
             },
             "replace": {
                 "sendgrid/sendgrid-php": "*"
@@ -103,7 +140,7 @@
                 "send",
                 "sendgrid"
             ],
-            "time": "2016-11-17 23:05:01"
+            "time": "2017-06-30T04:48:44+00:00"
         }
     ],
     "packages-dev": [],
