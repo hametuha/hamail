@@ -152,6 +152,10 @@ function hamail_fields_to_save( WP_User $user ) {
 			$applied_fields[ $sendgrid ] = get_user_meta( $user->ID, $sendgrid, true );
 		}
 	}
+	$key = get_option( 'hamail_site_key' );
+	if ( $key ) {
+		$applied_fields[ $key ] = $key;
+	}
 	if ( $applied_fields ) {
 		/**
 		 * hamail_user_field
@@ -165,10 +169,6 @@ function hamail_fields_to_save( WP_User $user ) {
 			'status' => 400,
 		] );
 	}
-}
-
-function hamail_get_contact_by(  ) {
-
 }
 
 /**
@@ -282,5 +282,4 @@ function hamail_get_recipient_id( $user_id ) {
 	foreach ( $result->recipients as $recipient ) {
 		return $recipient->id;
 	}
-
 }

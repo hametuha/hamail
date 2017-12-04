@@ -31,11 +31,11 @@ class HamailCommands extends \WP_CLI_Command {
 				\WP_CLI::line( 'All user are synced.' );
 				break;
 			} else {
+				echo '.';
 				sleep( 2 );
 				$cur_page++;
 			}
 		}
-
 		// Update all recipients to list.
 		$cur_page = 1;
 		while( true ) {
@@ -51,8 +51,6 @@ class HamailCommands extends \WP_CLI_Command {
 			$cur_page++;
 			sleep( 1 );
 		}
-
 		\WP_CLI::success( 'Done.' );
 	}
-
 }
