@@ -31,6 +31,9 @@ class HamailCommands extends \WP_CLI_Command {
 				\WP_CLI::line( 'All user are synced.' );
 				break;
 			} else {
+				foreach ( $result->errors as $error ) {
+					\WP_CLI::warning( $error->message );
+				}
 				echo '.';
 				sleep( 2 );
 				$cur_page++;
@@ -38,7 +41,7 @@ class HamailCommands extends \WP_CLI_Command {
 		}
 		// Update all recipients to list.
 		$cur_page = 1;
-		while( true ) {
+		while ( true ) {
 			$updated = hamail_sync_account( $cur_page );
 			if ( ! $updated ) {
 				\WP_CLI::line( 'All user are move to list.' );

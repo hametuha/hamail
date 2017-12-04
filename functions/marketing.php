@@ -215,7 +215,7 @@ function hamail_push_users( $query, $execute = false ) {
  * @param int $per_page
  */
 function hamail_sync_account( $paged = 1, $per_page = 1000 ) {
-	$list = get_option( 'hamail_list_to_sync' );
+	$list = (int) get_option( 'hamail_list_to_sync' );
 	$key = get_option( 'hamail_site_key' );
 	if ( ! $list || ! $key ) {
 		return new WP_Error( 'bad_option', __( 'List or site key is not set.', 'hamail' ), [
@@ -246,7 +246,7 @@ function hamail_sync_account( $paged = 1, $per_page = 1000 ) {
 		}
 		// Push to list.
 		$response = $sg->client->contactdb()->lists()->_($list)->recipients()->post( $ids );
-		return json_decode( $response->body() );
+		return 201 == $response->statusCode();
 	} catch ( \Exception $e ) {
 		return new WP_Error( 'response_failed', $e->getMessage(), [
 			'status' => $e->getCode(),
