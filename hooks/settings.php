@@ -27,7 +27,7 @@ add_action( 'admin_notices', function () {
  * Enqueue setting scripts
  */
 add_action( 'admin_enqueue_scripts', function( $slug ) {
-    if ( 'hamail_page_hamail-setting' === $slug ) {
+    if ( 'settings_page_hamail-setting' === $slug ) {
 		wp_enqueue_style( 'hamail-setting' );
         wp_enqueue_script( 'hamail-setting' );
     }
@@ -37,7 +37,7 @@ add_action( 'admin_enqueue_scripts', function( $slug ) {
  * Add Setting page
  */
 add_action( 'admin_menu', function () {
-	add_submenu_page( 'edit.php?post_type=hamail', __( 'Hamail Setting', 'hamail' ), __( 'Hamail Setting', 'hamail' ), 'manage_options', 'hamail-setting', function () {
+	add_options_page( __( 'Hamail Setting', 'hamail' ), __( 'Hamail Setting', 'hamail' ), 'manage_options', 'hamail-setting', function () {
 		?>
         <div class="wrap">
             <h2>

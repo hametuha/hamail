@@ -279,11 +279,36 @@ function hamail_simple_mail( $recipients, $subject, $body, $additional_headers =
 	$mail->setReplyTo( $reply_to );
 	// Subject
 	$mail->setSubject( $subject );
+	// Check if WooCommerce is not activated.
+	$no_woocommerce = ! class_exists( 'woocommerce' );
 	// Mail body
 	if ( 'text/html' == $headers['format'] ) {
-		$content = new SendGrid\Content( 'text/html', apply_filters( 'the_content', $body ) );
+		/**
+		 * hamail_body_before_send
+		 *
+		 * @param string $context 'html' or 'playin'
+		 */
+		do_action( 'hamail_body_before_send', 'html' );
+		/**
+		 * hamail_should_filter
+		 *
+		 * Filter if we should apply templates
+		 *
+		 * @package hamail
+		 * @param bool   $no_woocommerce If WooCommerce exists, no filter.
+		 * @param array  $headers
+		 * @param string $subject
+		 * @param string $body
+		 * @param array  $recipients
+		 */
+		$should_filter = apply_filters( 'hamail_should_filter', $no_woocommerce, $headers, $subject, $body, $recipients );
+		if ( $should_filter ) {
+			$body = apply_filters( 'the_content', $body );
+		}
+		$content = new SendGrid\Content( 'text/html', $body );
 		$mail->addContent( $content );
 	} else {
+		do_action( 'hamail_body_before_send', 'plain' );
 		$content = new SendGrid\Content( 'text/plain', strip_tags( $body ) );
 		$mail->addContent( $content );
 	}
@@ -316,7 +341,20 @@ function hamail_simple_mail( $recipients, $subject, $body, $additional_headers =
 		}
 		$mail->addPersonalization( $personalization );
 	}
-	if ( $headers['template'] ) {
+	/**
+	 * hamail_apply_template
+	 *
+	 * Filter if we should apply templates
+	 *
+	 * @package hamail
+	 * @param bool   $no_woocommerce If WooCommerce exists, no template default.
+	 * @param array  $headers
+	 * @param string $subject
+	 * @param string $body
+	 * @param array  $recipients
+	 */
+	$should_apply_template = apply_filters( 'hamail_apply_template', $no_woocommerce, $headers, $subject, $body, $recipients );
+	if ( $headers['template'] && $should_apply_template ) {
 		$mail->setTemplateId( $headers['template'] );
 	}
 	if ( 1 < count( $recipient_data ) ) {
