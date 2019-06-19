@@ -56,4 +56,31 @@ class HamailCommands extends \WP_CLI_Command {
 		}
 		\WP_CLI::success( 'Done.' );
 	}
+
+	/**
+	 * Test data to which data will be passed as personalized data.
+	 *
+	 * ## OPTIONS
+	 *
+	 * :<recipients>
+	 *   CSV value of id or emails.
+	 *
+	 * @synopsis <recipients>
+	 * @param array $args
+	 */
+	public function test_data( $args ) {
+		list( $id_or_emails ) = $args;
+		$id_or_emails = explode( ',', $id_or_emails );
+		add_filter( 'hamail_placeholders', function( $data, $user ) {
+			$data[ '-extra-' ] = is_a( $user, 'WP_User' ) ? 'WP_User' : 'Email';
+			return $data;
+		}, 10, 2 );
+		$recipient_data = hamail_get_recipients_data( $id_or_emails );
+		if ( ! $recipient_data ) {
+			\WP_CLI::error( __( 'No data found.', 'hamail' ) );
+		}
+		print_r( $recipient_data );
+		\WP_CLI::line( '' );
+		\WP_CLI::success( sprintf( __( '%d data converted.' ), count( $recipient_data ) ) );
+	}
 }

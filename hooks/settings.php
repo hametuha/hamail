@@ -7,19 +7,25 @@
  * Show error if no api key is set.
  */
 add_action( 'admin_notices', function () {
-	if ( !hamail_enabled() && current_user_can( 'manage_options' ) ) {
+	if ( ! hamail_enabled() && current_user_can( 'manage_options' ) ) {
 		printf(
 			'<div class="error"><p>%s</p></div>',
-			sprintf(
+			wp_kses_post( sprintf(
 				__( 'No API key is set. Please go to <a href="%s">Setting Page</a>.', 'hamail' ),
 				admin_url( 'options-general.php?page=hamail-setting' )
-			)
+			) )
 		);
 	}
-	if ( hamail_enabled() && !hamail_is_debug() && WP_DEBUG ) {
-		printf(
-			'<div class="notice notice-warning"><p>%s</p></div>',
-			__( 'Debug mode detected. If this is development production, please consider <code>define( \'HAMAIL_DEBUG\', true )</code> in your wp-config.php. Hamail may sent real email to your users via Web API even if you don\'t have local mail server!', 'hamail' ) );
+	if ( hamail_enabled() ) {
+	    if ( hamail_is_debug() ) {
+			printf(
+				'<div class="notice notice-info"><p>%s</p></div>',
+				wp_kses_post( __( 'Hameil is now debug mode. Sendgrid API will never used. To disabled debug mode, change <code>define( \'HAMAIL_DEBUG\', false )</code> in your wp-config.php.', 'hamail' ) ) );
+        } elseif ( WP_DEBUG ) {
+		    printf(
+			    '<div class="notice notice-warning"><p>%s</p></div>',
+			    wp_kses_post( __( 'Debug mode detected. If this is development production, please consider <code>define( \'HAMAIL_DEBUG\', true )</code> in your wp-config.php. Hamail may sent real email to your users via Web API even if you don\'t have local mail server!', 'hamail' ) ) );
+        }
 	}
 } );
 

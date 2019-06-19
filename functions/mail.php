@@ -85,29 +85,54 @@ if ( get_option( 'hamail_template_id' ) && ! function_exists( 'wp_mail' ) ) {
 /**
  * Get placeholders
  *
- * @param null|WP_User $user
+ * @param null|WP_User|string $user
+ * @param array               $extra_args
  *
- * @return array
+ * @return array|WP_Error
  */
-function hamail_placeholders( $user = null ) {
-	if ( is_null( $user ) ) {
+function hamail_placeholders( $user = null, $extra_args = [] ) {
+	$email = '';
+	if ( is_string( $user ) && is_email( $user ) ) {
+		$email = $user;
+	} elseif ( is_a( $user, 'WP_User' ) ) {
+		// Do nothing.
+	} else {
 		$user = get_userdata( get_current_user_id() );
 	}
-	$place_holders = [
-		'-id-'       => $user->ID,
-		'-name-'     => $user->display_name,
-		'-nicename-' => $user->user_nicename,
-		'-email-'    => $user->user_email,
-		'-login-'    => $user->user_login,
-	];
+	// Check if user is valid.
+	if ( $email && ! $user ) {
+		return new WP_Error( 'invalid_user_data', __( 'The user dose not exist.', 'hamail' ) );
+	}
+	if ( $email ) {
+		$place_holders =  [
+			'-id-'       => 0,
+			'-name-'     => hamail_guest_name(),
+			'-nicename-' => 'V/A',
+			'-email-'    => $email,
+			'-login-'    => 'V/A',
+		];
+	} else {
+		$place_holders = [
+			'-id-'       => $user->ID,
+			'-name-'     => $user->display_name,
+			'-nicename-' => $user->user_nicename,
+			'-email-'    => $user->user_email,
+			'-login-'    => $user->user_login,
+		];
+	}
+	if ( $extra_args ) {
+		foreach ( $extra_args as $key => $value ) {
+			$place_holders[ "-{$key}-" ] = $value;
+		}
+	}
 
 	/**
 	 * hamail_placeholders
 	 *
 	 * @filter hamail_placeholders
 	 *
-	 * @param array $place_holders
-	 * @param WP_User $user
+	 * @param array          $place_holders
+	 * @param WP_User|string $user
 	 *
 	 * @return array
 	 */
@@ -174,6 +199,107 @@ function hamail_default_headers( $context = 'simple' ) {
 }
 
 /**
+ * Guest name.
+ *
+ * @return string
+ */
+function hamail_guest_name() {
+	/**
+	 * hamail_guest_name
+	 *
+	 * @filter hamail_guest_name
+	 *
+	 * @param string $body
+	 *
+	 * @return string
+	 */
+	return apply_filters( 'hamail_guest_name', __( 'Guest', 'hamail' ) );
+}
+
+/**
+ * Get recipients data.
+ *
+ * @param array  $recipients
+ * @param string $subject
+ * @param string $body
+ * @return array Associative array of recipients and data.
+ */
+function hamail_get_recipients_data( $recipients, $subject = '', $body = '' ) {
+	if ( array_keys( $recipients ) === range( 0, count( $recipients ) - 1 ) ) {
+		// This is flat array.
+		$to_be = [];
+		foreach ( $recipients as $id_or_email ) {
+			$to_be[ $id_or_email ] = [];
+		}
+		$recipients = $to_be;
+	}
+	$id_or_emails = [];
+	foreach ( $recipients as $id_or_email => $extra_data ) {
+		$extra_data = (array) $extra_data;
+		// Normalize user id.
+		if ( is_numeric( $id_or_email ) ) {
+			$id_or_emails[ $id_or_email ] = $extra_data;
+		} else {
+			// This is email
+			if ( $id = email_exists( $id_or_email ) ) {
+				$id_or_emails[ $id ] = $extra_data;
+			} else {
+				$id_or_emails[ $id_or_email ] = $extra_data;
+			}
+		}
+	}
+
+	$recipient_data   = [];
+	foreach ( $id_or_emails as $id_or_email => $extra_data ) {
+		if ( ! $id_or_email ) {
+			continue;
+		}
+		/**
+		 * hamail_user_can_receive_mail
+		 *
+		 * @filter hamail_user_can_receive_mail
+		 *
+		 * @param bool $can_receive
+		 * @param WP_User $user
+		 *
+		 * @return bool
+		 */
+		$ok = apply_filters( 'hamail_user_can_receive_mail', true, $id_or_email );
+		if ( ! $ok ) {
+			continue;
+		}
+		if ( is_numeric( $id_or_email ) ) {
+			// This is user id.
+			$user = get_userdata( $id_or_email );
+			if ( ! $user ) {
+				continue;
+			}
+			$data = [
+				'id'            => $user->ID,
+				'email'         => $user->user_email,
+				'name'          => $user->display_name,
+				'substitutions' => hamail_placeholders( $user, $extra_data ),
+				'custom_args'   => $user->ID,
+			];
+		} else {
+			// This is email.
+			$data = [
+				'id'            => 0,
+				'email'         => $id_or_email,
+				'name'          => hamail_guest_name(),
+				'substitutions' => hamail_placeholders( $id_or_email, $extra_data ),
+				'custom_args'   => 0,
+			];
+		}
+		if ( is_wp_error( $data ) ) {
+			continue;
+		}
+		$recipient_data[] = $data;
+	}
+	return $recipient_data;
+}
+
+/**
  * Send single mail
  *
  * @param array|string $recipients
@@ -187,81 +313,7 @@ function hamail_default_headers( $context = 'simple' ) {
 function hamail_simple_mail( $recipients, $subject, $body, $additional_headers = [], $attachments = [] ) {
 	// Parse recipients
 	$recipients   = (array) $recipients;
-	$id_or_emails = [];
-	foreach ( $recipients as $id_or_email ) {
-		if ( is_numeric( $id_or_email ) ) {
-			$id_or_emails[] = $id_or_email;
-		} else {
-			// This is email
-			if ( $id = email_exists( $id_or_email ) ) {
-				$id_or_emails[] = $id;
-			} else {
-				$id_or_emails[] = $id_or_email;
-			}
-		}
-	}
-	$id_or_emails     = array_unique( $id_or_emails );
-
-	$recipient_data   = [];
-	/**
-	 * hamail_guest_name
-	 *
-	 * @filter hamail_guest_name
-	 *
-	 * @param  string $guest_name
-	 *
-	 * @return string
-	 */
-	$guest_name = apply_filters( 'hamail_guest_name', __( 'Guest', 'hamail' ) );
-	foreach ( $id_or_emails as $id_or_email ) {
-		if ( ! $id_or_email ) {
-			continue;
-		}
-		if ( is_numeric( $id_or_email ) ) {
-			// This is user id.
-			$user = get_userdata( $id_or_email );
-			if ( ! $user ) {
-				continue;
-			}
-			/**
-			 * hamail_user_can_receive_mail
-			 *
-			 * @filter hamail_user_can_receive_mail
-			 *
-			 * @param bool $can_receive
-			 * @param WP_User $user
-			 *
-			 * @return bool
-			 */
-			$ok = apply_filters( 'hamail_user_can_receive_mail', true, $user );
-			if ( ! $ok ) {
-				continue;
-			}
-			$recipient_data[] = [
-				'id'  => $user->ID,
-				'email' => $user->user_email,
-				'name'  => $user->display_name,
-				'substitutions' => hamail_placeholders( $user ),
-				'custom_args' => $user->ID,
-			];
-		} else {
-			// This is email.
-			$place_holders = apply_filters( 'hamail_placeholders', [
-				'-id-'       => 0,
-				'-name-'     => $guest_name,
-				'-nicename-' => 'V/A',
-				'-email-'    => $id_or_email,
-			    '-login-'    => 'V/A',
-			], null );
-			$recipient_data[] = [
-				'id' => 0,
-				'email' => $id_or_email,
-				'name'  => $guest_name,
-				'substitutions' => $place_holders,
-				'custom_args' => 0,
-			];
-		}
-	}
+	$recipient_data = hamail_get_recipients_data( $recipients, $subject, $body );
 
 	if ( ! $recipient_data ) {
 		return new WP_Error( 'no_recipients', __( 'No recipient set.', 'hamail' ) );
