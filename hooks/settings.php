@@ -17,14 +17,19 @@ add_action( 'admin_notices', function () {
 		);
 	}
 	if ( hamail_enabled() ) {
+	    // Display only hamail related page.
+	    $screen = get_current_screen();
+        if ( ! ( ( 'edit-hamail' === $screen->id ) || ( 'hamail' === $screen->post_type ) || ( 'settings_page_hamail-setting' === $screen->id ) ) ) {
+            return;
+		}
 	    if ( hamail_is_debug() ) {
 			printf(
 				'<div class="notice notice-info"><p>%s</p></div>',
-				wp_kses_post( __( 'Hameil is now debug mode. Sendgrid API will never used. To disabled debug mode, change <code>define( \'HAMAIL_DEBUG\', false )</code> in your wp-config.php.', 'hamail' ) ) );
+				wp_kses_post( __( 'Hameil is now <strong>debug mode</strong>. Sendgrid API will never used. To disabled debug mode, change <code>define( \'HAMAIL_DEBUG\', false )</code> in your wp-config.php.', 'hamail' ) ) );
         } elseif ( WP_DEBUG ) {
 		    printf(
 			    '<div class="notice notice-warning"><p>%s</p></div>',
-			    wp_kses_post( __( 'Debug mode detected. If this is development production, please consider <code>define( \'HAMAIL_DEBUG\', true )</code> in your wp-config.php. Hamail may sent real email to your users via Web API even if you don\'t have local mail server!', 'hamail' ) ) );
+			    wp_kses_post( __( 'WordPress debug mode <code>WP_DEBUG</code> detected. If this is development production, please consider <code>define( \'HAMAIL_DEBUG\', true )</code> in your wp-config.php. Hamail may sent real email to your users via Web API even if you don\'t have local mail server!', 'hamail' ) ) );
         }
 	}
 } );

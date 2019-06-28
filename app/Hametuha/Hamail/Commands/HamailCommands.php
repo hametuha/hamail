@@ -2,6 +2,7 @@
 
 namespace Hametuha\Hamail\Commands;
 
+
 /**
  * Command utility for hamail.
  *
@@ -62,7 +63,7 @@ class HamailCommands extends \WP_CLI_Command {
 	 *
 	 * ## OPTIONS
 	 *
-	 * :<recipients>
+	 * : <recipients>
 	 *   CSV value of id or emails.
 	 *
 	 * @synopsis <recipients>
@@ -81,6 +82,29 @@ class HamailCommands extends \WP_CLI_Command {
 		}
 		print_r( $recipient_data );
 		\WP_CLI::line( '' );
-		\WP_CLI::success( sprintf( __( '%d data converted.' ), count( $recipient_data ) ) );
+		\WP_CLI::success( sprintf( __( '%d data converted.', 'hamail' ), count( $recipient_data ) ) );
+	}
+
+	/**
+	 * Test transactional mail class.
+	 *
+	 * ## OPTIONS
+	 *
+	 * : <class_name>
+	 *   Mail class name.
+	 *
+	 * @synopsis <class_name>
+	 * @param array $args
+	 */
+	public function test_mail_class( $args ) {
+		list( $class_name ) = $args;
+		if ( ! class_exists( $class_name ) ) {
+			\WP_CLI::error( sprintf( __( 'Class %s does not exist.', 'hamail' ), $class_name ) );
+		}
+		/** @var \Hametuha\Hamail\Pattern\TransactionalEmail $class_name */
+		$data = $class_name::test();
+		print_r( $data );
+		\WP_CLI::line( '' );
+		\WP_CLI::success( sprintf( __( 'Above is the data of %s.', 'hamail' ), $class_name ) );
 	}
 }

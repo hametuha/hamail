@@ -320,7 +320,7 @@ function hamail_simple_mail( $recipients, $subject, $body, $additional_headers =
 	}
 	// Create request body
 	// TODO: Attachment files.
-	$headers      = wp_parse_args( $additional_headers, hamail_default_headers( 'simple' ) );
+	$headers      = array_merge( hamail_default_headers( 'simple' ), $additional_headers );
 	$mail = new SendGrid\Mail();
 	// From
 	$from = new SendGrid\Email( get_bloginfo( 'name' ), get_option( 'admin_email' ) );
@@ -369,9 +369,13 @@ function hamail_simple_mail( $recipients, $subject, $body, $additional_headers =
 		if ( ! file_exists( $path ) ) {
 			continue;
 		}
+		$mime = wp_check_filetype( $path );
+		if ( ! $mime[ 'type' ] ) {
+			continue;
+		}
 		$attachment = [
 			'content'  => base64_encode( file_get_contents( $path ) ),
-			'type'     => mime_content_type( $path ),
+			'type'     => $mime[ 'type' ],
 			'filename' => basename( $path ),
 		];
 		$mail->addAttachment( $attachment );
@@ -416,6 +420,7 @@ function hamail_simple_mail( $recipients, $subject, $body, $additional_headers =
 	}
 	// Execute
 	if ( hamail_is_debug() ) {
+		error_log( '[HAMAIL]' . "" . var_export( $mail, true ) );
 		return true;
 	}
 	$sg = hamail_client();
