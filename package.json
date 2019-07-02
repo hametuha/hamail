@@ -4,7 +4,8 @@
   "description": "A WordPress plugin to enable balk email.",
   "main": "gulpfile.js",
   "scripts": {
-    "start": "gulp build",
+    "start": "gulp build && gulp watch",
+    "package": "gulp build",
     "watch": "gulp watch"
   },
   "repository": {
