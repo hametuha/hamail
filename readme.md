@@ -1,22 +1,22 @@
 # Hamail
 
 Tags: mail, sendgrid  
-Contributors: Takahashi_Fumiki  
-Tested up to: 4.7.0  
-Requires at least: 4.6.0  
-Stable Tag: 1.0.0  
+Contributors: Takahashi_Fumiki, hametuha  
+Tested up to: 5.2.2  
+Requires at least: 5.0.0  
+Requires PHP: 5.6
+Stable Tag: 2.0.0  
 License: GPLv3 or later  
 License URI: http://www.gnu.org/licenses/gpl-3.0.txt
 
-A WordPress plugin to send contact mail to your users.
+A WordPress plugin to send contact mail to your users via Sendgrid.
 
 ## Description
 
 This plugin enables you to send emails to each of your users.
 No more long **to** or BCCs.
 
-## Install
-
+## Installation
 
 ### From Plugin Repository
 
@@ -44,6 +44,11 @@ You need [SendGrid API Key](https://sendgrid.com/docs/Classroom/Send/How_Emails_
 For more details, go to hamail setting screen.
 
 ## Changelog
+
+### 2.0.0
+
+* Add transactional email feature.
+* Requires WordPress 5.0 and over.
 
 ### 1.0.0
 
