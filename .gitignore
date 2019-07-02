@@ -1,3 +1,5 @@
 node_modules/
 assets/
 vendor/
+package-lock.json
+composer.lock
