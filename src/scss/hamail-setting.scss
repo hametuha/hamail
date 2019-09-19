@@ -1,3 +1,5 @@
+$red: #eb3d4e;
+
 #hamail_fields_to_sync{
   width: 100%;
   display: block;
@@ -21,7 +23,7 @@
     font-weight: normal;
     background: #f9f9f9;
     border: 1px solid #ddd;
-    color: #eb3d4e;
+    color: $red;
     padding: 2px 3px;
     margin-left: 5px;
     margin-right: 5px;
@@ -29,11 +31,13 @@
 }
 
 .hamail-csv-preview{
+  margin-top: 0.5em;
   border-collapse: collapse;
   caption{
     text-align: left;
     color: #888;
     font-weight: bold;
+    font-size: 0.85em;
   }
   th, td{
     padding: 5px;
@@ -54,3 +58,8 @@
   }
 }
 
+.hamail-format-error{
+  margin: 0.25em 0 0.5em;
+  font-weight: bold;
+  color: $red;
+}

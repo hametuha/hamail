@@ -71,18 +71,22 @@ function hamail_get_custom_fields() {
  */
 function hamail_fields_array() {
 	try {
+		$format = get_option( 'hamail_fields_to_sync' );
+		if ( ! trim( $format ) ) {
+			throw new \Exception( __( 'Fields mapping is empty.' ), 200 );
+		}
 		$rows = array_map( function ( $row ) {
 			return array_filter( array_map( 'trim', explode( ',', trim( $row ) ) ) );
-		}, preg_split( '#\r\n#u', get_option( 'hamail_fields_to_sync' ) ) );
+		}, preg_split( '#\r\n#u', $format ) );
 		if ( 2 !== count( $rows ) ) {
-			throw new Exception( __( 'Fields mapping is mal format.', 'hamail' ) );
+			throw new Exception( __( 'Fields mapping is mal format.', 'hamail' ), 400 );
 		}
 		list( $sendgrid, $wordpress ) = $rows;
 		if ( count( $sendgrid ) < 1 ) {
-			throw new Exception( __( 'No field mapping record exists.', 'hamail' ) );
+			throw new Exception( __( 'No field mapping record exists.', 'hamail' ), 400 );
 		}
 		if ( count( $sendgrid ) !== count( $wordpress ) ) {
-			throw new Exception( __( 'Each field mapping row should be same length.', 'hamail' ) );
+			throw new Exception( __( 'Each field mapping row should be same length.', 'hamail' ), 400 );
 		}
 		$result = [];
 		for ( $i = 0, $l = count( $sendgrid ); $i < $l; $i++ ) {
@@ -91,7 +95,7 @@ function hamail_fields_array() {
 		return $result;
 	} catch ( Exception $e ) {
 		return new WP_Error( 'invalid_option', $e->getMessage(), [
-			'status'
+			'status' => $e->getCode(),
 		] );
 	}
 }
