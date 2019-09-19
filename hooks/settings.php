@@ -239,7 +239,6 @@ add_action( 'admin_init', function () {
 		}, 'hamail-setting', 'hamail_list_setting' );
 		register_setting( 'hamail-setting', 'hamail_site_key' );
 	}
-	
 } );
 
 /**
