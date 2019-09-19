@@ -2,10 +2,10 @@
 
 Tags: mail, sendgrid  
 Contributors: Takahashi_Fumiki, hametuha  
-Tested up to: 5.2.2  
+Tested up to: 5.2.3  
 Requires at least: 5.0.0  
 Requires PHP: 5.6
-Stable Tag: 2.0.0  
+Stable Tag: 2.0.1  
 License: GPLv3 or later  
 License URI: http://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -44,6 +44,10 @@ You need [SendGrid API Key](https://sendgrid.com/docs/Classroom/Send/How_Emails_
 For more details, go to hamail setting screen.
 
 ## Changelog
+
+### 2.0.1
+
+* Fix `wp_mail` skipped.
 
 ### 2.0.0
 
