@@ -145,23 +145,17 @@ add_action( 'admin_init', function () {
             ), '' ],
               ] as $key => $labels ) {
 	    list( $label, $description, $placeholder ) = $labels;
-		add_settings_field(
-			$key,
-			$label,
-			function() use ( $key, $description, $placeholder ) {
-			    printf(
-                    '<input type="text" name="%1$s" id="%1$s" class="regular-text" value="%2$s" placeholder="%3$s" />',
-                    $key,
-                    get_option( $key, '' ),
-                    $placeholder
-                );
-			    if ( $description ) {
-			        printf( '<p class="description">%s</p>', $description );
-                }
-			},
-			'hamail-setting',
-			'hamail_api_setting'
-		);
+		add_settings_field( $key, $label, function() use ( $key, $description, $placeholder ) {
+			printf(
+				'<input type="text" name="%1$s" id="%1$s" class="regular-text" value="%2$s" placeholder="%3$s" />',
+				$key,
+				get_option( $key, '' ),
+				$placeholder
+			);
+			if ( $description ) {
+				printf( '<p class="description">%s</p>', $description );
+			}
+		}, 'hamail-setting', 'hamail_api_setting' );
 		register_setting( 'hamail-setting', $key );
 	}
 	// If enabled, sync field is available.
