@@ -107,4 +107,31 @@ class HamailCommands extends \WP_CLI_Command {
 		\WP_CLI::line( '' );
 		\WP_CLI::success( sprintf( __( 'Above is the data of %s.', 'hamail' ), $class_name ) );
 	}
+	
+	/**
+	 * Send email via wp_mail
+	 *
+	 * ## OPTIONS
+	 *
+	 * : <to>
+	 *   Mail address sent to.
+	 * : [--subject=<subject>]
+	 *   Mail subject.
+	 * : [--body=<body>]
+	 *   Mail body.
+	 *
+	 * @synopsis <to> [--subject=<subject>] [--body=<body>]
+	 * @param array $args
+	 * @param array $assoc
+	 */
+	public function wp_mail( $args, $assoc ) {
+		list( $to ) = $args;
+		$subject = isset( $assoc['subject'] ) ? $assoc['subject'] : __( 'This is a test mail from WP-CLI', 'hamail' );
+		$body    = isset( $assoc['body'] ) ? $assoc['body'] : __( 'Dear -email-, we sent you a test mail. This email validates your setting is correct.', 'hamail' );
+		if ( \wp_mail( $to, $subject, $body ) ) {
+			\WP_CLI::success( 'Successfully sent a test mail.' );
+		} else {
+			\WP_CLI::error( 'Failed to sent a test mail.' );
+		}
+	}
 }

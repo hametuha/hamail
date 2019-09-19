@@ -18,9 +18,12 @@ defined( 'ABSPATH' ) or die();
 /**
  * Initialize hamail
  */
-function hamail_plugins_loaded() {
+function hamail_plugins_loaded( $plugin ) {
+	if ( basename( $plugin ) !== basename( __FILE__ ) ) {
+		return;
+	}
 	load_plugin_textdomain( 'hamail', true, 'hamail/languages' );
-
+	
 	// Get version number
 	$info = get_file_data( __FILE__, array(
 		'version' => 'Version',
@@ -58,5 +61,5 @@ function hamail_plugins_loaded() {
 		} );
 	}
 }
-add_action( 'plugins_loaded', 'hamail_plugins_loaded' );
+add_action( 'plugin_loaded', 'hamail_plugins_loaded' );
 

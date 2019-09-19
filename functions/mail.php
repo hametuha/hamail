@@ -79,7 +79,6 @@ if ( get_option( 'hamail_template_id' ) && ! function_exists( 'wp_mail' ) ) {
 		$result = hamail_simple_mail( $to, $subject, $message, $additional_header, $attachments );
 		return $result && ! is_wp_error( $result );
 	}
-
 }
 
 /**
@@ -259,8 +258,8 @@ function hamail_get_recipients_data( $recipients, $subject = '', $body = '' ) {
 		 *
 		 * @filter hamail_user_can_receive_mail
 		 *
-		 * @param bool $can_receive
-		 * @param WP_User $user
+		 * @param bool       $can_receive
+		 * @param int|string $user User ID or email address.
 		 *
 		 * @return bool
 		 */
@@ -319,28 +318,29 @@ function hamail_simple_mail( $recipients, $subject, $body, $additional_headers =
 		return new WP_Error( 'no_recipients', __( 'No recipient set.', 'hamail' ) );
 	}
 	// Create request body
-	// TODO: Attachment files.
-	$headers      = array_merge( hamail_default_headers( 'simple' ), $additional_headers );
-	$mail = new SendGrid\Mail();
+	// TODO: Extract attachment files.
+	$headers = array_merge( hamail_default_headers( 'simple' ), $additional_headers );
+	$mail    = new SendGrid\Mail();
 	// From
 	$from = new SendGrid\Email( get_bloginfo( 'name' ), get_option( 'admin_email' ) );
 	$mail->setFrom( $from );
-
 	// Reply To
 	$reply_to = new SendGrid\ReplyTo( $headers['from'] );
 	$mail->setReplyTo( $reply_to );
 	// Subject
 	$mail->setSubject( $subject );
 	// Check if WooCommerce is not activated.
-	$no_woocommerce = ! class_exists( 'woocommerce' );
+	$no_woocommerce = ! function_exists( 'WC' );
 	// Mail body
 	if ( 'text/html' == $headers['format'] ) {
 		/**
 		 * hamail_body_before_send
 		 *
-		 * @param string $context 'html' or 'playin'
+		 * @param string $body    Mail body.
+		 * @param string $context 'html' or 'plain'
+		 * @return string
 		 */
-		do_action( 'hamail_body_before_send', 'html' );
+		$body = apply_filters( 'hamail_body_before_send', $body, 'html' );
 		/**
 		 * hamail_should_filter
 		 *
@@ -355,12 +355,14 @@ function hamail_simple_mail( $recipients, $subject, $body, $additional_headers =
 		 */
 		$should_filter = apply_filters( 'hamail_should_filter', $no_woocommerce, $headers, $subject, $body, $recipients );
 		if ( $should_filter ) {
+			hamail_is_sending( true );
 			$body = apply_filters( 'the_content', $body );
+			hamail_is_sending( false );
 		}
 		$content = new SendGrid\Content( 'text/html', $body );
 		$mail->addContent( $content );
 	} else {
-		do_action( 'hamail_body_before_send', 'plain' );
+		$body = apply_filters( 'hamail_body_before_send', $body, 'plain' );
 		$content = new SendGrid\Content( 'text/plain', strip_tags( $body ) );
 		$mail->addContent( $content );
 	}
@@ -518,3 +520,16 @@ function hamail_send_message( $post = null ) {
 	}
 }
 
+/**
+ * Set flag while sending email.
+ *
+ * @param null|bool If true or false is passed, setting will be change.
+ * @return bool
+ */
+function hamail_is_sending( $flag = null ) {
+	static $sending = false;
+	if ( ! is_null( $flag ) ) {
+		$sending = (bool) $sending;
+	}
+	return $sending;
+}
