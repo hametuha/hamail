@@ -334,14 +334,6 @@ function hamail_simple_mail( $recipients, $subject, $body, $additional_headers =
 	// Mail body
 	if ( 'text/html' == $headers['format'] ) {
 		/**
-		 * hamail_body_before_send
-		 *
-		 * @param string $body    Mail body.
-		 * @param string $context 'html' or 'plain'
-		 * @return string
-		 */
-		$body = apply_filters( 'hamail_body_before_send', $body, 'html' );
-		/**
 		 * hamail_should_filter
 		 *
 		 * Filter if we should apply templates
@@ -359,6 +351,14 @@ function hamail_simple_mail( $recipients, $subject, $body, $additional_headers =
 			$body = apply_filters( 'the_content', $body );
 			hamail_is_sending( false );
 		}
+		/**
+		 * hamail_body_before_send
+		 *
+		 * @param string $body    Mail body.
+		 * @param string $context 'html' or 'plain'
+		 * @return string
+		 */
+		$body = apply_filters( 'hamail_body_before_send', $body, 'html' );
 		$content = new SendGrid\Content( 'text/html', $body );
 		$mail->addContent( $content );
 	} else {
@@ -532,4 +532,27 @@ function hamail_is_sending( $flag = null ) {
 		$sending = (bool) $sending;
 	}
 	return $sending;
+}
+
+/**
+ * Get css file for email.
+ *
+ * @return string[]
+ */
+function hamail_get_mail_css() {
+	$css_path = [];
+	foreach ( [ get_template_directory(), get_stylesheet_directory() ] as $dir ) {
+		$css = $dir . '/hamail.css';
+		if ( file_exists( $css ) ) {
+			$css_path[] = $css;
+		}
+	}
+	
+	/**
+	 * CSS path to apply for email.
+	 *
+	 * @param string[] $css_path
+	 * @return string[]
+	 */
+	return apply_filters( 'hamail_css_path', $css_path );
 }
