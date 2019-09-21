@@ -3,6 +3,8 @@
 namespace Hametuha\Hamail\Commands;
 
 
+use Hametuha\Hamail\Service\Extractor;
+
 /**
  * Command utility for hamail.
  *
@@ -106,6 +108,28 @@ class HamailCommands extends \WP_CLI_Command {
 		print_r( $data );
 		\WP_CLI::line( '' );
 		\WP_CLI::success( sprintf( __( 'Above is the data of %s.', 'hamail' ), $class_name ) );
+	}
+	
+	/**
+	 * Extract mail object.
+	 *
+	 * ## OPTIONS
+	 *
+	 * : <post_id>
+	 *   Post ID to extract.
+	 *
+	 * @synopsis <post_id>
+	 * @param array $args
+	 */
+	public function extract( $args ) {
+		list( $post_id ) = $args;
+		$result = Extractor::process( $post_id );
+		if ( is_wp_error( $result ) ) {
+			\WP_CLI::error( $result->get_error_message() );
+		} else {
+			print_r( $result );
+			\WP_CLI::line( '' );
+		}
 	}
 	
 	/**

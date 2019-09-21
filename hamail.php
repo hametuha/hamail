@@ -22,7 +22,6 @@ function hamail_plugins_loaded( $plugin ) {
 	if ( basename( $plugin ) !== basename( __FILE__ ) ) {
 		return;
 	}
-	load_plugin_textdomain( 'hamail', true, 'hamail/languages' );
 	
 	// Get version number
 	$info = get_file_data( __FILE__, array(
