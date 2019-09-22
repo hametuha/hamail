@@ -1,7 +1,8 @@
+#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: Hamail\n"
-"POT-Creation-Date: 2017-01-06 18:58+0900\n"
+"POT-Creation-Date: 2019-09-23 01:15+0900\n"
 "PO-Revision-Date: 2017-01-06 18:58+0900\n"
 "Last-Translator: Takahashi Fumiki <takahashi.fumiki@hametuha.co.jp>\n"
 "Language-Team: Takahashi Fumiki <takahashi.fumiki@hametuha.co.jp>\n"
@@ -9,7 +10,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.7.1\n"
+"X-Generator: Poedit 2.2\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
@@ -20,43 +21,164 @@ msgstr ""
 "X-Poedit-SearchPathExcluded-0: vendor\n"
 "X-Poedit-SearchPathExcluded-1: node_modules\n"
 
-#: functions/mail.php:192
+#: app/Hametuha/Hamail/API/Reply.php:59
+#, php-format
+msgid "Dear %s,"
+msgstr ""
+
+#: app/Hametuha/Hamail/API/Reply.php:79
+#, php-format
+msgid ""
+"A new reply for #%d is created and saved as draft. Will you edit it now?"
+msgstr ""
+
+#: app/Hametuha/Hamail/API/Reply.php:114
+msgid "Reply"
+msgstr ""
+
+#: app/Hametuha/Hamail/Commands/HamailCommands.php:83
+msgid "No data found."
+msgstr ""
+
+#: app/Hametuha/Hamail/Commands/HamailCommands.php:87
+#, php-format
+msgid "%d data converted."
+msgstr ""
+
+#: app/Hametuha/Hamail/Commands/HamailCommands.php:104
+#, php-format
+msgid "Class %s does not exist."
+msgstr ""
+
+#: app/Hametuha/Hamail/Commands/HamailCommands.php:110
+#, php-format
+msgid "Above is the data of %s."
+msgstr ""
+
+#: app/Hametuha/Hamail/Commands/HamailCommands.php:153
+msgid "This is a test mail from WP-CLI"
+msgstr ""
+
+#: app/Hametuha/Hamail/Commands/HamailCommands.php:154
+msgid ""
+"Dear -email-,\n"
+"we sent you a test mail.\n"
+"\n"
+"This email validates your setting is correct.\n"
+"\n"
+"For example, how does a URL below looks like?\n"
+"https://example.com\n"
+"\n"
+"Also, you should check tags like <strong>strong</strong>, <em>emphasis</em>, "
+"<code>difficult code</code> and so on.\n"
+"\n"
+"If this is html mail, <a href=\"https://example.com\">link</a> should work "
+"properly."
+msgstr ""
+
+#: app/Hametuha/Hamail/Pattern/TransactionalEmail.php:81
+#, php-format
+msgid "No recipients set: %s"
+msgstr ""
+
+#: app/Hametuha/Hamail/Pattern/TransactionalEmail.php:87
+#, php-format
+msgid "Subject or mail body is empty: %s"
+msgstr ""
+
+#: app/Hametuha/Hamail/Service/Extractor.php:22
+msgid "Post does not exist."
+msgstr ""
+
+#: app/Hametuha/Hamail/Service/Extractor.php:32
+msgid "Failed to extract email."
+msgstr ""
+
+#: app/Hametuha/Hamail/Service/Extractor.php:35 functions/mail.php:215
 msgid "Guest"
 msgstr ""
 
-#: functions/mail.php:243
+#: app/Hametuha/Hamail/Service/Extractor.php:37
+msgid "Contact"
+msgstr ""
+
+#: app/Hametuha/Hamail/Service/Extractor.php:41
+msgid "This post type is not supported."
+msgstr ""
+
+#: functions/mail.php:103
+msgid "The user dose not exist."
+msgstr ""
+
+#: functions/mail.php:318
 msgid "No recipient set."
 msgstr ""
 
-#: functions/search.php:73
+#: functions/marketing.php:15
+msgid "No sync"
+msgstr ""
+
+#: functions/marketing.php:76
+msgid "Fields mapping is empty."
+msgstr ""
+
+#: functions/marketing.php:82
+msgid "Fields mapping is mal format."
+msgstr ""
+
+#: functions/marketing.php:86
+msgid "No field mapping record exists."
+msgstr ""
+
+#: functions/marketing.php:89
+msgid "Each field mapping row should be same length."
+msgstr ""
+
+#: functions/marketing.php:172
+msgid "Fields data to sync is empty."
+msgstr ""
+
+#: functions/marketing.php:225
+msgid "List or site key is not set."
+msgstr ""
+
+#: functions/search.php:76
 #, php-format
 msgid "Author of \"%s\""
 msgstr ""
 
-#: functions/search.php:80
+#: functions/search.php:83
 #, php-format
 msgid "Authors of posts in \"%s\""
 msgstr ""
 
-#: functions/search.php:84
+#: functions/search.php:88
 #, php-format
 msgid "%s (User)"
 msgstr ""
 
-#: hamail.php:34
+#: functions/user-mail.php:21
+msgid "Mail subject and mail body are required."
+msgstr ""
+
+#: functions/user-mail.php:38
+msgid "At least one recipient is required."
+msgstr ""
+
+#: hamail.php:39
 #, php-format
 msgid ""
 "[Hamail] Sorry, this plugin requires PHP %s and over, but your PHP is %s."
 msgstr ""
 
-#: hamail.php:39
+#: hamail.php:44
 #, php-format
 msgid ""
 "[Hamail] PHP auto loader %s is missing. Did you run <code>composer install</"
 "code>?"
 msgstr ""
 
-#: hooks/list.php:15 hooks/sender.php:154
+#: hooks/list.php:15 hooks/sender.php:170
 msgid "Recipients"
 msgstr ""
 
@@ -64,7 +186,11 @@ msgstr ""
 msgid "Status"
 msgstr ""
 
-#: hooks/list.php:77
+#: hooks/list.php:19
+msgid "Reply To"
+msgstr ""
+
+#: hooks/list.php:79
 #, php-format
 msgid " and %s others"
 msgstr ""
@@ -73,80 +199,80 @@ msgstr ""
 msgid "User Contact"
 msgstr ""
 
-#: hooks/sender.php:80
+#: hooks/sender.php:81
 msgid "You can use placeholders below."
 msgstr ""
 
-#: hooks/sender.php:83
+#: hooks/sender.php:84
 msgid "Placeholder"
 msgstr ""
 
-#: hooks/sender.php:84
+#: hooks/sender.php:85
 msgid "Result Value(Example)"
 msgstr ""
 
-#: hooks/sender.php:107 hooks/sender.php:127
+#: hooks/sender.php:108 hooks/sender.php:128
 msgid "You have no permission"
 msgstr ""
 
-#: hooks/sender.php:110
+#: hooks/sender.php:111
 msgid "Search query is not set."
 msgstr ""
 
-#: hooks/sender.php:130
+#: hooks/sender.php:131
 msgid "Term ID is not set."
 msgstr ""
 
-#: hooks/sender.php:134
+#: hooks/sender.php:148
 msgid "Term not found."
 msgstr ""
 
-#: hooks/sender.php:179
+#: hooks/sender.php:195
 msgid "This mail has been sent already. Any change won't be saved."
 msgstr ""
 
-#: hooks/sender.php:183
+#: hooks/sender.php:199
 msgid "Roles"
 msgstr ""
 
-#: hooks/sender.php:194
+#: hooks/sender.php:210
 msgid "Users"
 msgstr ""
 
-#: hooks/sender.php:198
+#: hooks/sender.php:214
 msgid "Type and search user..."
 msgstr ""
 
-#: hooks/sender.php:210
+#: hooks/sender.php:226
 msgid "Specified Address"
 msgstr ""
 
-#: hooks/sender.php:212
+#: hooks/sender.php:228
 msgid "Enter comma separated mail address"
 msgstr ""
 
-#: hooks/sender.php:223
+#: hooks/sender.php:239
 msgid "Sending Status"
 msgstr ""
 
-#: hooks/sender.php:229
+#: hooks/sender.php:245
 #, php-format
 msgid "This message was sent at %1$s as %2$s."
 msgstr ""
 
-#: hooks/sender.php:231
+#: hooks/sender.php:247
 msgid "Site Admin"
 msgstr ""
 
-#: hooks/sender.php:237
+#: hooks/sender.php:253
 msgid "This message is not sent yet."
 msgstr ""
 
-#: hooks/sender.php:242
+#: hooks/sender.php:258
 msgid "Send as Site Admin"
 msgstr ""
 
-#: hooks/sender.php:246
+#: hooks/sender.php:262
 msgid "Error Logs"
 msgstr ""
 
@@ -155,66 +281,162 @@ msgstr ""
 msgid "No API key is set. Please go to <a href=\"%s\">Setting Page</a>."
 msgstr ""
 
-#: hooks/settings.php:25 hooks/settings.php:30
+#: hooks/settings.php:28
+msgid ""
+"Hamail is now <strong>debug mode</strong>. SendGrid API will never used. To "
+"disabled debug mode, change <code>define( 'HAMAIL_DEBUG', false )</code> in "
+"your wp-config.php."
+msgstr ""
+
+#: hooks/settings.php:32
+msgid ""
+"WordPress debug mode <code>WP_DEBUG</code> detected. If this is development "
+"production, please consider <code>define( 'HAMAIL_DEBUG', true )</code> in "
+"your wp-config.php. Hamail may sent real email to your users via Web API "
+"even if you don't have local mail server!"
+msgstr ""
+
+#: hooks/settings.php:51 hooks/settings.php:56
 msgid "Hamail Setting"
 msgstr ""
 
-#: hooks/settings.php:35
+#: hooks/settings.php:69
+msgid "Test Mail"
+msgstr ""
+
+#: hooks/settings.php:73
+msgid "You can test email after setting up SendGrid API key."
+msgstr ""
+
+#: hooks/settings.php:79
 msgid ""
 "Mail sent successfully. Please check how it looks like on your mail client."
 msgstr ""
 
-#: hooks/settings.php:40
+#: hooks/settings.php:84
+msgid "Try sending mail via SendGrid."
+msgstr ""
+
+#: hooks/settings.php:92
+msgid "Subject"
+msgstr ""
+
+#: hooks/settings.php:101
+msgid "Mail to"
+msgstr ""
+
+#: hooks/settings.php:110
+msgid "Mail Body"
+msgstr ""
+
+#: hooks/settings.php:118
+msgid "Send mail"
+msgstr ""
+
+#: hooks/settings.php:136
+msgid "SendGrid API Setting"
+msgstr ""
+
+#: hooks/settings.php:137
 msgid ""
 "Setting value for Hamail. Please enter SendGrid API key. Mail Send "
 "permission is minimal requirement."
 msgstr ""
 
-#: hooks/settings.php:49
+#: hooks/settings.php:140
 msgid "SendGrid API key"
 msgstr ""
 
-#: hooks/settings.php:58
+#: hooks/settings.php:141
 msgid "Default Mail From"
 msgstr ""
 
-#: hooks/settings.php:68
+#: hooks/settings.php:142
 msgid "Template ID"
 msgstr ""
 
-#: hooks/settings.php:75
+#: hooks/settings.php:143
 #, php-format
 msgid ""
 "If you set template ID, all your default mail will be HTML. For more detail, "
 "see <a href=\"%s\" target=\"_blank\">SendGrid API doc</a>."
 msgstr ""
 
-#: hooks/settings.php:82
-msgid "Update Setting"
+#: hooks/settings.php:163
+#, php-format
+msgid "Stylesheet %s will be applied to your mail body."
 msgstr ""
 
-#: hooks/settings.php:87
-msgid "Test Mail"
+#: hooks/settings.php:169
+msgid ""
+"If you put <code>hamail.css</code> in your theme's directory, they will be "
+"applied to mail body as inline css."
 msgstr ""
 
-#: hooks/settings.php:90
-msgid "Try sending "
+#: hooks/settings.php:180
+msgid "List Sync"
 msgstr ""
 
-#: hooks/settings.php:99
-msgid "Subject"
+#: hooks/settings.php:181
+msgid "To sync your user list to SendGrid, choose list and conditions."
 msgstr ""
 
-#: hooks/settings.php:108
-msgid "Mail to"
+#: hooks/settings.php:184
+msgid "List to sync"
 msgstr ""
 
-#: hooks/settings.php:117
-msgid "Mail Body"
+#: hooks/settings.php:187
+msgid "If you have no lists, please make it first on SendGrid."
 msgstr ""
 
-#: hooks/settings.php:125
-msgid "Send mail"
+#: hooks/settings.php:198
+msgid "Fields Mapping"
+msgstr ""
+
+#: hooks/settings.php:204
+msgid "Put CSV here in 2 lines."
+msgstr ""
+
+#: hooks/settings.php:210
+msgid ""
+"Write in CSV format. Line 1 is SendGrid, Line 2 is your WordPress. Absent "
+"fields are ignored."
+msgstr ""
+
+#: hooks/settings.php:211
+msgid ""
+"WordPress <code>site</code> field is required for multiple site. You can add "
+"or edit custom fields on SendGrid."
+msgstr ""
+
+#: hooks/settings.php:214
+msgid "CSV Preview"
+msgstr ""
+
+#: hooks/settings.php:225
+msgid "Available Fields(* is default): "
+msgstr ""
+
+#: hooks/settings.php:232
+msgid "Available Fields: "
+msgstr ""
+
+#: hooks/settings.php:233
+msgid ""
+"User object property(ex. <code>user_email</code>, <code>ID</code>) and "
+"user_meta key. <code>role</code> is also available."
+msgstr ""
+
+#: hooks/settings.php:238
+msgid "SendGrid is not connected."
+msgstr ""
+
+#: hooks/settings.php:243
+msgid "Site Specific Field"
+msgstr ""
+
+#: hooks/settings.php:247
+msgid "This field will determine which user to put into list."
 msgstr ""
 
 #: hooks/user-group.php:14 hooks/user-group.php:15
