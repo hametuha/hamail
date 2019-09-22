@@ -1,11 +1,11 @@
 # Hamail
 
-Tags: mail, sendgrid  
+Tags: email, sendgrid, marketing  
 Contributors: Takahashi_Fumiki, hametuha  
 Tested up to: 5.2.3  
 Requires at least: 5.0.0  
-Requires PHP: 5.6
-Stable Tag: 2.0.1  
+Requires PHP: 5.6  
+Stable Tag: 2.1.0  
 License: GPLv3 or later  
 License URI: http://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -44,6 +44,10 @@ You need [SendGrid API Key](https://sendgrid.com/docs/Classroom/Send/How_Emails_
 For more details, go to hamail setting screen.
 
 ## Changelog
+
+### 2.1.0
+
+* Add reply feature. Jetpack contact is now supported.
 
 ### 2.0.1
 

@@ -256,8 +256,6 @@ function hamail_sync_account( $paged = 1, $per_page = 1000 ) {
 			'status' => $e->getCode(),
 		] );
 	}
-
-
 }
 
 /**

@@ -16,6 +16,7 @@ add_filter( 'manage_hamail_posts_columns', function ( $columns ) {
 		}
 	}
 	$new_columns['status'] = __( 'Status', 'hamail' );
+	$new_columns['parent'] = __( 'Reply To', 'hamail' );
 	return $new_columns;
 }, 10, 2 );
 
@@ -76,6 +77,14 @@ add_action( 'manage_hamail_posts_custom_column', function( $column, $post_id ) {
 			echo implode( ', ', $recipients );
 			if ( $others ) {
 				echo sprintf( esc_html__( ' and %s others', 'hamail' ), number_format_i18n( $others ) );
+			}
+			break;
+		case 'parent':
+			$parent = wp_get_post_parent_id( $post_id );
+			if ( $parent ) {
+				printf( '<a href="%s">#%d</a>', get_edit_post_link( $parent ),  $parent );
+			} else {
+				echo '<span style="color: grey">----</span>';
 			}
 			break;
 		default:

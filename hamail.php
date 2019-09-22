@@ -4,7 +4,7 @@ Plugin Name: Hamail
 Plugin URI: https://wordpress.org/plugins/hamail/
 Description: A WordPress plugin for sending e-mail via Sendgrid.
 Author: hametuha
-Version: 2.0.1
+Version: 2.1.0
 PHP Version: 5.6
 Author URI: https://hametuha.co.jp/
 License: GPL3 or later
@@ -22,7 +22,6 @@ function hamail_plugins_loaded( $plugin ) {
 	if ( basename( $plugin ) !== basename( __FILE__ ) ) {
 		return;
 	}
-	load_plugin_textdomain( 'hamail', true, 'hamail/languages' );
 	
 	// Get version number
 	$info = get_file_data( __FILE__, array(

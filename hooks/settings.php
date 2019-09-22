@@ -155,6 +155,22 @@ add_action( 'admin_init', function () {
 			if ( $description ) {
 				printf( '<p class="description">%s</p>', $description );
 			}
+			switch ( $key ) {
+				case 'hamail_template_id':
+					if ( $styles = hamail_get_mail_css() ) {
+						// translators: %s is csv list of stylesheets path.
+						$message = sprintf(
+							__( 'Stylesheet %s will be applied to your mail body.', 'hamail' ),
+							implode( ', ', array_map( function( $path ) {
+								return sprintf( '<code>%s</code>', esc_html( $path ) );
+							}, $styles ) )
+						);
+					} else {
+						$message = __( 'If you put <code>hamail.css</code> in your theme\'s directory, they will be applied to mail body as inline css.', 'hamail' );
+					}
+					echo wp_kses_post( "<p>{$message}</p>" );
+					break;
+			}
 		}, 'hamail-setting', 'hamail_api_setting' );
 		register_setting( 'hamail-setting', $key );
 	}

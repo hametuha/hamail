@@ -3,6 +3,8 @@
 namespace Hametuha\Hamail\Commands;
 
 
+use Hametuha\Hamail\Service\Extractor;
+
 /**
  * Command utility for hamail.
  *
@@ -109,6 +111,28 @@ class HamailCommands extends \WP_CLI_Command {
 	}
 	
 	/**
+	 * Extract mail object.
+	 *
+	 * ## OPTIONS
+	 *
+	 * : <post_id>
+	 *   Post ID to extract.
+	 *
+	 * @synopsis <post_id>
+	 * @param array $args
+	 */
+	public function extract( $args ) {
+		list( $post_id ) = $args;
+		$result = Extractor::process( $post_id );
+		if ( is_wp_error( $result ) ) {
+			\WP_CLI::error( $result->get_error_message() );
+		} else {
+			print_r( $result );
+			\WP_CLI::line( '' );
+		}
+	}
+	
+	/**
 	 * Send email via wp_mail
 	 *
 	 * ## OPTIONS
@@ -127,11 +151,60 @@ class HamailCommands extends \WP_CLI_Command {
 	public function wp_mail( $args, $assoc ) {
 		list( $to ) = $args;
 		$subject = isset( $assoc['subject'] ) ? $assoc['subject'] : __( 'This is a test mail from WP-CLI', 'hamail' );
-		$body    = isset( $assoc['body'] ) ? $assoc['body'] : __( 'Dear -email-, we sent you a test mail. This email validates your setting is correct.', 'hamail' );
+		$body    = isset( $assoc['body'] ) ? $assoc['body'] : __( 'Dear -email-,
+we sent you a test mail.
+
+This email validates your setting is correct.
+
+For example, how does a URL below looks like?
+https://example.com
+
+Also, you should check tags like <strong>strong</strong>, <em>emphasis</em>, <code>difficult code</code> and so on.
+
+If this is html mail, <a href="https://example.com">link</a> should work properly.', 'hamail' );
 		if ( \wp_mail( $to, $subject, $body ) ) {
 			\WP_CLI::success( 'Successfully sent a test mail.' );
 		} else {
 			\WP_CLI::error( 'Failed to sent a test mail.' );
 		}
+	}
+	
+	/**
+	 * Test css path
+	 *
+	 * @param array $args
+	 * @param array $assoc
+	 */
+	public function css_test( $args, $assoc ) {
+		$styles = hamail_get_mail_css();
+		if ( ! $styles ) {
+			\WP_CLI::error( 'No stylesheet exsits.' );
+		}
+		\WP_CLI::line( 'These stylesheets will be applied:' );
+		foreach ( $styles as $style ) {
+			\WP_CLI::line( $style );
+		}
+		$body = <<<HTML
+This is a test mail.
+
+You can check how <code>stylesheets</code> will be applied.
+
+Is this <strong>O.K.</strong> for you?
+How about <a href="https://example.com">links</a>?
+HTML;
+		$filtered = apply_filters( 'the_content', $body );
+		$filtered = apply_filters( 'hamail_body_before_send', $filtered, 'html' );
+		\WP_CLI::line( '' );
+		\WP_CLI::line( 'Original------------' );
+		echo trim( $body );
+		\WP_CLI::line( '' );
+		\WP_CLI::line( '--------------------' );
+		\WP_CLI::line( '' );
+		\WP_CLI::line( 'Style Applied-------' );
+		echo trim( $filtered );
+		\WP_CLI::line( '' );
+		\WP_CLI::line( '--------------------' );
+		\WP_CLI::line( '' );
+		\WP_CLI::success( 'Done!' );
 	}
 }
