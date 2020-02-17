@@ -1,14 +1,14 @@
-var User = Backbone.Model.extend({
+var User = Backbone.Model.extend( {
 
-  defaults: function(){
-    return {
-      user_id: '',
-      display_name : '',
-      user_email: ''
-    };
-  },
+	defaults: function () {
+		return {
+			user_id: '',
+			display_name: '',
+			user_email: ''
+		};
+	},
 
-  sync: function(){
-  }
+	sync: function () {
+	}
 
-});
+} );

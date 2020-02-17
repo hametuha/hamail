@@ -1,15 +1,15 @@
 //=require ./user.js
 
-var UserList = Backbone.Collection.extend({
+var UserList = Backbone.Collection.extend( {
 
-  model: User,
+	model: User,
 
-  url: function(){
-    return false;
-  },
+	url: function () {
+		return false;
+	},
 
-  sync: function(){
-  }
+	sync: function () {
+	}
 
 
-});
+} );

@@ -4,10 +4,10 @@
 
 //=require ./views/user-controller.js
 
-jQuery(document).ready(function ($) {
+jQuery( document ).ready( function ( $ ) {
 
-  'use strict';
+	'use strict';
 
-  var app = new UserController();
+	var app = new UserController();
 
-});
+} );
