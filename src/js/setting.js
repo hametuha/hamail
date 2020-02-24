@@ -6,17 +6,17 @@
 
 	'use strict';
 
-	var timer = null;
+	const timer = null;
 
-	var updateCsv = function () {
+	const updateCsv = function () {
 		if ( timer ) {
 			clearTimeout( timer );
 		}
 		setTimeout( function () {
-			var str = $( '#hamail_fields_to_sync' ).val().split( "\n" );
+			const str = $( '#hamail_fields_to_sync' ).val().split( "\n" );
 
 			$( '.hamail-csv-preview tr' ).each( function ( index, tr ) {
-				var $tr = $( tr );
+				const $tr = $( tr );
 				// Clear cells
 				$tr.find( 'td' ).remove();
 				if ( str[ index ] ) {

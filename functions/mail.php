@@ -15,7 +15,7 @@ function hamail_client() {
 	if ( is_null( $instance ) ) {
 		$instance = new \SendGrid( get_option( 'hamail_api_key' ) );
 	}
-	return$instance;
+	return $instance;
 }
 
 if ( get_option( 'hamail_template_id' ) && ! function_exists( 'wp_mail' ) ) {
@@ -34,30 +34,30 @@ if ( get_option( 'hamail_template_id' ) && ! function_exists( 'wp_mail' ) ) {
 		$attachments = (array) $attachments;
 		// Filter vars
 		$arguments = apply_filters( 'wp_mail', compact( 'to', 'subject', 'message', 'headers', 'attachments' ) );
-		$filtered = [];
+		$filtered  = [];
 		foreach ( [
-			'to' => [],
-			'subject' => '',
-			'message' => '',
-			'headers' => [],
+			'to'          => [],
+			'subject'     => '',
+			'message'     => '',
+			'headers'     => [],
 			'attachments' => [],
 		] as $key => $default ) {
 			$filtered[ $key ] = isset( $arguments[ $key ] ) ? $arguments[ $key ] : $default;
 		}
-		$to = array_filter( array_map( 'trim', explode( ',', $filtered['to'] ) ) );
-		$subject = $filtered['subject'];
-		$message = $filtered['message'];
-		$headers = $filtered['headers'];
+		$to          = array_filter( array_map( 'trim', explode( ',', $filtered['to'] ) ) );
+		$subject     = $filtered['subject'];
+		$message     = $filtered['message'];
+		$headers     = $filtered['headers'];
 		$attachments = $filtered['attachments'];
 		if ( ! $to || ! $subject || ! $message ) {
 			return false;
 		}
 		$additional_header = [];
-		$headers = (array) $headers;
+		$headers           = (array) $headers;
 		foreach ( $headers as $header ) {
 			foreach ( array_filter( explode( "\n", str_replace( "\r\n", "\n", $header ) ) ) as $line ) {
 				$parts = array_map( 'trim', explode( ':', $line ) );
-				$type = strtolower( array_shift( $parts ) );
+				$type  = strtolower( array_shift( $parts ) );
 				$parts = implode( ':', $parts );
 				switch ( $type ) {
 					case 'reply-to':
@@ -103,7 +103,7 @@ function hamail_placeholders( $user = null, $extra_args = [] ) {
 		return new WP_Error( 'invalid_user_data', __( 'The user dose not exist.', 'hamail' ) );
 	}
 	if ( $email ) {
-		$place_holders =  [
+		$place_holders = [
 			'-id-'       => 0,
 			'-name-'     => hamail_guest_name(),
 			'-nicename-' => 'V/A',

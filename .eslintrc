@@ -4,6 +4,8 @@
     "browser": true,
     "jquery": true
   },
-  "extends": [ "plugin:@wordpress/eslint-plugin/recommended" ]
+  "extends": [ "plugin:@wordpress/eslint-plugin/recommended" ],
+  "rules": {
+    "no-alert": "off"
+  }
 }
-
