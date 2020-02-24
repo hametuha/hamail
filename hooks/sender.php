@@ -3,6 +3,22 @@
  * Sending screen
  */
 
+add_action( 'add_meta_boxes', function() {
+	add_filter( 'gettext', function( $translation, $text, $domain ) {
+		if ( ! is_admin() ) {
+			return $translation;
+		}
+		$screen = get_current_screen();
+		if ( 'hamail' !== $screen->post_type ) {
+			return $translation;
+		}
+		if ( 'Publish' === $text && 'default' === $domain ) {
+			$translation = __( 'Submit' );
+		}
+		return $translation;
+	}, 10, 3 );
+} );
+
 /**
  * Register post type
  */
