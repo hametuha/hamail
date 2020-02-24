@@ -28,7 +28,7 @@ function hamail_apply_css_to_body( $body, $context ) {
 		if ( ! file_exists( $style ) ) {
 			continue;
 		}
-		$css = file_get_contents( $style );
+		$css  = file_get_contents( $style );
 		$body = $cssToInlineStyles->convert( $body, $css );
 	}
 	// Remove body tag.

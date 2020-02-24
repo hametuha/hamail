@@ -81,6 +81,10 @@ if ( get_option( 'hamail_template_id' ) && ! function_exists( 'wp_mail' ) ) {
 	}
 }
 
+function hamail_guest_information() {
+
+}
+
 /**
  * Get placeholders
  *
@@ -99,13 +103,13 @@ function hamail_placeholders( $user = null, $extra_args = [] ) {
 		$user = get_userdata( get_current_user_id() );
 	}
 	// Check if user is valid.
-	if ( $email && ! $user ) {
+	if ( ! $email && ! $user ) {
 		return new WP_Error( 'invalid_user_data', __( 'The user dose not exist.', 'hamail' ) );
 	}
 	if ( $email ) {
 		$place_holders = [
 			'-id-'       => 0,
-			'-name-'     => hamail_guest_name(),
+			'-name-'     => hamail_guest_name( $email ),
 			'-nicename-' => 'V/A',
 			'-email-'    => $email,
 			'-login-'    => 'V/A',
@@ -200,9 +204,10 @@ function hamail_default_headers( $context = 'simple' ) {
 /**
  * Guest name.
  *
+ * @param string $email
  * @return string
  */
-function hamail_guest_name() {
+function hamail_guest_name( $email = '' ) {
 	/**
 	 * hamail_guest_name
 	 *
@@ -212,7 +217,8 @@ function hamail_guest_name() {
 	 *
 	 * @return string
 	 */
-	return apply_filters( 'hamail_guest_name', __( 'Guest', 'hamail' ) );
+	$guest = apply_filters( 'hamail_guest_name', __( 'Guest', 'hamail' ), $email );
+	return ( $email === get_option( 'admin_email' ) ) ? __( 'Site Owner', 'hamail' ) : $guest;
 }
 
 /**
@@ -240,15 +246,15 @@ function hamail_get_recipients_data( $recipients, $subject = '', $body = '' ) {
 			$id_or_emails[ $id_or_email ] = $extra_data;
 		} else {
 			// This is email
-			if ( $id = email_exists( $id_or_email ) ) {
+			$id = email_exists( $id_or_email );
+			if ( $id ) {
 				$id_or_emails[ $id ] = $extra_data;
 			} else {
 				$id_or_emails[ $id_or_email ] = $extra_data;
 			}
 		}
 	}
-
-	$recipient_data   = [];
+	$recipient_data = [];
 	foreach ( $id_or_emails as $id_or_email => $extra_data ) {
 		if ( ! $id_or_email ) {
 			continue;
@@ -281,11 +287,10 @@ function hamail_get_recipients_data( $recipients, $subject = '', $body = '' ) {
 				'custom_args'   => $user->ID,
 			];
 		} else {
-			// This is email.
 			$data = [
 				'id'            => 0,
 				'email'         => $id_or_email,
-				'name'          => hamail_guest_name(),
+				'name'          => hamail_guest_name( $id_or_email ),
 				'substitutions' => hamail_placeholders( $id_or_email, $extra_data ),
 				'custom_args'   => 0,
 			];
@@ -313,7 +318,6 @@ function hamail_simple_mail( $recipients, $subject, $body, $additional_headers =
 	// Parse recipients
 	$recipients   = (array) $recipients;
 	$recipient_data = hamail_get_recipients_data( $recipients, $subject, $body );
-
 	if ( ! $recipient_data ) {
 		return new WP_Error( 'no_recipients', __( 'No recipient set.', 'hamail' ) );
 	}

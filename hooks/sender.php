@@ -3,6 +3,9 @@
  * Sending screen
  */
 
+/**
+ * Change "Publish" button's label.
+ */
 add_action( 'add_meta_boxes', function() {
 	add_filter( 'gettext', function( $translation, $text, $domain ) {
 		if ( ! is_admin() ) {
@@ -11,6 +14,17 @@ add_action( 'add_meta_boxes', function() {
 		$screen = get_current_screen();
 		if ( 'hamail' !== $screen->post_type ) {
 			return $translation;
+		}
+		if ( 'default' !== $domain ) {
+			return $translation;
+		}
+		switch( $text ) {
+			case 'Publish':
+				return __( 'Submit' );
+			case 'Schedule':
+				return _x( 'Schedule', 'submit-label', 'hamail' );
+			default:
+				return $translation;
 		}
 		if ( 'Publish' === $text && 'default' === $domain ) {
 			$translation = __( 'Submit' );
