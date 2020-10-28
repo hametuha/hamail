@@ -7,7 +7,7 @@ composer install --no-dev --prefer-dist --no-suggest
 
 # Install NPM.
 npm install
-npm start
+npm run package
 
 # Remove unwanted files.
 rm -rf .git

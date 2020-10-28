@@ -9,10 +9,11 @@
  * Search user name
  *
  * @param string $string
+ * @param int    $page
  *
  * @return array
  */
-function hamail_search( $string ) {
+function hamail_search( $string, $page = 1 ) {
 	global $wpdb;
 	$like = "%{$string}%";
 	// Build union query
@@ -23,7 +24,6 @@ function hamail_search( $string ) {
 		FROM {$wpdb->posts}
 		WHERE post_type NOT IN ( 'revision', 'auto-draft', 'attachment' )
 		  AND post_title LIKE %s
-		LIMIT 10
 SQL;
 	$unions[] = $wpdb->prepare( $query, $like );
 	// Search term
@@ -31,7 +31,6 @@ SQL;
 		SELECT term_id AS id, 'term' AS type, name AS label, '' as data
 		FROM {$wpdb->terms}
 		WHERE name like %s
-		LIMIT 10
 SQL;
 	$unions[] = $wpdb->prepare( $query, $like );
 	// Search user
@@ -39,7 +38,6 @@ SQL;
 		SELECT ID as id, 'user' AS type, display_name AS label, user_email as data
 		FROM {$wpdb->users}
 		WHERE display_name LIKE %s
-		LIMIT 10
 SQL;
 	$unions[] = $wpdb->prepare( $query, $like );
 	// Build union
@@ -56,7 +54,8 @@ SQL;
 	$unions = apply_filters( 'hamail_search_union', $unions, $string );
 	$query  = implode( ' UNION ', array_map( function( $query ) {
 		return "( {$query} )";
-	}, $unions ) ) . ' LIMIT 10';
+	}, $unions ) );
+	$query .= sprintf( ' LIMIT 10, %d', max( 1, $page ) - 1 );
 	/**
 	 * hamail_search_query
 	 *

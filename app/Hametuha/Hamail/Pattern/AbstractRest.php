@@ -8,10 +8,11 @@ use Hametuha\Pattern\RestApi;
 /**
  * Abstract rest api pattern.
  *
- * @package Hametuha\Hamail\Pattern
+ * @package hamail
+ * @since 2.1.0
  */
 abstract class AbstractRest extends RestApi {
-	
+
 	protected $namespace = 'hamail';
-	
+
 }
