@@ -192,6 +192,7 @@ You can check how <code>stylesheets</code> will be applied.
 Is this <strong>O.K.</strong> for you?
 How about <a href="https://example.com">links</a>?
 HTML;
+		$body     = apply_filters( 'hamail_style_test_body', $body );
 		$filtered = apply_filters( 'the_content', $body );
 		$filtered = apply_filters( 'hamail_body_before_send', $filtered, 'html' );
 		\WP_CLI::line( '' );

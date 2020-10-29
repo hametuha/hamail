@@ -5,7 +5,7 @@
  */
 add_action( 'admin_menu', function() {
 	if ( ! hamail_enabled() ) {
-		// Do nothing if
+		// Do nothing if hamail is not active.
 		return;
 	}
 	// Add sub menu

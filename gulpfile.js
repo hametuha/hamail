@@ -96,18 +96,13 @@ gulp.task( 'js', gulp.parallel( 'js:bundle', 'js:eslint' ) );
 //
 
 // Just copy.
-gulp.task( 'copy', function () {
-	return mergeStream(
-		gulp.src( [
-			'./node_modules/bootstrap/dist/js/bootstrap.min.js',
-			'./node_modules/bootstrap/dist/js/bootstrap.min.js.map',
-			'./node_modules/popper.js/dist/umd/popper.min.js',
-			'./node_modules/popper.js/dist/umd/popper.min.js.map',
-			'./node_modules/swiper/js/swiper.min.js',
-			'./node_modules/swiper/js/swiper.min.js.map',
-		] )
-			.pipe( gulp.dest( 'assets/js' ) )
-	);
+gulp.task( 'copy', function ( done ) {
+	done();
+	// return mergeStream(
+	// 	gulp.src( [
+	// 	] )
+	// 		.pipe( gulp.dest( 'assets/js' ) )
+	// );
 } );
 
 //

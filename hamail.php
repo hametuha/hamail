@@ -39,14 +39,14 @@ function hamail_plugins_loaded( $plugin ) {
 			// translators: %1$s is required PHP version, %2$s is current PHP version.
 			throw new Exception( sprintf( __( '[Hamail] Sorry, this plugin requires PHP %1$s and over, but your PHP is %2$s.', 'hamail' ), $info['php_version'], phpversion() ) );
 		}
-		// find auto loader
+		// Find auto loader
 		$auto_loader = __DIR__ . '/vendor/autoload.php';
 		if ( ! file_exists( $auto_loader ) ) {
 			// translators: %s is composer path.
 			throw new Exception( sprintf( __( '[Hamail] PHP auto loader %s is missing. Did you run <code>composer install</code>?', 'hamail' ), $auto_loader ) );
 		}
 		require $auto_loader;
-		// Load functions
+		// Load functions.
 		foreach ( array( 'functions', 'hooks' ) as $dir_name ) {
 			$dir = __DIR__ . '/' . $dir_name . '/';
 			foreach ( scandir( $dir ) as $file ) {
@@ -57,8 +57,7 @@ function hamail_plugins_loaded( $plugin ) {
 		}
 	} catch ( Exception $e ) {
 		$error = sprintf( '<div class="error"><p>%s</p></div>', $e->getMessage() );
-		add_action(
-			'admin_notices', function () use ( $error ) {
+		add_action( 'admin_notices', function () use ( $error ) {
 			echo wp_kses_post( $error );
 		} );
 	}
