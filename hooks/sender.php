@@ -73,6 +73,9 @@ add_action( 'save_post_hamail', function( $post_id, $post ) {
 		// Save roles
 		$roles = implode( ',', array_filter( filter_input( INPUT_POST,  'hamail_roles', FILTER_DEFAULT, FILTER_FORCE_ARRAY ) ) );
 		update_post_meta( $post->ID, '_hamail_roles', $roles );
+		// Save groups.
+		$groups = implode( ',', array_filter( filter_input( INPUT_POST,  'hamail_user_groups', FILTER_DEFAULT, FILTER_FORCE_ARRAY ) ) );
+		update_post_meta( $post->ID, '_hamail_user_groups', $groups );
 		// Save users.
 		$users_ids = implode( ',', array_filter( array_map( function ( $id ) {
 			$id = trim( $id );
@@ -197,13 +200,15 @@ add_action( 'add_meta_boxes', function ( $post_type ) {
 function hamail_placeholders_meta_box( $post, $args ) {
 	$place_holders = $args['args']['placeholders'];
 	?>
+	<p class="description">
+		<?php esc_html_e( 'You can use placeholders below in mail body and subject.', 'hamail' ) ?>
+	</p>
 	<div class="hamail-instruction">
 		<table class="hamail-instruction-table">
-			<caption><?php _e( 'You can use placeholders below in mail body and subject..', 'hamail' ) ?></caption>
 			<thead>
 			<tr>
-				<th><?php _e( 'Placeholder', 'hamail' ) ?></th>
-				<th><?php _e( 'Result Value(Example)', 'hamail' ) ?></th>
+				<th><?php esc_html_e( 'Placeholder', 'hamail' ) ?></th>
+				<th><?php esc_html_e( 'Result Value(Example)', 'hamail' ) ?></th>
 			</tr>
 			</thead>
 			<tbody>
@@ -250,7 +255,7 @@ function hamail_recipients_meta_box( $post ) {
 		<?php endif; ?>
 		
 		<div class="hamail-address-roles">
-			<h4 class="hamail-address-title"><?php _e( 'Roles', 'hamail' ) ?></h4>
+			<h4 class="hamail-address-title"><?php esc_html_e( 'Roles', 'hamail' ) ?></h4>
 			<?php foreach ( get_editable_roles() as $key => $role ) : ?>
 				<label class="inline-block">
 					<input type="checkbox" name="hamail_roles[]"
@@ -258,6 +263,29 @@ function hamail_recipients_meta_box( $post ) {
 					<?php echo translate_user_role( $role[ 'name' ] ) ?>
 				</label>
 			<?php endforeach; ?>
+		</div>
+		
+		<hr />
+		
+		<div class="hamail-address-user-group">
+			<h4 class="hamail-address-title"><?php esc_html_e( 'User Group', 'hamail' ) ?></h4>
+			<?php
+			$groups = hamail_user_groups();
+			if ( $groups ) {
+				$post_groups = array_filter( explode( ',', get_post_meta( $post->ID, '_hamail_user_groups', true ) ) );
+				foreach ( $groups as $group ) {
+					printf(
+						'<label class="inline-block" title="%4$s"><input type="checkbox" name="hamail_user_groups[]" value="%1$s" %5$s /> %2$s <small>(%3$d)</small></label>',
+						esc_attr( $group->name ),
+						esc_html( $group->label ),
+						esc_html( $group->count ),
+						esc_attr( $group->description ),
+						checked( in_array( $group->name, $post_groups ), true, false )
+					);
+				}
+			} else {
+				printf( '<p class="description">%s</p>', esc_html__( 'User group is not available.', 'hamail' ) );
+			} ?>
 		</div>
 		
 		<hr />
@@ -278,6 +306,7 @@ function hamail_recipients_meta_box( $post ) {
 		</div>
 		
 		<hr />
+		
 		<div class="hamail-address-raw">
 			<h4 class="hamail-address-title"><?php _e( 'Specified Address', 'hamail' ) ?></h4>
 			<label for="hamail_raw_address" class="block">

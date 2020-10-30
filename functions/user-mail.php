@@ -6,7 +6,7 @@
  */
 
 /**
- *
+ * Create user contact.
  *
  * @param string $subject
  * @param string $body

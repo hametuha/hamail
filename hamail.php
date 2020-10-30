@@ -1,5 +1,5 @@
 <?php
-/*
+/**
 Plugin Name: Hamail
 Plugin URI: https://wordpress.org/plugins/hamail/
 Description: A WordPress plugin for sending e-mail via Sendgrid.
@@ -54,6 +54,10 @@ function hamail_plugins_loaded( $plugin ) {
 					require $dir . $file;
 				}
 			}
+		}
+		// Load test file if exists.
+		if ( class_exists( 'Hametuha\\HamailDev\\Bootstrap' ) ) {
+			Hametuha\HamailDev\Bootstrap::get_instance();
 		}
 	} catch ( Exception $e ) {
 		$error = sprintf( '<div class="error"><p>%s</p></div>', $e->getMessage() );

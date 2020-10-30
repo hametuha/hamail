@@ -13,7 +13,9 @@ use Hametuha\Hamail\Service\Extractor;
  */
 class Reply extends AbstractRest {
 	
-	protected $route = 'reply/(?P<post_id>\d+)/?';
+	protected function route() {
+		return 'reply/(?P<post_id>\d+)/?';
+	}
 	
 	public static $repliable = [ 'feedback' ];
 	

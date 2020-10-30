@@ -19,7 +19,6 @@
     "minimum-stability": "stable",
     "require": {
         "sendgrid/sendgrid": "^5.1",
-        "hametuha/pattern": "^0.8",
         "tijsverkoyen/css-to-inline-styles": "^2.2"
     },
     "require-dev": {
@@ -30,6 +29,11 @@
     "autoload": {
         "psr-0": {
             "Hametuha\\Hamail": "app"
+        }
+    },
+    "autoload-dev": {
+        "psr-0": {
+            "Hametuha\\HamailDev": "tests/app"
         }
     }
 }

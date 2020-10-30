@@ -12,8 +12,7 @@ use Hametuha\Hamail\Pattern\RecipientSelector;
  */
 class Authors extends RecipientSelector {
 
-	protected $route = 'search/authors';
-
+	
 	protected function get_args( $http_method ) {
 		// TODO: Implement get_args() method.
 	}
@@ -27,5 +26,7 @@ class Authors extends RecipientSelector {
 		return __( 'Authors of Posts', 'hamail' );
 	}
 
-
+	protected function route() {
+		return 'search/users';
+	}
 }
