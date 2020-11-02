@@ -7,5 +7,7 @@ module.exports = {
 			ignoreProperties: [ 'font-family' ],
 		} ],
 		'number-leading-zero': null,
+		'rule-empty-line-before': null,
+		'declaration-property-unit-whitelist': null,
 	},
 };

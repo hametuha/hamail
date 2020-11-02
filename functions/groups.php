@@ -28,3 +28,32 @@ function hamail_user_groups() {
 function hamail_get_groups( $post = null ) {
 
 }
+
+/**
+ * Get user count in specified role.
+ *
+ * @param string $role
+ * @return int
+ */
+function hamail_get_role_count( $role ) {
+	$query = new WP_User_Query( [
+		'role'   => $role,
+		'number' => 1,
+	] );
+	return $query->get_total();
+}
+
+/**
+ * Groups of recipients.
+ *
+ * @return array[]
+ */
+function hamail_recipients_group() {
+	return apply_filters( 'hamail_generic_group', [
+		[
+			'id'       => 'hamail_recipients_id',
+			'label'    => __( 'Users', 'hamail' ),
+			'endpoint' => 'hamail/v1/search/users',
+		],
+	] );
+}

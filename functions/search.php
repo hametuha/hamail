@@ -145,3 +145,5 @@ SQL;
 	$query = apply_filters( 'hamail_term_user_query', $query, $term_taxonomy_id );
 	return $wpdb->get_results( $query );
 }
+
+

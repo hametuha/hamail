@@ -6,6 +6,7 @@ const mergeStream = require( 'merge-stream' );
 const webpack = require( 'webpack-stream' );
 const webpackBundle = require( 'webpack' );
 const named = require( 'vinyl-named' );
+const { dumpSetting } = require('@kunoichi/grab-deps');
 
 //
 // SCSS tasks
@@ -143,19 +144,31 @@ gulp.task( 'imagemin:misc', function () {
 // minify all images.
 gulp.task( 'imagemin', gulp.parallel( 'imagemin:misc', 'imagemin:svg' ) );
 
+// Dump dependency setting.
+gulp.task( 'dump', function( done ) {
+	dumpSetting( 'assets' );
+	done();
+} );
+
 //
 // Watch
 // =================
 //
-gulp.task( 'watch', function () {
-	// Make SASS
+gulp.task( 'watch', function ( done ) {
+	// Make SASS.
 	gulp.watch( [
 		'src/scss/**/*.scss',
 	], gulp.task( 'scss' ) );
-	// JS
+	// Bundle JS.
 	gulp.watch( [ 'src/js/**/*.js' ], gulp.task( 'js' ) );
-	// Minify Image
+	// Minify Images.
 	gulp.watch( 'src/img/**/*', gulp.task( 'imagemin' ) );
+	// Dump settings.
+	gulp.watch( [
+		'assets/js/**/*.js',
+		'assets/css/**/*.css'
+	], gulp.task( 'dump' ) );
+	done();
 } );
 
 //
@@ -163,8 +176,8 @@ gulp.task( 'watch', function () {
 // ================
 //
 
-// Build
-gulp.task( 'build', gulp.parallel( 'copy', 'js:bundle', 'scss:generate', 'imagemin' ) );
+// Build task.
+gulp.task( 'build', gulp.series( gulp.parallel( 'copy', 'js:bundle', 'scss:generate', 'imagemin' ), 'dump' ) );
 
-// Default Tasks
+// Default Tasks.
 gulp.task( 'default', gulp.task( 'watch' ) );

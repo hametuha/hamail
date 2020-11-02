@@ -1,4 +1,4 @@
-const LicenseWebpackPlugin = require( 'license-webpack-plugin' ).LicenseWebpackPlugin;
+const TerserPlugin = require( 'terser-webpack-plugin' );
 
 module.exports = {
 	mode: 'production',
@@ -17,7 +17,17 @@ module.exports = {
 			},
 		],
 	},
-	plugins: [
-		new LicenseWebpackPlugin(),
-	],
+	optimization: {
+		minimize: true,
+		minimizer: [
+			new TerserPlugin( {
+				terserOptions: {
+					format: {
+						comments: /\*!/i,
+					},
+				},
+				extractComments: true,
+			} ),
+		],
+	},
 };

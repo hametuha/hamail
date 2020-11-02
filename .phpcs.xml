@@ -16,7 +16,7 @@
 	<rule ref="WordPress-Docs" />
 
 	<!-- Check all PHP files in directory tree by default. -->
-	<arg name="extensions" value="php"/>
+	<arg name="extensions" value="php" />
 	<file>functions</file>
 	<file>hooks</file>
 	<file>app</file>

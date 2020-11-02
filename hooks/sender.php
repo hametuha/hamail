@@ -64,17 +64,17 @@ add_action( 'save_post_hamail', function( $post_id, $post ) {
 		// If sent, nothing will be updated.
 		return;
 	}
-	// Send as admin
+	// Send as admin.
 	if ( wp_verify_nonce( filter_input( INPUT_POST, '_hamailadminnonce' ), 'hamail_as_admin' ) ) {
 		update_post_meta( $post_id, '_hamail_as_admin', filter_input( INPUT_POST, 'hamail_as_admin' ) );
 	}
 	// Save meta data.
 	if ( wp_verify_nonce( filter_input( INPUT_POST, '_hamail_recipients' ), 'hamail_recipients' ) ) {
-		// Save roles
-		$roles = implode( ',', array_filter( filter_input( INPUT_POST,  'hamail_roles', FILTER_DEFAULT, FILTER_FORCE_ARRAY ) ) );
+		// Save roles.
+		$roles = implode( ',', array_filter( filter_input( INPUT_POST, 'hamail_roles', FILTER_DEFAULT, FILTER_FORCE_ARRAY ) ) );
 		update_post_meta( $post->ID, '_hamail_roles', $roles );
 		// Save groups.
-		$groups = implode( ',', array_filter( filter_input( INPUT_POST,  'hamail_user_groups', FILTER_DEFAULT, FILTER_FORCE_ARRAY ) ) );
+		$groups = implode( ',', array_filter( filter_input( INPUT_POST, 'hamail_user_groups', FILTER_DEFAULT, FILTER_FORCE_ARRAY ) ) );
 		update_post_meta( $post->ID, '_hamail_user_groups', $groups );
 		// Save users.
 		$users_ids = implode( ',', array_filter( array_map( function ( $id ) {
@@ -82,7 +82,7 @@ add_action( 'save_post_hamail', function( $post_id, $post ) {
 			return is_numeric( $id ) ? $id : false;
 		}, explode( ',', filter_input( INPUT_POST, 'hamail_recipients_id' ) ) ) ) );
 		update_post_meta( $post_id, '_hamail_recipients_id', $users_ids );
-		// Save each address
+		// Save each address.
 		update_post_meta( $post->ID, '_hamail_raw_address', filter_input( INPUT_POST, 'hamail_raw_address' ) );
 	}
 }, 9, 2 );
@@ -95,11 +95,8 @@ add_action( 'save_post_hamail', function( $post_id, $post ) {
  */
 add_action( 'save_post_hamail', function ( $post_id, $post ) {
 	// Try send mail.
-	if ( ! hamail_is_sent( $post ) ) {
-		// Send
-		if ( 'publish' === $post->post_status ) {
-			hamail_send_message( $post );
-		}
+	if ( 'publish' === $post->post_status && ! hamail_is_sent( $post ) ) {
+		hamail_send_message( $post );
 	}
 }, 10, 2 );
 
@@ -172,23 +169,17 @@ add_action( 'add_meta_boxes', function ( $post_type ) {
 	if ( 'hamail' !== $post_type ) {
 		return;
 	}
-	// Enqueue scripts
+	// Enqueue scripts.
 	wp_enqueue_style( 'hamail-sender' );
 	wp_enqueue_script( 'hamail-sender' );
-	wp_localize_script( 'hamail-sender', 'HamailSearchOptions', apply_filters( 'hamail_searc_options', [
-		'users' => __( '', '' ),
-		'posts' => __( '', '' ),
-		'tags'  => __( '', '' ),
-		''
-	] ) );
-	// Recipients
+	// Recipients.
 	add_meta_box( 'hamail-recipients', __( 'Recipients', 'hamail' ), 'hamail_recipients_meta_box', $post_type, 'normal', 'high' );
-	// Placeholders
+	// Placeholders.
 	$place_holders = hamail_placeholders();
 	if ( ! empty( $place_holders ) ) {
-		add_meta_box( 'hamail-placeholders', __( 'Available Placeholders', 'hamail' ), 'hamail_placeholders_meta_box', $post_type, 'normal', 'low', [ 'placeholders' => $place_holders ]  );
+		add_meta_box( 'hamail-placeholders', __( 'Available Placeholders', 'hamail' ), 'hamail_placeholders_meta_box', $post_type, 'normal', 'low', [ 'placeholders' => $place_holders ] );
 	}
-	// Sending status
+	// Sending status.
 	add_meta_box( 'hamail-status', __( 'Sending Status', 'hamail' ), 'hamail_status_meta_box', $post_type, 'side', 'low' );
 } );
 
@@ -207,15 +198,15 @@ function hamail_placeholders_meta_box( $post, $args ) {
 		<table class="hamail-instruction-table">
 			<thead>
 			<tr>
-				<th><?php esc_html_e( 'Placeholder', 'hamail' ) ?></th>
-				<th><?php esc_html_e( 'Result Value(Example)', 'hamail' ) ?></th>
+				<th><?php esc_html_e( 'Placeholder', 'hamail' ); ?></th>
+				<th><?php esc_html_e( 'Result Value(Example)', 'hamail' ); ?></th>
 			</tr>
 			</thead>
 			<tbody>
 			<?php foreach ( $place_holders as $key => $value ) : ?>
 				<tr>
-					<th><?php echo esc_html( $key ) ?></th>
-					<td><?php echo esc_html( $value ) ?></td>
+					<th><?php echo esc_html( $key ); ?></th>
+					<td><?php echo esc_html( $value ); ?></td>
 				</tr>
 			<?php endforeach; ?>
 			</tbody>
@@ -247,28 +238,27 @@ function hamail_recipients_meta_box( $post ) {
 	}
 	?>
 	<div class="hamail-address">
-		
 		<?php if ( hamail_is_sent( $post ) ) : ?>
 			<p class="description">
 				<?php esc_html_e( 'This mail has been sent already. Any change won\'t be saved.', 'hamail' ); ?>
 			</p>
 		<?php endif; ?>
-		
 		<div class="hamail-address-roles">
-			<h4 class="hamail-address-title"><?php esc_html_e( 'Roles', 'hamail' ) ?></h4>
+			<h4 class="hamail-address-title"><?php esc_html_e( 'Roles', 'hamail' ); ?></h4>
 			<?php foreach ( get_editable_roles() as $key => $role ) : ?>
 				<label class="inline-block">
 					<input type="checkbox" name="hamail_roles[]"
-						value="<?php echo esc_attr( $key ) ?>" <?php checked( hamail_has_role( $key, $post ) ) ?> />
-					<?php echo translate_user_role( $role[ 'name' ] ) ?>
+						value="<?php echo esc_attr( $key ); ?>" <?php checked( hamail_has_role( $key, $post ) ); ?> />
+					<?php echo translate_user_role( $role['name'] ); ?>
+					<small>(<?php echo hamail_get_role_count( $role['name'] ); ?>)</small>
 				</label>
 			<?php endforeach; ?>
 		</div>
-		
+
 		<hr />
-		
+
 		<div class="hamail-address-user-group">
-			<h4 class="hamail-address-title"><?php esc_html_e( 'User Group', 'hamail' ) ?></h4>
+			<h4 class="hamail-address-title"><?php esc_html_e( 'User Group', 'hamail' ); ?></h4>
 			<?php
 			$groups = hamail_user_groups();
 			if ( $groups ) {
@@ -280,41 +270,41 @@ function hamail_recipients_meta_box( $post ) {
 						esc_html( $group->label ),
 						esc_html( $group->count ),
 						esc_attr( $group->description ),
-						checked( in_array( $group->name, $post_groups ), true, false )
+						checked( in_array( $group->name, $post_groups, true ), true, false )
 					);
 				}
 			} else {
 				printf( '<p class="description">%s</p>', esc_html__( 'User group is not available.', 'hamail' ) );
-			} ?>
+			}
+			?>
 		</div>
-		
+
 		<hr />
-		
-		<div class="hamail-address-users">
-			<h4 class="hamail-address-title"><?php _e( 'Users', 'hamail' ) ?></h4>
-			<div id="hamail-users"
-			<input type="hidden" name="hamail_recipients_id" id="hamail-address-users-id" value="" />
-			<input type="text" class="regular-text" id="hamail-address-search" value=""
-				placeholder="<?php esc_attr_e( 'Type and search user...', 'hamail' ) ?>" />
-			<button class="button" id="hamail-address-submit"><?php esc_html_e( 'Search', 'hamail' ) ?></button>
-			<ul id="hamail-address-list" class="hamail-address-list">
-			</ul>
-			<script type="text/template" id="hamail-user-card">
-				<span class="hamail-address-user-name" title="<%- user_email %>"><%- display_name %></span>
-				<a href="#" class="remove"><i class="dashicons dashicons-no"></i></a>
-			</script>
-		</div>
-		
-		<hr />
-		
+
+		<?php foreach ( hamail_recipients_group() as $search ) : ?>
+			<div class="hamail-address-users">
+				<h4 class="hamail-address-title"><?php echo esc_html( $search['label'] ); ?></h4>
+				<div class="hamail-search-wrapper" id="<?php echo esc_attr( $search['id'] ); ?>" data-endpoint="<?php echo esc_attr( $search['endpoint'] ); ?>">
+					<input class="hamail-search-value" type="hidden" name="<?php echo esc_attr( $search['id'] ); ?>"
+						value="<?php echo esc_attr( get_post_meta( $post->ID, '_' . $search['id'], true ) ); ?>" />
+					<input type="text" class="regular-text hamail-search-field" value=""
+						placeholder="<?php echo esc_attr( sprintf( __( 'Type and search %s...', 'hamail' ), $search['label'] ) ); ?>" />
+					<ul class="hamail-search-list"></ul>
+				</div>
+			</div>
+
+			<hr />
+
+		<?php endforeach; ?>
+
 		<div class="hamail-address-raw">
-			<h4 class="hamail-address-title"><?php _e( 'Specified Address', 'hamail' ) ?></h4>
+			<h4 class="hamail-address-title"><?php _e( 'Specified Address', 'hamail' ); ?></h4>
 			<label for="hamail_raw_address" class="block">
-				<?php _e( 'Enter comma separated mail address', 'hamail' ) ?>
+				<?php _e( 'Enter comma separated mail address', 'hamail' ); ?>
 			</label>
 			<textarea class="hamail-address-textarea" name="hamail_raw_address"
 				placeholder="foo@example.com,var@example.com" rows="3"
-				id="hamail_raw_address"><?php echo esc_textarea( get_post_meta( $post->ID, '_hamail_raw_address', true ) ) ?></textarea>
+				id="hamail_raw_address"><?php echo esc_textarea( get_post_meta( $post->ID, '_hamail_raw_address', true ) ); ?></textarea>
 		</div>
 	</div><!-- //.hamail-address -->
 	<?php
