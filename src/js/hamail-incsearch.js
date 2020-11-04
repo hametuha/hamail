@@ -77,6 +77,7 @@ const ItemsController = Backbone.View.extend( {
 	curValue: '',
 
 	initialize: function ( options ) {
+		const that = this;
 		this.options = $.extend( {
 			id: '',
 		}, options );
@@ -173,8 +174,16 @@ const ItemsController = Backbone.View.extend( {
 							const model = new Item( ui.item );
 							collection.add( model );
 						} else {
-							// Need fetch.
-							console.log( 'Fetch: ' );
+							wp.apiFetch( {
+								path: that.endpoint + '?ids=' + ui.item.id,
+							} ).then( ( response ) => {
+								response.forEach( ( item ) => {
+									const model = new Item( item );
+									collection.add( model );
+								} )
+							} ).catch( () => {
+								// Do nothing.
+							} );
 						}
 						$( this ).val( '' );
 						return false;
@@ -187,7 +196,7 @@ const ItemsController = Backbone.View.extend( {
 				case '__total__':
 				case '__next__':
 				case '__prev__':
-					return $( sprintf( '<li class="hamail-search-nav %s"><div>%2$s</div></li>', item.id.replace( /_/g, '' ), item.label ) ).appendTo( ul );
+					return $( sprintf( '<li class="hamail-search-nav %1$s"><div>%2$s</div></li>', item.id.replace( /_/g, '' ), item.label ) ).appendTo( ul );
 				default:
 					return $( sprintf( '<li><div>%s</div></li>', item.label ) ).appendTo( ul );
 			}
@@ -216,7 +225,7 @@ const ItemsController = Backbone.View.extend( {
 					{
 						id: '__total__',
 						label: sprintf(
-							'<span class="hamail-search-result"> %1$d/%1$d </span>',
+							'<span class="hamail-search-result"> %1$d/%2$d </span>',
 							instance.options.curPage,
 							Math.ceil( instance.options.total / 10 )
 						),
