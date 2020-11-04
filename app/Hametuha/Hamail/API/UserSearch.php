@@ -13,10 +13,6 @@ use Hametuha\Hamail\Pattern\RecipientSelector;
  */
 class UserSearch extends RecipientSelector {
 
-	/**
-	 * @var \WP_User_Query Query result;
-	 */
-	protected $query_result = null;
 
 	protected function route() {
 		return 'search/users';
@@ -73,19 +69,6 @@ class UserSearch extends RecipientSelector {
 		} else {
 			return 0;
 		}
-	}
-
-	/**
-	 * Convert user_query to data.
-	 *
-	 * @param array $user_query
-	 * @return SearchResultItem[]
-	 */
-	protected function user_to_item( $user_query ) {
-		$this->query_result = new \WP_User_Query( $user_query );
-		return array_map( function( \WP_User $user ) {
-			return new SearchResultItem( $user->ID, sprintf( '#%d %s', $user->ID, $user->display_name ) );
-		}, $this->query_result->get_results() );
 	}
 
 	/**

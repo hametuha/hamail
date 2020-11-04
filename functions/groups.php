@@ -49,7 +49,7 @@ function hamail_get_role_count( $role ) {
  * @return array[]
  */
 function hamail_recipients_group() {
-	return apply_filters( 'hamail_generic_group', [
+	return apply_filters( 'hamail_generic_user_group', [
 		[
 			'id'       => 'hamail_recipients_id',
 			'label'    => __( 'Users', 'hamail' ),

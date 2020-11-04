@@ -20,14 +20,21 @@ class SearchResultItem {
 	protected $label = '';
 
 	/**
+	 * @var string Type of data.
+	 */
+	protected $type = 'user';
+
+	/**
 	 * SearchResultItem constructor.
 	 *
 	 * @param string $id
 	 * @param string $label
+	 * @param string $type
 	 */
-	public function __construct( $id, $label ) {
+	public function __construct( $id, $label, $type = 'user' ) {
 		$this->id    = $id;
 		$this->label = $label;
+		$this->type  = $type;
 	}
 
 	/**
@@ -37,6 +44,7 @@ class SearchResultItem {
 		return [
 			'id'    => $this->id,
 			'label' => $this->label,
+			'type'  => $this->type,
 		];
 	}
 }

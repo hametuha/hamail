@@ -11,6 +11,11 @@ use Hametuha\Hamail\Model\SearchResultItem;
  * @since 2.2.0
  */
 abstract class RecipientSelector extends AbstractRest {
+	
+	/**
+	 * @var \WP_User_Query Query result;
+	 */
+	protected $query_result = null;
 
 	/**
 	 * @var int Iterms per page.
@@ -119,5 +124,18 @@ abstract class RecipientSelector extends AbstractRest {
 			'X-WP-Next'  => $total > $paged * $this->per_page ? 'more' : 'no',
 		] );
 		return $response;
+	}
+
+	/**
+	 * Convert user_query to data.
+	 *
+	 * @param array $user_query
+	 * @return SearchResultItem[]
+	 */
+	protected function user_to_item( $user_query ) {
+		$this->query_result = new \WP_User_Query( $user_query );
+		return array_map( function( \WP_User $user ) {
+			return new SearchResultItem( $user->ID, sprintf( '#%d %s', $user->ID, $user->display_name ) );
+		}, $this->query_result->get_results() );
 	}
 }

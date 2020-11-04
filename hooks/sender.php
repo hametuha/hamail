@@ -281,21 +281,29 @@ function hamail_recipients_meta_box( $post ) {
 
 		<hr />
 
-		<?php foreach ( hamail_recipients_group() as $search ) : ?>
 			<div class="hamail-address-users">
-				<h4 class="hamail-address-title"><?php echo esc_html( $search['label'] ); ?></h4>
-				<div class="hamail-search-wrapper" id="<?php echo esc_attr( $search['id'] ); ?>" data-endpoint="<?php echo esc_attr( $search['endpoint'] ); ?>">
-					<input class="hamail-search-value" type="hidden" name="<?php echo esc_attr( $search['id'] ); ?>"
-						value="<?php echo esc_attr( get_post_meta( $post->ID, '_' . $search['id'], true ) ); ?>" />
+				<h4 class="hamail-address-title"><?php esc_html_e( 'User', 'hamail' ); ?></h4>
+				<div class="hamail-search-wrapper" id="hamail-search-users">
+					<div class="hamail-search-type">
+						<span class="hamail-search-type-label"><?php echo esc_html_x( 'Search Target:', 'hamail-user-search', 'hamail' ); ?></span>
+						<?php $checked = true; foreach ( hamail_recipients_group() as $search ) : ?>
+							<label class="inline-block">
+								<input type="radio" name="hamail_search_action" id="<?php echo esc_attr( $search['id'] ); ?>"
+									value="<?php echo esc_attr( $search['endpoint'] ); ?>" <?php checked( $checked ); ?> />
+								<?php echo esc_html( $search['label'] ); ?>
+							</label>
+						<?php $checked = false; endforeach; ?>
+					</div>
+					<input class="hamail-search-value" type="hidden" name="hamail_recipients_id"
+						value="<?php echo esc_attr( get_post_meta( $post->ID, '_hamail_recipients_id', true ) ); ?>" />
 					<input type="text" class="regular-text hamail-search-field" value=""
-						placeholder="<?php echo esc_attr( sprintf( __( 'Type and search %s...', 'hamail' ), $search['label'] ) ); ?>" />
+						placeholder="<?php esc_attr_e( 'Type and search users...', 'hamail' ); ?>" />
 					<ul class="hamail-search-list"></ul>
 				</div>
 			</div>
 
 			<hr />
 
-		<?php endforeach; ?>
 
 		<div class="hamail-address-raw">
 			<h4 class="hamail-address-title"><?php _e( 'Specified Address', 'hamail' ); ?></h4>

@@ -5,6 +5,7 @@ namespace Hametuha\HamailDev;
 
 use Hametuha\Hamail\Pattern\Singleton;
 use Hametuha\Hamail\Pattern\UserGroup;
+use Hametuha\HamailDev\Groups\TagAuthor;
 
 /**
  * Class Bootstrap
@@ -18,6 +19,9 @@ class Bootstrap extends Singleton {
 	 */
 	protected function init() {
 		add_filter( 'hamail_user_groups', [ $this, 'user_groups' ] );
+		add_filter( 'hamail_generic_user_group', [ $this, 'generic_user_group' ] );
+		// Enable rest api.
+		TagAuthor::get_instance();
 	}
 
 	/**
@@ -38,6 +42,15 @@ class Bootstrap extends Singleton {
 			$class_name = 'Hametuha\\HamailDev\\Groups\\' . $match[1];
 			$groups[]   = $class_name::get_instance();
 		}
+		return $groups;
+	}
+
+	public function generic_user_group( $groups ) {
+		$groups[] = [
+			'id'       => 'hamail_tag_authors',
+			'label'    => 'Tag Author',
+			'endpoint' => 'hamail/v1/search/tag-authors',
+		];
 		return $groups;
 	}
 }
