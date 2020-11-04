@@ -1,6 +1,8 @@
 <?php
 /**
- * Sending screen
+ * Mail editor.
+ *
+ * @package hamail
  */
 
 /**
@@ -42,7 +44,7 @@ add_action( 'init', function () {
 		'show_in_rest'    => true,
 	];
 	/**
-	 * hamail_post_type_arg
+	 * Arguments for hamail custom post type.
 	 *
 	 * @filter hamail_post_type_arg
 	 *
@@ -53,8 +55,6 @@ add_action( 'init', function () {
 	$args = apply_filters( 'hamail_post_type_arg', $args );
 	register_post_type( 'hamail', $args );
 } );
-
-
 
 /**
  * Save data before sending.
@@ -99,68 +99,6 @@ add_action( 'save_post_hamail', function ( $post_id, $post ) {
 		hamail_send_message( $post );
 	}
 }, 10, 2 );
-
-
-/**
- * Search user via Ajax
- */
-add_action( 'wp_ajax_hamail_search', function () {
-	try {
-		if ( ! hamail_allowed() ) {
-			throw new Exception( __( 'You have no permission', 'hamail' ), 403 );
-		}
-		if ( ! isset( $_GET[ 'term' ] ) || ! $_GET[ 'term' ] ) {
-			throw new Exception( __( 'Search query is not set.', 'hamail' ), 400 );
-		}
-		wp_send_json( hamail_search( $_GET[ 'term' ] ) );
-	} catch ( \Exception $e ) {
-		status_header( $e->getCode() );
-		wp_send_json_error( [
-			'message' => $e->getMessage(),
-		] );
-	}
-} );
-
-/**
- * Search user with term_id
- */
-add_action( 'wp_ajax_hamail_term_authors', function () {
-	try {
-		if ( ! hamail_allowed() ) {
-			throw new Exception( __( 'You have no permission', 'hamail' ), 403 );
-		}
-		if ( ! isset( $_GET[ 'term_id' ] ) || ! $_GET[ 'term_id' ] ) {
-			throw new Exception( __( 'Term ID is not set.', 'hamail' ), 400 );
-		}
-		if ( isset( $_GET[ 'type' ] ) && 'term' != $_GET[ 'type' ] ) {
-			/**
-			 * hamail_extra_search
-			 *
-			 * Filter for extra types
-			 *
-			 * @param array $result Default emmpty
-			 * @param string $type Custom type name
-			 * @param string $id ID
-			 *
-			 * @package hamail
-			 * @since 1.0.0
-			 */
-			$result = apply_filters( 'hamail_extra_search', [], $_GET[ 'type' ], $_GET[ 'term_id' ] );
-		} else {
-			$term = get_term( $_GET[ 'term_id' ] );
-			if ( ! $term || is_wp_error( $term ) ) {
-				throw new Exception( __( 'Term not found.', 'hamail' ), 404 );
-			}
-			$result = hamail_term_authors( $term->term_taxonomy_id );
-		}
-		wp_send_json( $result );
-	} catch ( \Exception $e ) {
-		status_header( $e->getCode() );
-		wp_send_json_error( [
-			'message' => $e->getMessage(),
-		] );
-	}
-} );
 
 /**
  * Register meta box
