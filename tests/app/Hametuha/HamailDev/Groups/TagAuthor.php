@@ -20,8 +20,17 @@ class TagAuthor extends RecipientSelector {
 	protected function get_from_ids( $ids ) {
 		// TODO: Implement get_from_ids() method.
 	}
-
+	
+	/**
+	 * Search tags matches query.
+	 *
+	 * @param string $term
+	 * @param int    $paged
+	 *
+	 * @return SearchResultItem[]|void|\WP_Error
+	 */
 	protected function search( $term, $paged = 1 ) {
+		global $wpdb;
 		// TODO: Implement search() method.
 	}
 }

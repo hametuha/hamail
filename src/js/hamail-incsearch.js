@@ -74,6 +74,8 @@ const ItemsController = Backbone.View.extend( {
 
 	type: '',
 
+	curValue: '',
+
 	initialize: function ( options ) {
 		this.options = $.extend( {
 			id: '',
@@ -98,6 +100,13 @@ const ItemsController = Backbone.View.extend( {
 		_.bindAll( this, 'findUsers', 'addUser', 'changeList' );
 		// Register auto complete.
 		this.$complete = this.$el.find( '.hamail-search-field' );
+		this.$complete.on( 'keyup', ( e ) => {
+			const value = e.target.value;
+			if ( this.options.curValue !== value ) {
+				this.flush();
+			}
+			this.options.curValue = value;
+		} );
 		// Bind events.
 		this.listenTo( this.collection, 'add', this.addUser );
 		this.listenTo( this.collection, 'update', this.changeList );
@@ -131,9 +140,6 @@ const ItemsController = Backbone.View.extend( {
 				} ).catch( ( response ) => {
 					callback( response );
 				} );
-			},
-			change: () => {
-				this.flush();
 			},
 			focus() {
 				return true;
@@ -260,7 +266,7 @@ const ItemsController = Backbone.View.extend( {
 	findUsers: function( itemIds ) {
 		this.$list.addClass( 'loading' );
 		wp.apiFetch( {
-			path: this.endpoint + '?ids=' + itemIds.join( ',' ),
+			path: 'hamail/v1/search/users?ids=' + itemIds.join( ',' ),
 		} ).then( ( res ) => {
 			_.each( res, function ( item ) {
 				const model = new Item( item );
