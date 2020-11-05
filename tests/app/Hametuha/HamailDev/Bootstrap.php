@@ -22,6 +22,8 @@ class Bootstrap extends Singleton {
 		add_filter( 'hamail_generic_user_group', [ $this, 'generic_user_group' ] );
 		// Enable rest api.
 		TagAuthor::get_instance();
+		// Change bulk email filter for debug.
+		add_filter( 'hamail_bulk_limit', [ $this, 'bulk_limit' ] );
 	}
 
 	/**
@@ -52,5 +54,18 @@ class Bootstrap extends Singleton {
 			'endpoint' => 'hamail/v1/search/tag-authors',
 		];
 		return $groups;
+	}
+	
+	/**
+	 * Filter bulk limit for debug.
+	 *
+	 * @return int
+	 */
+	public function bulk_limit() {
+		if ( defined( 'HAMAIL_BULK_LIMIT' ) && is_numeric( HAMAIL_BULK_LIMIT ) ) {
+			return (int) HAMAIL_BULK_LIMIT;
+		} else {
+			return 3;
+		}
 	}
 }

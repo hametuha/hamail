@@ -15,19 +15,21 @@ function hamail_client() {
 	if ( is_null( $instance ) ) {
 		$instance = new \SendGrid( get_option( 'hamail_api_key' ) );
 	}
+	
 	return $instance;
 }
 
 if ( get_option( 'hamail_template_id' ) && ! function_exists( 'wp_mail' ) ) {
-
+	
 	/**
 	 * Override wp_mail
 	 *
-	 * @param string|array $to          Array or comma-separated list of email addresses to send message.
-	 * @param string       $subject     Email subject
-	 * @param string       $message     Message contents
-	 * @param string|array $headers     Optional. Additional headers.
+	 * @param string|array $to Array or comma-separated list of email addresses to send message.
+	 * @param string $subject Email subject
+	 * @param string $message Message contents
+	 * @param string|array $headers Optional. Additional headers.
 	 * @param string|array $attachments Optional. Files to attach.
+	 *
 	 * @return bool Whether the email contents were sent successfully.
 	 */
 	function wp_mail( $to, $subject, $message, $headers = '', $attachments = [] ) {
@@ -35,20 +37,22 @@ if ( get_option( 'hamail_template_id' ) && ! function_exists( 'wp_mail' ) ) {
 		// Filter vars.
 		$arguments = apply_filters( 'wp_mail', compact( 'to', 'subject', 'message', 'headers', 'attachments' ) );
 		$filtered  = [];
-		foreach ( [
-			'to'          => [],
-			'subject'     => '',
-			'message'     => '',
-			'headers'     => [],
-			'attachments' => [],
-		] as $key => $default ) {
+		foreach (
+			[
+				'to'          => [],
+				'subject'     => '',
+				'message'     => '',
+				'headers'     => [],
+				'attachments' => [],
+			] as $key => $default
+		) {
 			$filtered[ $key ] = isset( $arguments[ $key ] ) ? $arguments[ $key ] : $default;
 		}
-		$to          = array_filter( array_map( 'trim', explode( ',', $filtered['to'] ) ) );
-		$subject     = $filtered['subject'];
-		$message     = $filtered['message'];
-		$headers     = $filtered['headers'];
-		$attachments = $filtered['attachments'];
+		$to          = array_filter( array_map( 'trim', explode( ',', $filtered[ 'to' ] ) ) );
+		$subject     = $filtered[ 'subject' ];
+		$message     = $filtered[ 'message' ];
+		$headers     = $filtered[ 'headers' ];
+		$attachments = $filtered[ 'attachments' ];
 		if ( ! $to || ! $subject || ! $message ) {
 			return false;
 		}
@@ -62,9 +66,9 @@ if ( get_option( 'hamail_template_id' ) && ! function_exists( 'wp_mail' ) ) {
 				switch ( $type ) {
 					case 'reply-to':
 						if ( preg_match( '#<(.*@.*)>#', $parts, $match ) ) {
-							$additional_header['from'] = $match[1];
+							$additional_header[ 'from' ] = $match[ 1 ];
 						} else {
-							$additional_header['from'] = $parts;
+							$additional_header[ 'from' ] = $parts;
 						}
 						break;
 					default:
@@ -77,6 +81,7 @@ if ( get_option( 'hamail_template_id' ) && ! function_exists( 'wp_mail' ) ) {
 			$to = explode( ',', $to );
 		}
 		$result = hamail_simple_mail( $to, $subject, $message, $additional_header, $attachments );
+		
 		return $result && ! is_wp_error( $result );
 	}
 }
@@ -134,7 +139,7 @@ function hamail_placeholders( $user = null, $extra_args = [] ) {
 	 *
 	 * @filter hamail_placeholders
 	 *
-	 * @param array          $place_holders
+	 * @param array $place_holders
 	 * @param WP_User|string $user
 	 *
 	 * @return array
@@ -197,7 +202,7 @@ function hamail_default_headers( $context = 'simple' ) {
 		'format'    => get_option( 'hamail_template_id' ) ? 'text/html' : 'text/plain',
 		'from'      => hamail_default_from( $context ),
 		'from_name' => get_bloginfo( 'name' ),
-	    'post_id'   => 0,
+		'post_id'   => 0,
 	], $context );
 }
 
@@ -205,6 +210,7 @@ function hamail_default_headers( $context = 'simple' ) {
  * Guest name.
  *
  * @param string $email
+ *
  * @return string
  */
 function hamail_guest_name( $email = '' ) {
@@ -218,16 +224,18 @@ function hamail_guest_name( $email = '' ) {
 	 * @return string
 	 */
 	$guest = apply_filters( 'hamail_guest_name', __( 'Guest', 'hamail' ), $email );
+	
 	return ( $email === get_option( 'admin_email' ) ) ? __( 'Site Owner', 'hamail' ) : $guest;
 }
 
 /**
  * Get recipients data.
  *
- * @param array  $recipients
+ * @param array $recipients
  * @param string $subject
  * @param string $body
- * @return array Associative array of recipients and data.
+ *
+ * @return array Array of associative arrays of recipients and data.
  */
 function hamail_get_recipients_data( $recipients, $subject = '', $body = '' ) {
 	if ( array_keys( $recipients ) === range( 0, count( $recipients ) - 1 ) ) {
@@ -264,7 +272,7 @@ function hamail_get_recipients_data( $recipients, $subject = '', $body = '' ) {
 		 *
 		 * @filter hamail_user_can_receive_mail
 		 *
-		 * @param bool       $can_receive
+		 * @param bool $can_receive
 		 * @param int|string $user User ID or email address.
 		 *
 		 * @return bool
@@ -298,8 +306,11 @@ function hamail_get_recipients_data( $recipients, $subject = '', $body = '' ) {
 		if ( is_wp_error( $data ) ) {
 			continue;
 		}
-		$recipient_data[] = $data;
+		if ( is_email( $data['email'] ) ) {
+			$recipient_data[] = $data;
+		}
 	}
+
 	return $recipient_data;
 }
 
@@ -315,39 +326,44 @@ function hamail_get_recipients_data( $recipients, $subject = '', $body = '' ) {
  * @return bool|WP_Error
  */
 function hamail_simple_mail( $recipients, $subject, $body, $additional_headers = [], $attachments = [] ) {
-	// Parse recipients
-	$recipients   = (array) $recipients;
+	// Parse recipients.
+	$recipients     = (array) $recipients;
 	$recipient_data = hamail_get_recipients_data( $recipients, $subject, $body );
 	if ( ! $recipient_data ) {
 		return new WP_Error( 'no_recipients', __( 'No recipient set.', 'hamail' ) );
 	}
-	// Create request body
+	// Create slot because SendGrid has API limit
+	// 1,000 mail per 1 request and 10,000 requests per second.
+	$limit                 = hamail_bulk_limit();
+	$recipients_slot_count = ceil( count( $recipient_data ) / $limit );
+	$recipients_slots      = [];
+	for ( $i = 0; $i < $recipients_slot_count; $i++ ) {
+		$recipients_slots[] = array_slice( $recipient_data, $i * $limit, $limit );
+	}
+	// Create request body.
 	// TODO: Extract attachment files.
 	$headers = array_merge( hamail_default_headers( 'simple' ), $additional_headers );
-	$mail    = new SendGrid\Mail();
-	// From
-	$from = new SendGrid\Email( get_bloginfo( 'name' ), get_option( 'admin_email' ) );
-	$mail->setFrom( $from );
-	// Reply To
-	$reply_to = new SendGrid\ReplyTo( $headers['from'] );
-	$mail->setReplyTo( $reply_to );
-	// Subject
-	$mail->setSubject( $subject );
+	// From.
+	$from = new SendGrid\Mail\From( hamail_default_from(), get_bloginfo( 'name' ) );
+	// Reply To.
+	$reply_to = new SendGrid\Mail\ReplyTo( $headers['from'] );
+	// Subject.
 	// Check if WooCommerce is not activated.
 	$no_woocommerce = ! function_exists( 'WC' );
-	// Mail body
+	// Mail body.
 	if ( 'text/html' == $headers['format'] ) {
 		/**
 		 * hamail_should_filter
 		 *
 		 * Filter if we should apply templates
 		 *
-		 * @package hamail
-		 * @param bool   $no_woocommerce If WooCommerce exists, no filter.
-		 * @param array  $headers
+		 * @param bool $no_woocommerce If WooCommerce exists, no filter.
+		 * @param array $headers
 		 * @param string $subject
 		 * @param string $body
-		 * @param array  $recipients
+		 * @param array $recipients
+		 *
+		 * @package hamail
 		 */
 		$should_filter = apply_filters( 'hamail_should_filter', $no_woocommerce, $headers, $subject, $body, $recipients );
 		if ( $should_filter ) {
@@ -358,87 +374,130 @@ function hamail_simple_mail( $recipients, $subject, $body, $additional_headers =
 		/**
 		 * hamail_body_before_send
 		 *
-		 * @param string $body    Mail body.
+		 * @param string $body Mail body.
 		 * @param string $context 'html' or 'plain'
+		 *
 		 * @return string
 		 */
-		$body = apply_filters( 'hamail_body_before_send', $body, 'html' );
-		$content = new SendGrid\Content( 'text/html', $body );
-		$mail->addContent( $content );
+		$body    = apply_filters( 'hamail_body_before_send', $body, 'html' );
+		$content = new SendGrid\Mail\Content( 'text/html', $body );
 	} else {
-		$body = apply_filters( 'hamail_body_before_send', $body, 'plain' );
-		$content = new SendGrid\Content( 'text/plain', strip_tags( $body ) );
-		$mail->addContent( $content );
+		$body    = apply_filters( 'hamail_body_before_send', $body, 'plain' );
+		$content = new SendGrid\Mail\Content( 'text/plain', strip_tags( $body ) );
 	}
 	// Add attachment if exists.
+	$mail_attachments = [];
 	foreach ( $attachments as $path ) {
 		if ( ! file_exists( $path ) ) {
 			continue;
 		}
 		$mime = wp_check_filetype( $path );
-		if ( ! $mime[ 'type' ] ) {
+		if ( ! $mime['type'] ) {
 			continue;
 		}
-		$attachment = [
+		$mail_attachments[] = [
 			'content'  => base64_encode( file_get_contents( $path ) ),
-			'type'     => $mime[ 'type' ],
+			'type'     => $mime['type'],
 			'filename' => basename( $path ),
 		];
-		$mail->addAttachment( $attachment );
-	}
-	// Add recipients
-	foreach ( $recipient_data as $recipient ) {
-		$personalization = new SendGrid\Personalization();
-		$email = new SendGrid\Email( $recipient['name'] , $recipient['email'] );
-		$personalization->addTo( $email );
-		$personalization->setSubject( $subject );
-		foreach ( $recipient['substitutions'] as $key => $val ) {
-			$personalization->addSubstitution( $key, (string) $val );
-		}
-		if ( isset( $recipient['custom_arg'] ) ) {
-			$personalization->addCustomArg( 'userId', (string) $recipient['custom_arg'] );
-		}
-		if ( isset( $headers['post_id'] ) ) {
-			$personalization->addCustomArg( 'postId', (string) $headers['post_id'] );
-		}
-		$mail->addPersonalization( $personalization );
 	}
 	/**
 	 * hamail_apply_template
 	 *
 	 * Filter if we should apply templates
 	 *
-	 * @package hamail
-	 * @param bool   $no_woocommerce If WooCommerce exists, no template default.
-	 * @param array  $headers
+	 * @param bool $no_woocommerce If WooCommerce exists, no template default.
+	 * @param array $headers
 	 * @param string $subject
 	 * @param string $body
-	 * @param array  $recipients
+	 * @param array $recipients
+	 *
+	 * @package hamail
 	 */
 	$should_apply_template = apply_filters( 'hamail_apply_template', $no_woocommerce, $headers, $subject, $body, $recipients );
-	if ( $headers['template'] && $should_apply_template ) {
-		$mail->setTemplateId( $headers['template'] );
-	}
+	// Category.
 	if ( 1 < count( $recipient_data ) ) {
-		$mail->addCategory( 'group' );
+		$category = 'group';
 	} else {
-		$mail->addCategory( 'personal' );
+		$category = 'personal';
 	}
-	// Execute
-	if ( hamail_is_debug() ) {
-		error_log( '[HAMAIL]' . "" . var_export( $mail, true ) );
-		return true;
-	}
+	// Email client.
 	$sg = hamail_client();
-	$response = $sg->client->mail()->send()->post( $mail );
-	// Get response
-	$code = $response->statusCode();
-	if ( preg_match( '#2[\d]{2}#u', $code ) ) {
+	// Error object.
+	$errors      = new WP_Error();
+	$slots_total = 0;
+	$sent_total  = 0;
+	foreach ( $recipients_slots as $recipients_group ) {
+		try {
+			// Create mail instance.
+			$mail = new SendGrid\Mail\Mail();
+			$mail->setFrom( $from );
+			$mail->setReplyTo( $reply_to );
+			$mail->setSubject( $subject );
+			$mail->addContent( $content );
+			$mail->setSendAt( current_time( 'timestamp', true ) );
+			// Add attachments.
+			if ( ! empty( $mail_attachments ) ) {
+				$mail->addAttachments( $mail_attachments );
+			}
+			// Apply templates.
+			if ( $headers['template'] && $should_apply_template ) {
+				$mail->setTemplateId( $headers['template'] );
+			}
+			// Set email category.
+			$mail->addCategory( $category );
+			// Add recipients.
+			foreach ( $recipients_group as $recipient ) {
+				try {
+					$personalization = new \SendGrid\Mail\Personalization();
+					$email           = new \SendGrid\Mail\To( $recipient['email'], $recipient['name'] );
+					$personalization->addTo( $email );
+					$personalization->setSubject( $subject );
+					foreach ( $recipient['substitutions'] as $key => $val ) {
+						$personalization->addSubstitution( $key, (string) $val );
+					}
+					if ( isset( $recipient['custom_arg'] ) ) {
+						$arg = new \SendGrid\Mail\CustomArg( 'userId', (string) $recipient['custom_arg'] );
+						$personalization->addCustomArg( $arg );
+					}
+					if ( isset( $headers['post_id'] ) ) {
+						$arg = new \SendGrid\Mail\CustomArg( 'postId', (string) $headers['post_id'] );
+						$personalization->addCustomArg( $arg );
+					}
+					$mail->addPersonalization( $personalization );
+					$sent_total++;
+				} catch ( \Exception $e ) {
+					$errors->add( 'hamail_personlization_exception', sprintf( '[%s] %s', $e->getCode(), $e->getMessage() ) );
+				}
+			}
+			// If debug mode, not sent actually.
+			if ( hamail_is_debug() ) {
+				$slots_total++;
+				error_log( '[HAMAIL]' . '' . var_export( $mail, true ) );
+				continue;
+			}
+			// Execute Web API.
+			$response = $sg->send( $mail );
+			// Get response.
+			$code = $response->statusCode();
+			if ( preg_match( '#2[\d]{2}#u', $code ) ) {
+				continue;
+			} else {
+				$error          = json_decode( $response->body() );
+				$error->headers = $response->headers();
+				$errors->add( $code, json_encode( $errors ) );
+			}
+		} catch ( \Exception $e ) {
+			$errors->add( 'hamail_exception', $e->getMessage() );
+		}
+	}
+	if ( hamail_is_debug() ) {
+		error_log( sprintf( '[HAMAIL] %d slots / %d sent / %d recipients', $slots_total, $sent_total, count( $recipients ) ) );
+	}
+	if ( empty( $errors->get_error_messages() ) ) {
 		return true;
 	} else {
-		$error = json_decode( $response->body() );
-		$error->headers = $response->headers();
-		return new WP_Error( $code, json_encode( $error ) );
+		return $errors;
 	}
 }
 
@@ -454,7 +513,7 @@ function hamail_get_message_recipients( $post = null ) {
 	// Create user row.
 	$to = [];
 	// Raw email.
-	$emails = array_filter( array_map( 'trim', explode( ',', get_post_meta( $post->ID, '_hamail_raw_address', true ) ) ), function( $email ) {
+	$emails = array_filter( array_map( 'trim', explode( ',', get_post_meta( $post->ID, '_hamail_raw_address', true ) ) ), function ( $email ) {
 		$is_valid = ! empty( $email ) && is_email( $email );
 		return apply_filters( 'hamail_is_valid_email', $is_valid, $email );
 	} );
@@ -489,7 +548,7 @@ function hamail_get_message_recipients( $post = null ) {
 		}
 	}
 	// Users.
-	$user_ids = array_filter( array_map( 'trim', explode( ',', get_post_meta( $post->ID, '_hamail_recipients_id', true ) ) ), function( $user_id ) {
+	$user_ids = array_filter( array_map( 'trim', explode( ',', get_post_meta( $post->ID, '_hamail_recipients_id', true ) ) ), function ( $user_id ) {
 		return is_numeric( $user_id ) && ( 0 < $user_id );
 	} );
 	if ( $user_ids ) {
@@ -512,15 +571,16 @@ function hamail_get_message_recipients( $post = null ) {
  * Send message
  *
  * @param null|int|WP_Error $post
+ * @param bool              $force If true, send email if it's already sent or not-published.
  *
  * @return bool|WP_Error
  */
-function hamail_send_message( $post = null ) {
+function hamail_send_message( $post = null, $force = false ) {
 	$post = get_post( $post );
 	if ( 'hamail' !== $post->post_type ) {
 		return false;
 	}
-	if ( ( 'publish' !== $post->post_status ) || hamail_is_sent( $post ) ) {
+	if ( ! $force && ( 'publish' !== $post->post_status ) || hamail_is_sent( $post ) ) {
 		return false;
 	}
 	// O.K. Let's try sending.
@@ -540,27 +600,32 @@ function hamail_send_message( $post = null ) {
 	// Send.
 	$result = hamail_simple_mail( $to, $subject, $body, $headers );
 	if ( is_wp_error( $result ) ) {
-		$message = sprintf( '[Error] %s: %s', $result->get_error_code(), current_time( 'mysql' ) )."\n";
-		$json = json_decode( $result->get_error_message() );
-		foreach ( $json->errors as $error ) {
-			$message .= "------\n".$error->message;
-			if ( $error->field ) {
-				$message .= sprintf( "\n[Field]\n%s", $error->field );
+		$message = sprintf( '[Error] %s: %s', $result->get_error_code(), current_time( 'mysql' ) ) . "\n";
+		foreach ( $result->get_error_messages() as $err_message ) {
+			$json = json_decode( $err_message );
+			if ( ! $json ) {
+				// Simple message.
+				$message .= "------\n" . $err_message . "\n";
+			} else {
+				foreach ( $json->errors as $error ) {
+					$message .= "------\n" . $error->message;
+					if ( $error->field ) {
+						$message .= sprintf( "\n[Field]\n%s", $error->field );
+					}
+					if ( $error->help ) {
+						$message .= sprintf( "\n[Help]\n%s", $error->help );
+					}
+				}
+				if ( $json->headers ) {
+					$message .= sprintf( "\n-----\n[Headers]\n%s\n", implode( "\n", $json->headers ) );
+				}
 			}
-			if ( $error->help ) {
-				$message .= sprintf( "\n[Help]\n%s", $error->help );
-			}
+			// Save log.
+			add_post_meta( $post->ID, '_hamail_log', $message );
 		}
-		if ( $json->headers ) {
-			$message .= sprintf( "\n-----\n[Headers]\n%s\n", implode( "\n", $json->headers ) );
-		}
-		// Save log.
-		add_post_meta( $post->ID, '_hamail_log', $message );
-
 		return $result;
 	} else {
 		update_post_meta( $post->ID, '_hamail_sent', current_time( 'mysql' ) );
-
 		return true;
 	}
 }
@@ -569,6 +634,7 @@ function hamail_send_message( $post = null ) {
  * Set flag while sending email.
  *
  * @param null|bool If true or false is passed, setting will be change.
+ *
  * @return bool
  */
 function hamail_is_sending( $flag = null ) {
@@ -576,6 +642,7 @@ function hamail_is_sending( $flag = null ) {
 	if ( ! is_null( $flag ) ) {
 		$sending = (bool) $sending;
 	}
+	
 	return $sending;
 }
 
@@ -592,12 +659,28 @@ function hamail_get_mail_css() {
 			$css_path[] = $css;
 		}
 	}
-	
+
 	/**
 	 * CSS path to apply for email.
 	 *
 	 * @param string[] $css_path
+	 *
 	 * @return string[]
 	 */
 	return apply_filters( 'hamail_css_path', $css_path );
+}
+
+/**
+ * Get bulk limit.
+ *
+ * @return int
+ */
+function hamail_bulk_limit() {
+	/**
+	 * hamail_bulk_limit
+	 *
+	 * @param int $limit Default 1000
+	 * @return int Integer from 2 to 1000.
+	 */
+	return min( 1000, max( 2, apply_filters( 'hamail_bulk_limit', 1000 ) ) );
 }

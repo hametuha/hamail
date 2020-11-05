@@ -253,4 +253,36 @@ HTML;
 		\WP_CLI::line( '' );
 		\WP_CLI::success( 'Done!' );
 	}
+
+	/**
+	 * Try to send message.
+	 *
+	 * ## OPTIONS
+	 *
+	 * : <post_id>
+	 *   Post ID to get recipients.
+	 *
+	 * @synopsis <post_id>
+	 * @param array $args
+	 */
+	public function test_message( $args ) {
+		list( $post_id ) = $args;
+		// Force debug mode.
+		if ( ! defined( 'HAMAIL_DEBUG' ) ) {
+			define( 'HAMAIL_DEBUG', true );
+		}
+		$result = hamail_send_message( $post_id, true );
+		if ( is_wp_error( $result ) ) {
+			foreach( $result->get_error_codes() as $code ) {
+				foreach ( $result->get_error_messages( $code ) as $message ) {
+					\WP_CLI::warning( sprintf( '%s: %s', $code, $message ) );
+				}
+			}
+			\WP_CLI::error( __( 'Failed to send messages.', 'hamail' ) );
+		} elseif ( $result ) {
+			\WP_CLI::success( __( 'Post is successfully sent.', 'hamail' ) );
+		} else {
+			\WP_CLI::error( __( 'Failed to send message. Because of no post, no recipients, nor already sent.', 'hamail' ) );
+		}
+	}
 }
