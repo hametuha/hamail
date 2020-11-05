@@ -131,7 +131,52 @@ class HamailCommands extends \WP_CLI_Command {
 			\WP_CLI::line( '' );
 		}
 	}
-	
+
+	/**
+	 * Get message recipients.
+	 *
+	 * ## OPTIONS
+	 *
+	 * : <post_id>
+	 *   Post ID to get recipients.
+	 *
+	 * @synopsis <post_id>
+	 * @param array $args
+	 */
+	public function get_recipients( $args ) {
+		list( $post_id ) = $args;
+		$post            = get_post( $post_id );
+		if ( ! $post || 'hamail' !== $post->post_type ) {
+			\WP_CLI::error( __( 'No message found.', 'hamail' ) );
+		}
+		// translators: %1$s is post title, %2$d is post ID.
+		\WP_CLI::line( sprintf( __( 'Get the recipients of #%2$d %1$s...', 'hamail' ), get_the_title( $post ), $post->ID ) );
+		$to = hamail_get_message_recipients( $post );
+		if ( empty( $to ) ) {
+			\WP_CLI::error( 'Message %s has no recipient.', 'hamail' );
+		}
+		$table = new \cli\Table();
+		$table->setHeaders( [ 'Type', 'Value', 'User' ] );
+		foreach ( $to as $id_email ) {
+			$row = [];
+			if ( is_numeric( $id_email ) ) {
+				$row[] = 'ID';
+				$user  = true;
+			} elseif ( is_email( $id_email ) ) {
+				$row[] = 'Email';
+				$user  = email_exists( $id_email );
+			} else {
+				$row[] = 'NAN';
+				$user  = false;
+			}
+			$row[] = $id_email;
+			$row[] = $user ? 'Yes' : 'No';
+			$table->addRow( $row );
+		}
+		$table->display();
+		\WP_CLI::success( sprintf( '%s has %d recipients.', get_the_title( $post ), count( $to ) ) );
+	}
+
 	/**
 	 * Send email via wp_mail
 	 *

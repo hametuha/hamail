@@ -32,7 +32,7 @@ if ( get_option( 'hamail_template_id' ) && ! function_exists( 'wp_mail' ) ) {
 	 */
 	function wp_mail( $to, $subject, $message, $headers = '', $attachments = [] ) {
 		$attachments = (array) $attachments;
-		// Filter vars
+		// Filter vars.
 		$arguments = apply_filters( 'wp_mail', compact( 'to', 'subject', 'message', 'headers', 'attachments' ) );
 		$filtered  = [];
 		foreach ( [
@@ -68,7 +68,7 @@ if ( get_option( 'hamail_template_id' ) && ! function_exists( 'wp_mail' ) ) {
 						}
 						break;
 					default:
-						// Do nothing
+						// Do nothing.
 						break;
 				}
 			}
@@ -443,6 +443,72 @@ function hamail_simple_mail( $recipients, $subject, $body, $additional_headers =
 }
 
 /**
+ * Get recipients.
+ *
+ * @param null|int|WP_Post $post
+ *
+ * @return array ID or email.
+ */
+function hamail_get_message_recipients( $post = null ) {
+	$post = get_post( $post );
+	// Create user row.
+	$to = [];
+	// Raw email.
+	$emails = array_filter( array_map( 'trim', explode( ',', get_post_meta( $post->ID, '_hamail_raw_address', true ) ) ), function( $email ) {
+		$is_valid = ! empty( $email ) && is_email( $email );
+		return apply_filters( 'hamail_is_valid_email', $is_valid, $email );
+	} );
+	foreach ( $emails as $email ) {
+		$to[] = $email;
+	}
+	// Roles.
+	$roles = array_filter( array_map( 'trim', explode( ',', get_post_meta( $post->ID, '_hamail_roles', true ) ) ) );
+	if ( $roles ) {
+		$query = new WP_User_Query( [
+			'role__in' => $roles,
+			'number'   => - 1,
+			'fields'   => 'ID',
+		] );
+		foreach ( $query->get_results() as $user_id ) {
+			$to[] = $user_id;
+		}
+	}
+	// Groups.
+	$groups = array_filter( array_map( 'trim', explode( ',', get_post_meta( $post->ID, '_hamail_user_groups', true ) ) ) );
+	if ( $groups ) {
+		$user_groups = hamail_user_groups();
+		foreach ( $groups as $group ) {
+			foreach ( $user_groups as $user_group ) {
+				if ( $group !== $user_group->name ) {
+					continue;
+				}
+				foreach ( $user_group->get_users() as $user ) {
+					$to[] = $user->ID;
+				}
+			}
+		}
+	}
+	// Users.
+	$user_ids = array_filter( array_map( 'trim', explode( ',', get_post_meta( $post->ID, '_hamail_recipients_id', true ) ) ), function( $user_id ) {
+		return is_numeric( $user_id ) && ( 0 < $user_id );
+	} );
+	if ( $user_ids ) {
+		$query = new WP_User_Query( [
+			'include' => $user_ids,
+			'number'  => - 1,
+			'fields'  => 'ID',
+		] );
+		foreach ( $query->get_results() as $user_id ) {
+			$to[] = $user_id;
+		}
+	}
+	// Unique.
+	$to = array_unique( $to );
+	$to = apply_filters( 'hamail_message_recipients', $to, $post );
+	return $to;
+}
+
+/**
  * Send message
  *
  * @param null|int|WP_Error $post
@@ -451,13 +517,13 @@ function hamail_simple_mail( $recipients, $subject, $body, $additional_headers =
  */
 function hamail_send_message( $post = null ) {
 	$post = get_post( $post );
-	if ( 'hamail' != $post->post_type ) {
+	if ( 'hamail' !== $post->post_type ) {
 		return false;
 	}
-	if ( 'publish' != $post->post_status || hamail_is_sent( $post ) ) {
+	if ( ( 'publish' !== $post->post_status ) || hamail_is_sent( $post ) ) {
 		return false;
 	}
-	// O.K. Let's try sending
+	// O.K. Let's try sending.
 	$subject = get_the_title( $post );
 	$body    = apply_filters( 'the_content', $post->post_content );
 	$headers = [ 'post_id' => $post->ID ];
@@ -466,37 +532,12 @@ function hamail_send_message( $post = null ) {
 		$headers['from']      = $author->user_email;
 		$headers['from_name'] = $author->display_name;
 	}
-	// Create user row
-	$to = [];
-	// raw email
-	if ( $raw = array_filter( array_map( 'trim', explode( ',', get_post_meta( $post->ID, '_hamail_raw_address', true ) ) ) ) ) {
-		$to += $raw;
+	// Get recipients.
+	$to = hamail_get_message_recipients( $post );
+	if ( empty( $to ) ) {
+		return false;
 	}
-	// roles
-	if ( $roles = array_filter( array_map( 'trim', explode( ',', get_post_meta( $post->ID, '_hamail_roles', true ) ) ) ) ) {
-		$query = new WP_User_Query( [
-			'role__in' => $roles,
-			'number'   => - 1,
-			'fields'   => 'ID',
-		] );
-		if ( ! empty( $query->results ) ) {
-			$to += $query->results;
-		}
-	}
-	// Users
-	if ( $user_ids = get_post_meta( $post->ID, '_hamail_recipients_id', true ) ) {
-		$user_ids = explode( ',', $user_ids );
-
-		$query = new WP_User_Query( [
-			'include' => $user_ids,
-			'number'   => - 1,
-			'fields'   => 'ID',
-		] );
-		if ( ! empty( $query->results ) ) {
-			$to += $query->results;
-		}
-	}
-	// Send
+	// Send.
 	$result = hamail_simple_mail( $to, $subject, $body, $headers );
 	if ( is_wp_error( $result ) ) {
 		$message = sprintf( '[Error] %s: %s', $result->get_error_code(), current_time( 'mysql' ) )."\n";
@@ -513,7 +554,7 @@ function hamail_send_message( $post = null ) {
 		if ( $json->headers ) {
 			$message .= sprintf( "\n-----\n[Headers]\n%s\n", implode( "\n", $json->headers ) );
 		}
-		// Save log
+		// Save log.
 		add_post_meta( $post->ID, '_hamail_log', $message );
 
 		return $result;

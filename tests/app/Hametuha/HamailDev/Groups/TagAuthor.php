@@ -14,7 +14,7 @@ use Hametuha\Hamail\Pattern\RecipientSelector;
 class TagAuthor extends RecipientSelector {
 
 	protected $total = 0;
-	
+
 	protected function route() {
 		return 'search/tag-authors';
 	}
