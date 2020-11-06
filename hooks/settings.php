@@ -132,31 +132,40 @@ add_action( 'admin_init', function () {
 	}
 	//
 	// Add setting section for hamail api.
-    //
- 	add_settings_section( 'hamail_api_setting', __( 'SendGrid API Setting', 'hamail' ), function() {
-		printf( '<p class="description">%s</p>', esc_html__(  'Setting value for Hamail. Please enter SendGrid API key. Mail Send permission is minimal requirement.', 'hamail' ) );
+	//
+	add_settings_section( 'hamail_api_setting', __( 'SendGrid API Setting', 'hamail' ), function () {
+		printf( '<p class="description">%s</p>', esc_html__( 'Setting value for Hamail. Please enter SendGrid API key. Mail Send permission is minimal requirement.', 'hamail' ) );
 	}, 'hamail-setting' );
-	foreach ( [
-	        'hamail_api_key' => [ __( 'SendGrid API key', 'hamail' ), '', '' ],
-	        'hamail_default_from' => [ __( 'Default Mail From', 'hamail' ), '', get_option( 'admin_email' ) ],
-	        'hamail_template_id' => [ __( 'Template ID', 'hamail' ), sprintf(
-                __( 'If you set template ID, all your default mail will be HTML. For more detail, see <a href="%s" target="_blank">SendGrid API doc</a>.', 'hamail' ),
-                'https://sendgrid.com/docs/Glossary/transactional_email_templates.html'
-            ), '' ],
-              ] as $key => $labels ) {
-	    list( $label, $description, $placeholder ) = $labels;
+	foreach (
+		[
+			'hamail_api_key'      => [ __( 'SendGrid API key', 'hamail' ), '', '' ],
+			'hamail_default_from' => [ __( 'Default Mail From', 'hamail' ), '', get_option( 'admin_email' ) ],
+			'hamail_template_id'  => [
+				__( 'Template ID', 'hamail' ),
+				sprintf(
+					// translators: %s document URL.
+					__( 'If you set template ID, all your default mail will be HTML. For more detail, see <a href="%s" target="_blank">SendGrid API doc</a>.', 'hamail' ),
+					'https://sendgrid.com/docs/Glossary/transactional_email_templates.html'
+				),
+				'',
+			],
+		] as $key => $labels
+	) {
+		list( $label, $description, $placeholder ) = $labels;
 		add_settings_field( $key, $label, function() use ( $key, $description, $placeholder ) {
-			printf(
-				'<input type="text" name="%1$s" id="%1$s" class="regular-text" value="%2$s" placeholder="%3$s" />',
-				$key,
-				get_option( $key, '' ),
-				$placeholder
-			);
-			if ( $description ) {
-				printf( '<p class="description">%s</p>', $description );
-			}
+			// Set message and input type.
+			$message = '';
+			$type    = 'text';
+			$input   = '';
 			switch ( $key ) {
 				case 'hamail_template_id':
+					// If API key is not set,
+					// Hide style option.
+					if ( ! hamail_enabled() ) {
+						$type    = 'hidden';
+						$message = __( 'Enter ', 'hamail' );
+					}
+					
 					if ( $styles = hamail_get_mail_css() ) {
 						// translators: %s is csv list of stylesheets path.
 						$message = sprintf(
@@ -168,8 +177,23 @@ add_action( 'admin_init', function () {
 					} else {
 						$message = __( 'If you put <code>hamail.css</code> in your theme\'s directory, they will be applied to mail body as inline css.', 'hamail' );
 					}
-					echo wp_kses_post( "<p>{$message}</p>" );
 					break;
+			}
+			if ( ! $input ) {
+				$input = sprintf(
+					'<input type="%4$s" name="%1$s" id="%1$s" class="regular-text" value="%2$s" placeholder="%3$s" />',
+					$key,
+					get_option( $key, '' ),
+					$placeholder,
+					esc_attr( $type )
+				);
+			}
+			echo $input;
+			if ( $description ) {
+				echo wp_kses_post( sprintf( '<p class="description">%s</p>', $description ) );
+			}
+			if ( $message ) {
+				echo wp_kses_post( "<p>{$message}</p>" );
 			}
 		}, 'hamail-setting', 'hamail_api_setting' );
 		register_setting( 'hamail-setting', $key );
@@ -184,34 +208,34 @@ add_action( 'admin_init', function () {
 		add_settings_field( 'hamail_list_to_sync', __( 'List to sync', 'hamail' ), function () {
 			$lists = hamail_available_lists();
 			?>
-				<p class="description"><?php esc_html_e( 'If you have no lists, please make it first on SendGrid.', 'hamail' ) ?></p>
+				<p class="description"><?php esc_html_e( 'If you have no lists, please make it first on SendGrid.', 'hamail' ); ?></p>
 				<select name="hamail_list_to_sync" id="hamail_list_to_sync">
 					<?php foreach ( $lists as $value => $label ) : ?>
-						<option value="<?= esc_attr( $value ) ?>"<?php selected( $value, hamail_active_list() ) ?>><?php echo esc_html( $label ) ?></option>
+						<option value="<?php echo esc_attr( $value ); ?>"<?php selected( $value, hamail_active_list() ); ?>><?php echo esc_html( $label ); ?></option>
 					<?php endforeach; ?>
 				</select>
 			<?php
 		}, 'hamail-setting', 'hamail_list_setting' );
 		register_setting( 'hamail-setting', 'hamail_list_to_sync' );
-		
+
 		// Field to sync.
-		add_settings_field( 'hamail_fields_to_sync', __( 'Fields Mapping',  'hamail' ), function(){
+		add_settings_field( 'hamail_fields_to_sync', __( 'Fields Mapping', 'hamail' ), function() {
 			if ( hamail_enabled() ) {
-				$fields = hamail_get_custom_fields();
+				$fields         = hamail_get_custom_fields();
 				$current_fields = hamail_fields_array();
 				?>
 				<textarea rows="2" id="hamail_fields_to_sync" name="hamail_fields_to_sync"
-						  placeholder="<?php esc_attr_e( 'Put CSV here in 2 lines.', 'hamail' ) ?>"
-				><?= esc_textarea( get_option( 'hamail_fields_to_sync', '' ) ) ?></textarea>
+					placeholder="<?php esc_attr_e( 'Put CSV here in 2 lines.', 'hamail' ); ?>"
+				><?php echo esc_textarea( get_option( 'hamail_fields_to_sync', '' ) ); ?></textarea>
 				<?php if ( is_wp_error( $current_fields ) && 200 !== $current_fields->get_error_data()['status'] ) : ?>
-					<p class="hamail-format-error"><?= esc_html( $current_fields->get_error_message() ) ?></p>
+					<p class="hamail-format-error"><?php echo esc_html( $current_fields->get_error_message() ); ?></p>
 				<?php endif; ?>
 				<p class="description">
-					<?php esc_html_e( 'Write in CSV format. Line 1 is SendGrid, Line 2 is your WordPress. Absent fields are ignored.', 'hamail' ) ?>
-					<?php _e( 'WordPress <code>site</code> field is required for multiple site. You can add or edit custom fields on SendGrid.', 'hamail' ) ?>
+					<?php esc_html_e( 'Write in CSV format. Line 1 is SendGrid, Line 2 is your WordPress. Absent fields are ignored.', 'hamail' ); ?>
+					<?php echo wp_kses_post( __( 'WordPress <code>site</code> field is required for multiple site. You can add or edit custom fields on SendGrid.', 'hamail' ) ); ?>
 				</p>
 				<table class="hamail-csv-preview">
-					<caption><?php esc_html_e( 'CSV Preview', 'hamail' ) ?></caption>
+					<caption><?php esc_html_e( 'CSV Preview', 'hamail' ); ?></caption>
 					<tr>
 						<th>SendGrid</th>
 					</tr>
@@ -222,15 +246,19 @@ add_action( 'admin_init', function () {
 				<dl class="hamail-description">
 					<dt>SendGrid</dt>
 					<dd>
-						<?php esc_html_e( 'Available Fields(* is default): ', 'hamail' ) ?>
-						<?= implode( ' ', array_map( function( $field, $id ) {
+						<?php
+						esc_html_e( 'Available Fields(* is default): ', 'hamail' );
+						echo implode( ' ', array_map( function( $field, $id ) {
 							return sprintf( '<code>%s%s</code>', esc_html( $field ), $id ? '' : '<sup>*</sup>' );
-						}, array_keys( $fields ), array_values( $fields ) ) ) ?>
+						}, array_keys( $fields ), array_values( $fields ) ) );
+						?>
 					</dd>
 					<dt>WordPress</dt>
 					<dd>
-						<?php esc_html_e( 'Available Fields: ', 'hamail' ) ?>
-						<strong><?= wp_kses_post( __( 'User object property(ex. <code>user_email</code>, <code>ID</code>) and user_meta key. <code>role</code> is also available.', 'hamail' ) ) ?></strong>
+						<?php
+						esc_html_e( 'Available Fields: ', 'hamail' );
+						echo wp_kses_post( __( 'User object property(ex. <code>user_email</code>, <code>ID</code>) and user_meta key. <code>role</code> is also available.', 'hamail' ) );
+						?>
 					</dd>
 				</dl>
 				<?php
@@ -239,8 +267,8 @@ add_action( 'admin_init', function () {
 			}
 		}, 'hamail-setting', 'hamail_list_setting' );
 		register_setting( 'hamail-setting', 'hamail_fields_to_sync' );
-		// Site key
-		add_settings_field( 'hamail_site_key', __( 'Site Specific Field',  'hamail' ), function() {
+		// Site key.
+		add_settings_field( 'hamail_site_key', __( 'Site Specific Field', 'hamail' ), function() {
 			printf( '<input type="text" class="regular-text" name="%1$s" id="%1$s" value="%2$s" />', 'hamail_site_key', esc_attr( get_option( 'hamail_site_key' ) ) );
 			printf(
 				'<p class="description">%s</p>',
@@ -258,12 +286,23 @@ add_action( 'admin_init', function() {
 	if ( ! wp_verify_nonce( filter_input( INPUT_POST, '_wpnonce' ), 'hamail_test' ) ) {
 		return;
 	}
-	$response = hamail_simple_mail( $_REQUEST[ 'hamail_to' ], $_REQUEST[ 'hamail_subject' ], $_REQUEST[ 'hamail_body' ] );
+	$to       = filter_input( INPUT_POST, 'hamail_to' );
+	$subject  = filter_input( INPUT_POST, 'hamail_subject' );
+	$body     = filter_input( INPUT_POST, 'hamail_body' );
+	$response = hamail_simple_mail( $to, $subject, $body );
 	if ( is_wp_error( $response ) ) {
-		$message = json_decode( $response->get_error_message(), true );
-		wp_die( sprintf( '<pre>%s</pre>', var_export( $message, true ) ), get_status_header_desc( $response->get_error_code() ), [
+		$response = $response->get_error_message();
+		$json     = json_decode( $response, true );
+		if ( $json ) {
+			$code    = $response->get_error_code();
+			$message = var_export( $json, true );
+		} else {
+			$code    = 500;
+			$message = $response;
+		}
+		wp_die( sprintf( '<pre>%s</pre>', esc_html( $message ) ), get_status_header_desc( $code ), [
 			'back_link' => true,
-			'status'    => $response->get_error_code(),
+			'status'    => $code,
 		] );
 	} else {
 		wp_redirect( admin_url( 'options-general.php?page=hamail-setting&mail_sent=true' ) );

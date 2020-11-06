@@ -1,24 +1,9 @@
 <?php
-
 /**
- * Register admin screen if possible
+ * User group hooks.
+ *
+ * @package hamail
  */
-add_action( 'admin_menu', function() {
-	if ( ! hamail_enabled() ) {
-		// Do nothing if hamail is not active.
-		return;
-	}
-	// Add sub menu
-	add_submenu_page(
-		'hamail-send',
-		__( 'Group', 'hamail' ),
-		__( 'Group', 'hamail' ),
-		hamail_capability(),
-		'hamail-group',
-		'hamail_admin_group'
-	);
-} );
-
 
 // Register sync command.
 if ( defined( 'WP_CLI' ) && WP_CLI ) {
@@ -38,11 +23,10 @@ add_filter( 'send_email_change_email', function( $send_mail, $current_user, $new
 		if ( ! hamail_enabled() ) {
 			return $send_mail;
 		}
-
-		$sg = hamail_client();
-		$response = $sg->client->contactdb()->recipients()->search()->get(null, [
+		$sg             = hamail_client();
+		$response       = $sg->client->contactdb()->recipients()->search()->get( null, [
 			'email' => $current_user['user_email'],
-		]);
+		] );
 		$search_results = json_decode( $response->body() )->recipients;
 		if ( ! $search_results ) {
 			return $send_mail;
@@ -50,7 +34,7 @@ add_filter( 'send_email_change_email', function( $send_mail, $current_user, $new
 		$update = [];
 		foreach ( $search_results as $recipient ) {
 			$update[] = [
-				'id' => $recipient->id,
+				'id'    => $recipient->id,
 				'email' => $new_userdata['user_email'],
 			];
 		}

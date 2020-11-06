@@ -16,15 +16,14 @@ class HamailCommands extends \WP_CLI_Command {
 	 * Sync user account to SendGrid
 	 */
 	public function sync() {
-
 		// Sync user while it exists.
 		$cur_page = 1;
-		while( true ) {
+		while ( true ) {
 			$query = apply_filters( 'hamail_user_push_query', [
 //				'role' => 'administrator',
 				'role__not_in' => [ 'pending' ],
-				'paged' => $cur_page,
-				'number' => 1000,
+				'paged'        => $cur_page,
+				'number'       => 1000,
 			] );
 			$result = hamail_push_users( $query, true );
 			if ( is_wp_error( $result ) ) {
@@ -49,7 +48,7 @@ class HamailCommands extends \WP_CLI_Command {
 			if ( ! $updated ) {
 				\WP_CLI::line( 'All user are move to list.' );
 				break;
-			} elseif ( is_wp_error( $updated) ) {
+			} elseif ( is_wp_error( $updated ) ) {
 				\WP_CLI::error( $updated->get_error_message() );
 			} else {
 				echo '.';
@@ -73,9 +72,9 @@ class HamailCommands extends \WP_CLI_Command {
 	 */
 	public function test_data( $args ) {
 		list( $id_or_emails ) = $args;
-		$id_or_emails = explode( ',', $id_or_emails );
+		$id_or_emails         = explode( ',', $id_or_emails );
 		add_filter( 'hamail_placeholders', function( $data, $user ) {
-			$data[ '-extra-' ] = is_a( $user, 'WP_User' ) ? 'WP_User' : 'Email';
+			$data['-extra-'] = is_a( $user, 'WP_User' ) ? 'WP_User' : 'Email';
 			return $data;
 		}, 10, 2 );
 		$recipient_data = hamail_get_recipients_data( $id_or_emails );
@@ -84,6 +83,7 @@ class HamailCommands extends \WP_CLI_Command {
 		}
 		print_r( $recipient_data );
 		\WP_CLI::line( '' );
+		// translators: %d is amount of data.
 		\WP_CLI::success( sprintf( __( '%d data converted.', 'hamail' ), count( $recipient_data ) ) );
 	}
 
@@ -101,15 +101,17 @@ class HamailCommands extends \WP_CLI_Command {
 	public function test_mail_class( $args ) {
 		list( $class_name ) = $args;
 		if ( ! class_exists( $class_name ) ) {
+			// translators: %s is class name.
 			\WP_CLI::error( sprintf( __( 'Class %s does not exist.', 'hamail' ), $class_name ) );
 		}
 		/** @var \Hametuha\Hamail\Pattern\TransactionalEmail $class_name */
 		$data = $class_name::test();
 		print_r( $data );
 		\WP_CLI::line( '' );
+		// translators: %s is class name.
 		\WP_CLI::success( sprintf( __( 'Above is the data of %s.', 'hamail' ), $class_name ) );
 	}
-	
+
 	/**
 	 * Extract mail object.
 	 *
@@ -123,7 +125,7 @@ class HamailCommands extends \WP_CLI_Command {
 	 */
 	public function extract( $args ) {
 		list( $post_id ) = $args;
-		$result = Extractor::process( $post_id );
+		$result          = Extractor::process( $post_id );
 		if ( is_wp_error( $result ) ) {
 			\WP_CLI::error( $result->get_error_message() );
 		} else {
@@ -195,8 +197,8 @@ class HamailCommands extends \WP_CLI_Command {
 	 */
 	public function wp_mail( $args, $assoc ) {
 		list( $to ) = $args;
-		$subject = isset( $assoc['subject'] ) ? $assoc['subject'] : __( 'This is a test mail from WP-CLI', 'hamail' );
-		$body    = isset( $assoc['body'] ) ? $assoc['body'] : __( 'Dear -email-,
+		$subject    = isset( $assoc['subject'] ) ? $assoc['subject'] : __( 'This is a test mail from WP-CLI', 'hamail' );
+		$body       = isset( $assoc['body'] ) ? $assoc['body'] : __( 'Dear -email-,
 we sent you a test mail.
 
 This email validates your setting is correct.
@@ -213,7 +215,7 @@ If this is html mail, <a href="https://example.com">link</a> should work properl
 			\WP_CLI::error( 'Failed to sent a test mail.' );
 		}
 	}
-	
+
 	/**
 	 * Test css path
 	 *
@@ -229,7 +231,7 @@ If this is html mail, <a href="https://example.com">link</a> should work properl
 		foreach ( $styles as $style ) {
 			\WP_CLI::line( $style );
 		}
-		$body = <<<HTML
+		$body     = <<<HTML
 This is a test mail.
 
 You can check how <code>stylesheets</code> will be applied.
@@ -273,7 +275,7 @@ HTML;
 		}
 		$result = hamail_send_message( $post_id, true );
 		if ( is_wp_error( $result ) ) {
-			foreach( $result->get_error_codes() as $code ) {
+			foreach ( $result->get_error_codes() as $code ) {
 				foreach ( $result->get_error_messages( $code ) as $message ) {
 					\WP_CLI::warning( sprintf( '%s: %s', $code, $message ) );
 				}

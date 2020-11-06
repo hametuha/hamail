@@ -14,7 +14,7 @@
  *
  * @return array
  */
-add_filter( 'wp_new_user_notification_email', function( $wp_new_user_notification_email, $user, $blogname ){
+add_filter( 'wp_new_user_notification_email', function( $wp_new_user_notification_email, $user, $blogname ) {
 	$wp_new_user_notification_email['message'] = preg_replace( '#^https?://.*$#um', '$1', $wp_new_user_notification_email['message'] );
 	$wp_new_user_notification_email['message'] = preg_replace( '#<(https?://[^>]+)>#u', '$1', $wp_new_user_notification_email['message'] );
 	return $wp_new_user_notification_email;

@@ -50,7 +50,7 @@ add_action( 'manage_hamail_posts_custom_column', function( $column, $post_id ) {
 			if ( $groups ) {
 				$post_groups = array_filter( explode( ',', get_post_meta( $post_id, '_hamail_user_groups', true ) ) );
 				foreach ( $groups as $group ) {
-					if ( ! in_array( $group->name, $post_groups ) ) {
+					if ( ! in_array( $group->name, $post_groups, true ) ) {
 						continue;
 					}
 					$recipients[] = sprintf( '<span>%s</span>', esc_html( $group->label ) );
@@ -63,9 +63,9 @@ add_action( 'manage_hamail_posts_custom_column', function( $column, $post_id ) {
 					'include' => $user_ids,
 					'number'  => -1,
 				] );
-				$users = $user_query->get_results();
+				$users      = $user_query->get_results();
 				foreach ( $user_query->get_results() as $user ) {
-					$recipients[] =  sprintf(
+					$recipients[] = sprintf(
 						'<a href="%s">%s</a>',
 						admin_url( 'user-edit.php?user_id=' . $user->ID ),
 						esc_html( $user->display_name )
@@ -75,7 +75,7 @@ add_action( 'manage_hamail_posts_custom_column', function( $column, $post_id ) {
 			// Mail address.
 			$emails = array_filter( explode( ',', get_post_meta( $post_id, '_hamail_raw_address', true ) ) );
 			foreach ( $emails as $email ) {
-				$recipients[] =  sprintf(
+				$recipients[] = sprintf(
 					'<a href="mailto:%1$s">%1$s</a>',
 					esc_html( $email )
 				);
@@ -90,13 +90,14 @@ add_action( 'manage_hamail_posts_custom_column', function( $column, $post_id ) {
 			}
 			echo implode( ', ', $recipients );
 			if ( $others ) {
+				// translators: %s is number of users.
 				echo sprintf( esc_html__( ' and %s others', 'hamail' ), number_format_i18n( $others ) );
 			}
 			break;
 		case 'parent':
 			$parent = wp_get_post_parent_id( $post_id );
 			if ( $parent ) {
-				printf( '<a href="%s">#%d</a>', get_edit_post_link( $parent ),  $parent );
+				printf( '<a href="%s">#%d</a>', get_edit_post_link( $parent ), $parent );
 			} else {
 				echo '<span style="color: grey">----</span>';
 			}

@@ -455,9 +455,13 @@ function hamail_simple_mail( $recipients, $subject, $body, $additional_headers =
 					$personalization->setSubject( $subject );
 					foreach ( $recipient['substitutions'] as $key => $val ) {
 						$personalization->addSubstitution( $key, (string) $val );
+						if ( '-id-' === $key ) {
+							$arg = new \SendGrid\Mail\CustomArg( 'user_id', $val );
+							$personalization->addCustomArg( $arg );
+						}
 					}
 					if ( isset( $recipient['custom_arg'] ) ) {
-						$arg = new \SendGrid\Mail\CustomArg( 'userId', (string) $recipient['custom_arg'] );
+						$arg = new \SendGrid\Mail\CustomArg( 'custom', (string) $recipient['custom_arg'] );
 						$personalization->addCustomArg( $arg );
 					}
 					if ( isset( $headers['post_id'] ) ) {
