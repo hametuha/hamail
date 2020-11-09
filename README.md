@@ -16,6 +16,16 @@ A WordPress plugin to send contact mail to your users via Sendgrid.
 This plugin enables you to send emails to each of your users.
 No more long **to** or BCCs.
 
+### Features
+
+- User contact email.
+- HTML SendGrid email Template.
+- Override default email functions.
+- Marketing Email creator **[PRO]**
+- Periodical Email **[PRO]**
+
+Pro version is available at [Kunoichi Market](https://kunoichiwp.com/product/plugin/hamail-pro).
+
 ## Installation
 
 ### From Plugin Repository
@@ -42,6 +52,18 @@ npm install && npm start
 You need [SendGrid API Key](https://sendgrid.com/docs/Classroom/Send/How_Emails_Are_Sent/api_keys.html).
 
 For more details, go to hamail setting screen.
+
+## FAQ
+
+### Where can I get supported?
+
+<!--only:pro>
+Please Go to [Kunoichi Market](https://kunoichiwp.com/product/plugin/hamail-pro) to get supported.
+</only:pro-->
+
+<!--only:light>
+To get supported, please go to [Kunoichi Market](https://kunoichiwp.com/product/plugin/hamail-pro).
+</only:light-->
 
 ## Changelog
 
