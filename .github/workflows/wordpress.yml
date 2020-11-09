@@ -44,7 +44,7 @@ jobs:
         run: bash bin/install-wp-tests.sh wordpress root root 127.0.0.1 ${{ matrix.wp }}
 
       - name: Remove Pro directory for light version.
-        if: "pro" != matrix.version
+        if: ${{ "pro" != matrix.version }}
         run: rm -rf app/Hametuha/Hamail/Pro
 
       - name: Run test suite
