@@ -39,7 +39,7 @@ function hamail_plugins_loaded( $plugin ) {
 			// translators: %1$s is required PHP version, %2$s is current PHP version.
 			throw new Exception( sprintf( __( '[Hamail] Sorry, this plugin requires PHP %1$s and over, but your PHP is %2$s.', 'hamail' ), $info['php_version'], phpversion() ) );
 		}
-		// Find auto loader
+		// Find auto loader.
 		$auto_loader = __DIR__ . '/vendor/autoload.php';
 		if ( ! file_exists( $auto_loader ) ) {
 			// translators: %s is composer path.

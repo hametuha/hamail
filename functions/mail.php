@@ -5,6 +5,8 @@
  * @package hamail
  */
 
+use \Hametuha\Hamail\Service\TemplateSelector;
+
 /**
  * Get SendGrid client.
  *
@@ -15,12 +17,11 @@ function hamail_client() {
 	if ( is_null( $instance ) ) {
 		$instance = new \SendGrid( get_option( 'hamail_api_key' ) );
 	}
-	
 	return $instance;
 }
 
-if ( get_option( 'hamail_template_id' ) && ! function_exists( 'wp_mail' ) ) {
-	
+if ( hamail_enabled() && ! function_exists( 'wp_mail' ) ) {
+
 	/**
 	 * Override wp_mail
 	 *
@@ -198,7 +199,7 @@ function hamail_default_headers( $context = 'simple' ) {
 	 * @return array
 	 */
 	return apply_filters( 'hamail_default_headers', [
-		'template'  => get_option( 'hamail_template_id' ),
+		'template'  => TemplateSelector::get_default_template(),
 		'format'    => get_option( 'hamail_template_id' ) ? 'text/html' : 'text/plain',
 		'from'      => hamail_default_from( $context ),
 		'from_name' => get_bloginfo( 'name' ),
@@ -253,7 +254,7 @@ function hamail_get_recipients_data( $recipients, $subject = '', $body = '' ) {
 		if ( is_numeric( $id_or_email ) ) {
 			$id_or_emails[ $id_or_email ] = $extra_data;
 		} else {
-			// This is email
+			// This is email.
 			$id = email_exists( $id_or_email );
 			if ( $id ) {
 				$id_or_emails[ $id ] = $extra_data;
@@ -590,7 +591,10 @@ function hamail_send_message( $post = null, $force = false ) {
 	// O.K. Let's try sending.
 	$subject = get_the_title( $post );
 	$body    = apply_filters( 'the_content', $post->post_content );
-	$headers = [ 'post_id' => $post->ID ];
+	$headers = [
+		'post_id'  => $post->ID,
+		'template' => TemplateSelector::get_post_template( $post->ID ),
+	];
 	if ( ! get_post_meta( $post->ID, '_hamail_as_admin', true ) ) {
 		$author               = get_userdata( $post->post_author );
 		$headers['from']      = $author->user_email;

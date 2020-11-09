@@ -5,6 +5,9 @@
  * @package hamail
  */
 
+// Enable template selector.
+\Hametuha\Hamail\Service\TemplateSelector::get_instance();
+
 /**
  * Change "Publish" button's label.
  */
@@ -102,6 +105,8 @@ add_action( 'save_post_hamail', function ( $post_id, $post ) {
 
 /**
  * Register meta box
+ *
+ * @param string $post_type
  */
 add_action( 'add_meta_boxes', function ( $post_type ) {
 	if ( 'hamail' !== $post_type ) {
@@ -111,14 +116,18 @@ add_action( 'add_meta_boxes', function ( $post_type ) {
 	wp_enqueue_style( 'hamail-sender' );
 	wp_enqueue_script( 'hamail-sender' );
 	// Recipients.
-	add_meta_box( 'hamail-recipients', __( 'Recipients', 'hamail' ), 'hamail_recipients_meta_box', $post_type, 'normal', 'high' );
+	add_meta_box( 'hamail-recipients', __( 'Recipients', 'hamail' ), 'hamail_recipients_meta_box', $post_type, 'normal', 'high', [
+	] );
 	// Placeholders.
 	$place_holders = hamail_placeholders();
 	if ( ! empty( $place_holders ) ) {
-		add_meta_box( 'hamail-placeholders', __( 'Available Placeholders', 'hamail' ), 'hamail_placeholders_meta_box', $post_type, 'normal', 'low', [ 'placeholders' => $place_holders ] );
+		add_meta_box( 'hamail-placeholders', __( 'Available Placeholders', 'hamail' ), 'hamail_placeholders_meta_box', $post_type, 'normal', 'low', [
+			'placeholders' => $place_holders,
+		] );
 	}
 	// Sending status.
-	add_meta_box( 'hamail-status', __( 'Sending Status', 'hamail' ), 'hamail_status_meta_box', $post_type, 'side', 'low' );
+	add_meta_box( 'hamail-status', __( 'Sending Status', 'hamail' ), 'hamail_status_meta_box', $post_type, 'side', 'low', [
+	] );
 } );
 
 /**
@@ -265,7 +274,7 @@ function hamail_status_meta_box( $post ) {
 	if ( hamail_is_sent() ) : ?>
 		<p class="hamail-success">
 			<span class="dashicons dashicons-yes"></span>
-			<?php echo esc_htlm( sprintf(
+			<?php echo esc_html( sprintf(
 				__( 'This message was sent at %1$s as %2$s.', 'hamail' ),
 				hamail_sent_at( $post, get_option( 'date_format' ) . ' ' . get_option( 'time_format' ) ),
 				get_post_meta( $post->ID, '_hamail_as_admin', true ) ? __( 'Site Admin', 'hamail' ) : get_the_author_meta( 'display_name', $post->post_author )
