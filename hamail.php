@@ -2,9 +2,9 @@
 /**
 Plugin Name: Hamail
 Plugin URI: https://wordpress.org/plugins/hamail/
-Description: A WordPress plugin for sending e-mail via Sendgrid.
+Description: A WordPress plugin for sending e-mail via SendGrid.
 Author: Hametuha INC.
-Version: 2.1.0
+Version: nightly
 PHP Version: 5.6
 Author URI: https://hametuha.co.jp/
 License: GPL3 or later
@@ -15,23 +15,30 @@ Domain Path: /languages
 
 defined( 'ABSPATH' ) or die();
 
+// Hamail should be loaded at once.
+if ( function_exists( 'hamail_plugins_loaded' ) ) {
+	return;
+}
+
 /**
  * Initialize hamail
+ *
+ * @param string $plugin
  */
 function hamail_plugins_loaded( $plugin ) {
 	if ( basename( $plugin ) !== basename( __FILE__ ) ) {
 		return;
 	}
 
-	// Get version number
+	// Get version number.
 	$info = get_file_data( __FILE__, [
 		'version'     => 'Version',
 		'php_version' => 'PHP Version',
 		'domain'      => 'Text Domain',
 	] );
 
-	define( 'HAMAIL_VERSION', $info['version'] );
 
+	define( 'HAMAIL_VERSION', $info['version'] );
 	load_plugin_textdomain( $info['domain'], false, basename( __DIR__ ) . '/languages' );
 
 	try {
@@ -55,6 +62,10 @@ function hamail_plugins_loaded( $plugin ) {
 				}
 			}
 		}
+		// Load Pro features if exists.
+		if ( class_exists( 'Hametuha\\Hamail\\Pro\\Bootstrap' ) ) {
+			Hametuha\Hamail\Pro\Bootstrap::get_instance();
+		}
 		// Load test file if exists.
 		if ( class_exists( 'Hametuha\\HamailDev\\Bootstrap' ) ) {
 			Hametuha\HamailDev\Bootstrap::get_instance();
@@ -66,6 +77,5 @@ function hamail_plugins_loaded( $plugin ) {
 		} );
 	}
 }
-
 add_action( 'plugin_loaded', 'hamail_plugins_loaded' );
 
