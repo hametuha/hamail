@@ -3,6 +3,8 @@
  * Create settings screen
  */
 
+use Hametuha\Hamail\Service\TemplateSelector;
+
 /**
  * Show error if no api key is set.
  */
@@ -138,13 +140,13 @@ add_action( 'admin_init', function () {
 	}, 'hamail-setting' );
 	foreach (
 		[
-			'hamail_api_key'      => [ __( 'SendGrid API key', 'hamail' ), '', '' ],
-			'hamail_default_from' => [ __( 'Default Mail From', 'hamail' ), '', get_option( 'admin_email' ) ],
-			'hamail_template_id'  => [
+			'hamail_api_key'             => [ __( 'SendGrid API key', 'hamail' ), '', '' ],
+			'hamail_default_from'        => [ __( 'Default Mail From', 'hamail' ), '', get_option( 'admin_email' ) ],
+			TemplateSelector::OPTION_KEY => [
 				__( 'Template ID', 'hamail' ),
 				sprintf(
 					// translators: %s document URL.
-					__( 'If you set template ID, all your default mail will be HTML. For more detail, see <a href="%s" target="_blank">SendGrid API doc</a>.', 'hamail' ),
+					__( 'If Template ID is set, all your default mail will be HTML. For more detail, see <a href="%s" target="_blank">SendGrid API doc</a>.', 'hamail' ),
 					'https://sendgrid.com/docs/Glossary/transactional_email_templates.html'
 				),
 				'',
@@ -158,24 +160,32 @@ add_action( 'admin_init', function () {
 			$type    = 'text';
 			$input   = '';
 			switch ( $key ) {
-				case 'hamail_template_id':
+				case TemplateSelector::OPTION_KEY:
 					// If API key is not set,
 					// Hide style option.
 					if ( ! hamail_enabled() ) {
 						$type    = 'hidden';
-						$message = __( 'Enter ', 'hamail' );
-					}
-					
-					if ( $styles = hamail_get_mail_css() ) {
-						// translators: %s is csv list of stylesheets path.
-						$message = sprintf(
-							__( 'Stylesheet %s will be applied to your mail body.', 'hamail' ),
-							implode( ', ', array_map( function( $path ) {
-								return sprintf( '<code>%s</code>', esc_html( $path ) );
-							}, $styles ) )
-						);
+						$message = __( 'If SendGrid API key is valid, you can set template.', 'hamail' );
 					} else {
-						$message = __( 'If you put <code>hamail.css</code> in your theme\'s directory, they will be applied to mail body as inline css.', 'hamail' );
+						$value     = TemplateSelector::get_default_template();
+						$templates = TemplateSelector::get_template_pull_down();
+						if ( is_wp_error( $templates ) ) {
+							$message = $templates->get_error_message();
+							$type    = 'text';
+						} else {
+							$input = $templates;
+						}
+						if ( $styles = hamail_get_mail_css() ) {
+							// translators: %s is csv list of stylesheets path.
+							$message = sprintf(
+								__( 'Stylesheet %s will be applied to your mail body.', 'hamail' ),
+								implode( ', ', array_map( function( $path ) {
+									return sprintf( '<code>%s</code>', esc_html( $path ) );
+								}, $styles ) )
+							);
+						} else {
+							$message = __( 'If you put <code>hamail.css</code> in your theme\'s directory, they will be applied to mail body as inline css.', 'hamail' );
+						}
 					}
 					break;
 			}
@@ -189,11 +199,11 @@ add_action( 'admin_init', function () {
 				);
 			}
 			echo $input;
-			if ( $description ) {
-				echo wp_kses_post( sprintf( '<p class="description">%s</p>', $description ) );
-			}
 			if ( $message ) {
 				echo wp_kses_post( "<p>{$message}</p>" );
+			}
+			if ( $description ) {
+				echo wp_kses_post( sprintf( '<p class="description">%s</p>', $description ) );
 			}
 		}, 'hamail-setting', 'hamail_api_setting' );
 		register_setting( 'hamail-setting', $key );
