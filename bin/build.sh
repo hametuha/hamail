@@ -9,11 +9,9 @@ fi
 
 # Set variables.
 VERSION=$1
-
-echo $VERSION
-
 WP_README_ENV=$2
-export WP_README_ENV
+
+echo "Building Hamail ${WP_README_ENV} v${VERSION}..."
 
 
 # Install packages.
@@ -24,6 +22,7 @@ npm install
 npm run package
 
 # Create README.txt
+export WP_README_ENV
 curl -L https://raw.githubusercontent.com/fumikito/wp-readme/master/wp-readme.php | php
 
 # Change version string.

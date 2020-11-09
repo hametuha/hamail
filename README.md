@@ -37,12 +37,12 @@ Click install and activate it.
 Composer and NPM are required.
 
 ```
-# Go to your wp-content/plugins and run git
+ # Go to your wp-content/plugins and run git
 cd wp-content/plugins
 git clone https://github.com/hametuha/hamail.git hamail
-# Then move into
+ # Then move into
 cd hamail
-# Install dependencies
+ # Install dependencies
 composer install
 npm install && npm start
 ```
@@ -57,13 +57,13 @@ For more details, go to hamail setting screen.
 
 ### Where can I get supported?
 
-<!--only:pro>
+<!-- only:pro>
 Please Go to [Kunoichi Market](https://kunoichiwp.com/product/plugin/hamail-pro) to get supported.
-</only:pro-->
+</only:pro -->
 
-<!--only:light>
+<!-- only:light>
 To get supported, please go to [Kunoichi Market](https://kunoichiwp.com/product/plugin/hamail-pro).
-</only:light-->
+</only:light -->
 
 ## Changelog
 
