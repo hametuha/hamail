@@ -104,20 +104,17 @@ add_action( 'save_post_hamail', function ( $post_id, $post ) {
 }, 10, 2 );
 
 /**
- * Register meta box
+ * Meta box for placeholder.
  *
  * @param string $post_type
  */
 add_action( 'add_meta_boxes', function ( $post_type ) {
-	if ( 'hamail' !== $post_type ) {
+	// Recipients.
+	$should_show_stats = apply_filters( 'hamail_should_show_placeholder_meta_box', ( 'hamail' === $post_type ), $post_type );
+	if ( ! $should_show_stats ) {
 		return;
 	}
-	// Enqueue scripts.
 	wp_enqueue_style( 'hamail-sender' );
-	wp_enqueue_script( 'hamail-sender' );
-	// Recipients.
-	add_meta_box( 'hamail-recipients', __( 'Recipients', 'hamail' ), 'hamail_recipients_meta_box', $post_type, 'normal', 'high', [
-	] );
 	// Placeholders.
 	$place_holders = hamail_placeholders();
 	if ( ! empty( $place_holders ) ) {
@@ -125,10 +122,27 @@ add_action( 'add_meta_boxes', function ( $post_type ) {
 			'placeholders' => $place_holders,
 		] );
 	}
-	// Sending status.
-	add_meta_box( 'hamail-status', __( 'Sending Status', 'hamail' ), 'hamail_status_meta_box', $post_type, 'side', 'low', [
-	] );
 } );
+
+/**
+ * Meta box for sender.
+ *
+ * @param string $post_type
+ */
+add_action( 'add_meta_boxes', function( $post_type ) {
+	if ( 'hamail' !== $post_type ) {
+		return;
+	}
+	// Enqueue scripts.
+	wp_enqueue_style( 'hamail-sender' );
+	wp_enqueue_script( 'hamail-sender' );
+	add_meta_box( 'hamail-recipients', __( 'Recipients', 'hamail' ), 'hamail_recipients_meta_box', $post_type, 'normal', 'high', [] );
+	// Sending status.
+	add_meta_box( 'hamail-status', __( 'Sending Status', 'hamail' ), 'hamail_status_meta_box', $post_type, 'side', 'low', [] );
+} );
+
+
+
 
 /**
  * Show place holders

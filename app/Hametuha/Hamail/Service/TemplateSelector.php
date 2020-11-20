@@ -15,9 +15,9 @@ class TemplateSelector extends Singleton {
 	const OPTION_KEY = 'hamail_template_id';
 
 	const POST_META_KEY = '_hamail_template_id';
-	
+
 	const POST_TYPES = [ 'hamail' ];
-	
+
 	const NO_TEMPLATE = '__no_template__';
 
 	/**
@@ -25,8 +25,8 @@ class TemplateSelector extends Singleton {
 	 */
 	protected function init() {
 		add_action( 'save_post', [ $this, 'save_post' ], 9, 2 );
-		add_action( 'add_meta_boxes', function( $post_type ) {
-			if ( in_array( $post_type, self::POST_TYPES, true ) ) {
+		add_action( 'add_meta_boxes', function ( $post_type ) {
+			if ( in_array( $post_type, self::post_types(), true ) ) {
 				add_meta_box( 'hamail-template-box', __( 'Mail Template', 'hamail' ), [ $this, 'do_meta_box' ], $post_type, 'side', 'low' );
 			}
 		} );
@@ -39,7 +39,7 @@ class TemplateSelector extends Singleton {
 	 * @param \WP_Post $post
 	 */
 	public function save_post( $post_id, $post ) {
-		if ( ! in_array( $post->post_type, self::POST_TYPES, true ) ) {
+		if ( ! in_array( $post->post_type, self::post_types(), true ) ) {
 			return;
 		}
 		if ( ! wp_verify_nonce( filter_input( INPUT_POST, '_hamailtemplatenonce' ), 'hamail_template' ) ) {
@@ -71,8 +71,8 @@ class TemplateSelector extends Singleton {
 				$templates = self::get_available_templates();
 				if ( ! is_wp_error( $templates ) ) {
 					foreach ( $templates as $template ) {
-						if ( $default === $template['id'] ) {
-							$label = $template['label'];
+						if ( $default === $template[ 'id' ] ) {
+							$label = $template[ 'label' ];
 							break 1;
 						}
 					}
@@ -131,23 +131,23 @@ class TemplateSelector extends Singleton {
 				if ( ! $json ) {
 					throw new \Exception( __( 'Failed to retrieve templates list.', 'hamail' ), 500 );
 				}
-				if ( empty( $json['templates'] ) ) {
+				if ( empty( $json[ 'templates' ] ) ) {
 					$templates = [];
 				} else {
 					$templates = array_map( function ( $template ) {
 						return [
-							'id'    => $template['id'],
-							'name'  => $template['name'],
-							'type'  => $template['generation'],
+							'id'    => $template[ 'id' ],
+							'name'  => $template[ 'name' ],
+							'type'  => $template[ 'generation' ],
 							// translators: %1$s is template name, %2$s is generation.
-							'label' => sprintf( _x( '%1$s(%2$s)', 'template-label', 'hamail' ), $template['name'], $template['generation'] ),
+							'label' => sprintf( _x( '%1$s(%2$s)', 'template-label', 'hamail' ), $template[ 'name' ], $template[ 'generation' ] ),
 						];
-					}, $json ['templates'] );
+					}, $json [ 'templates' ] );
 				}
 			} catch ( \Exception $e ) {
-				$code      = $e->getCode();
+				$code = $e->getCode();
 				$templates = new \WP_Error( 'hamail_template_error', $e->getMessage(), [
-					'status'               => preg_match( '/^[0-9]{3}$/u', $code ) ? $code : 500,
+					'status' => preg_match( '/^[0-9]{3}$/u', $code ) ? $code : 500,
 					'original_status_code' => $code,
 				] );
 			}
@@ -158,8 +158,8 @@ class TemplateSelector extends Singleton {
 	/**
 	 * Get pull down for template
 	 *
-	 * @param int    $post_id If post id is set, get post meta value.
-	 * @param string $name    Template pull down.
+	 * @param int $post_id If post id is set, get post meta value.
+	 * @param string $name Template pull down.
 	 * @return string
 	 */
 	public static function get_template_pull_down( $post_id = 0, $name = '' ) {
@@ -173,7 +173,7 @@ class TemplateSelector extends Singleton {
 		} elseif ( empty( $templates ) ) {
 			return new \WP_Error( 'hamail_template_error', __( 'No template found.', 'hamail' ) );
 		}
-		$select     = sprintf( '<select id="%1$s" name="%1$s">', esc_attr( $name ) );
+		$select = sprintf( '<select id="%1$s" name="%1$s">', esc_attr( $name ) );
 		$pull_downs = [
 			[
 				'id'    => '',
@@ -190,12 +190,21 @@ class TemplateSelector extends Singleton {
 		foreach ( $pull_downs as $template ) {
 			$select .= sprintf(
 				'<option value="%1$s"%3$s>%2$s</option>',
-				esc_attr( $template['id'] ),
-				esc_html( $template['label'] ),
-				selected( $template['id'], $current_value, false )
+				esc_attr( $template[ 'id' ] ),
+				esc_html( $template[ 'label' ] ),
+				selected( $template[ 'id' ], $current_value, false )
 			);
 		}
 		$select .= '</select>';
 		return $select;
+	}
+
+	/**
+	 * Available post types.
+	 *
+	 * @return string[]
+	 */
+	public static function post_types() {
+		return apply_filters( 'hamail_template_selectable_post_type', self::POST_TYPES );
 	}
 }

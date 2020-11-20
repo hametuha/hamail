@@ -1,4 +1,4 @@
-# Hamail
+# Hamail - Send Email via SendGrid
 
 Tags: email, sendgrid, marketing  
 Contributors: Takahashi_Fumiki, hametuha  

@@ -51,6 +51,25 @@ $sg-gray: #9e9e9e;
 	}
 }
 
+.hamail-meta {
+
+	&-title {
+		margin: 20px 0 10px;
+		font-size: 1em;
+	}
+
+	&-body {
+		.block {
+			margin: 10px 0;
+		}
+
+		.inline-block {
+			margin: 5px 5px 5px 0;
+			display: inline-block;
+		}
+	}
+}
+
 .hamail-search {
 
 	&-type {
@@ -128,6 +147,7 @@ $sg-gray: #9e9e9e;
 				background: rgba(255, 255, 255, .8);
 			}
 		}
+
 		li {
 			display: inline-block;
 			margin: 5px 5px 5px 0;

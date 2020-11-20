@@ -16,9 +16,10 @@ Domain Path: /languages
 defined( 'ABSPATH' ) or die();
 
 // Hamail should be loaded at once.
-if ( function_exists( 'hamail_plugins_loaded' ) ) {
+if ( defined( 'HAMAIL_INIT' ) ) {
 	return;
 }
+define( 'HAMAIL_INIT', __FILE__ );
 
 /**
  * Initialize hamail

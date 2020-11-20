@@ -8,19 +8,109 @@
 /**
  * Get available list via API
  *
+ * @param string|null $no_list Label for no list is selected.
  * @return array
  */
-function hamail_available_lists() {
-	$return   = [
-		'' => __( 'No sync', 'hamail' ),
-	];
-	$sg       = hamail_client();
-	$response = $sg->client->contactdb()->lists()->get();
-	if ( 200 === $response->statusCode() ) {
-		$lists = json_decode( $response->body() )->lists;
-		foreach ( $lists as $list ) {
-			$return[ $list->id ] = sprintf( '%s(%d)', $list->name, $list->recipient_count );
+function hamail_available_lists( $no_list = '' ) {
+	$return = [];
+	if ( ! is_null( $no_list ) ) {
+		if ( ! $no_list ) {
+			$no_list = __( 'No sync', 'hamail' );
 		}
+		$return[''] = $no_list;
+	}
+	try {
+		$sg       = hamail_client();
+		$response = $sg->client->contactdb()->lists()->get();
+		if ( 200 === $response->statusCode() ) {
+			$lists = json_decode( $response->body() )->lists;
+			foreach ( $lists as $list ) {
+				$return[ $list->id ] = sprintf( '%s(%d)', $list->name, $list->recipient_count );
+			}
+		}
+	} catch ( \Exception $e ) {
+		error_log( sprintf( "[HAMAIL_LOG %d]\t%s", $e->getCode(), $e->getMessage() ) );
+	}
+	return $return;
+}
+
+/**
+ * Get all segments.
+ *
+ * @return array[]
+ */
+function hamail_available_segments() {
+	foreach ( hamail_available_lists( null ) as $id => $label ) {
+		$segments[] = [
+			'type'  => 'list',
+			'id'    => $id,
+			'label' => $label,
+		];
+	}
+	$segments = [];
+	try {
+		$sg = hamail_client();
+		// Get lists.
+		$response = $sg->client->contactdb()->lists()->get();
+		if ( 200 === $response->statusCode() ) {
+			$lists = json_decode( $response->body() )->lists;
+			foreach ( $lists as $list ) {
+				$segments[] = [
+					'type'    => 'list',
+					'id'      => $list->id,
+					'label'   => $list->name,
+					'count'   => $list->recipient_count,
+					'list_id' => $list->id,
+				];
+			}
+		}
+		// Get segments.
+		$response = $sg->client->contactdb()->segments()->get();
+		if ( 200 === $response->statusCode() ) {
+			$lists = json_decode( $response->body() )->segments;
+			foreach ( $lists as $list ) {
+				$segments[] = [
+					'type'    => 'segment',
+					'id'      => $list->id,
+					'label'   => $list->name,
+					'count'   => $list->recipient_count,
+					'list_id' => $list->list_id,
+				];
+			}
+		}
+	} catch ( \Exception $e ) {
+		error_log( sprintf( "[HAMAIL_LOG %d]\t%s", $e->getCode(), $e->getMessage() ) );
+	}
+	return $segments;
+}
+
+/**
+ * Get sender ID list.
+ *
+ * @param string|null $no_list
+ * @return array
+ */
+function hamail_available_senders( $no_list = '' ) {
+	$return = [];
+	if ( ! is_null( $no_list ) ) {
+		if ( ! $no_list ) {
+			$no_list = __( 'No Sender ID', 'hamail' );
+		}
+		$return[''] = $no_list;
+	}
+	try {
+		$sg       = hamail_client();
+		$response = $sg->client->senders()->get();
+		if ( 200 === $response->statusCode() ) {
+			$lists = json_decode( $response->body() );
+			if ( $lists ) {
+				foreach ( $lists as $sender ) {
+					$return[ $sender->id ] = sprintf( '%s <%s>', $sender->nickname, $sender->from->email );
+				}
+			}
+		}
+	} catch ( \Exception $e ) {
+		error_log( sprintf( "[HAMAIL_LOG %d]\t%s", $e->getCode(), $e->getMessage() ) );
 	}
 	return $return;
 }
