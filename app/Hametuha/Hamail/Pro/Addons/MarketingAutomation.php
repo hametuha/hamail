@@ -22,11 +22,14 @@ class MarketingAutomation extends Singleton {
 	 * Constructor.
 	 */
 	protected function init() {
+		// TODO: implement.
+		return;
 		add_action( 'init', [ $this, 'register_post_type' ], 11 );
 		add_filter( 'hamail_template_selectable_post_type', [ $this, 'add_post_type' ] );
 		add_filter( 'hamail_should_show_placeholder_meta_box', [ $this, 'hamail_placeholder_meta_box' ], 10, 2 );
 		add_action( 'add_meta_boxes', [ $this, 'add_meta_boxes' ] );
 		add_action( 'save_post_' . self::POST_TYPE, [ $this, 'save_post' ], 10, 2 );
+
 	}
 
 	/**
@@ -36,7 +39,7 @@ class MarketingAutomation extends Singleton {
 	 * @param \WP_Post $post
 	 */
 	public function save_post( $post_id, $post ) {
-		if ( ! wp_verify_nonce( filter_input( INPUT_POST, '_hamailmarketing' ), 'hamail_marketing' ) ) {
+		if ( ! wp_verify_nonce( filter_input( INPUT_POST, '_hamailmarketing' ), 'hamail_marketing_target' ) ) {
 			return;
 		}
 		update_post_meta( $post_id, self::META_KEY_SENDER, filter_input( INPUT_POST, 'hamail_marketing_sender' ) );
@@ -55,7 +58,43 @@ class MarketingAutomation extends Singleton {
 	public function add_meta_boxes( $post_type ) {
 		if ( self::POST_TYPE === $post_type ) {
 			add_meta_box( 'hamail-marketing-target', __( 'Marketing Setting', 'hamail' ), [ $this, 'meta_box_marketing_list' ], $post_type, 'side', 'high' );
+			add_meta_box( 'hamail-marketing-timing', __( 'Schedule', 'hamail' ), [ $this, 'meta_box_marketing_schedule' ], $post_type, 'side', 'high' );
 		}
+	}
+
+	/**
+	 * Render schedule selector.
+	 *
+	 * @param \WP_Post $post
+	 */
+	public function meta_box_marketing_schedule( $post ) {
+		wp_nonce_field( 'hamail_marketing_schedule', '_hamailmarketingschedule', false );
+		$frequency = get_post_meta( $post->ID, '_frequency', true );
+		?>
+		<p>
+			<label for="send_frequency"><?php esc_html_e( 'Frequency', 'hanmail' ) ?></labelf><br />
+			<select id="send_frequency" name="send_frequency">
+				<option disabled value=""><?php esc_html_e( 'Select Frequency', 'hamail' ); ?></option>
+				<option value="yearly"<?php selected( 'yearly', $frequency ) ?>><?php esc_html_e( 'Yearly', 'hamail' ); ?></option>
+				<option value="monthly"<?php selected( 'monthly', $frequency ) ?>><?php esc_html_e( 'Monthly', 'hamail' ); ?></option>
+				<optgroup label="<?php esc_attr_e( 'Weekly', 'hamail' ) ?>">
+					<?php foreach ( range( 0, 6 ) as $day ) :
+						$value = 'weekly_' . $day;
+						$date = strtotime( 'last sunday', current_time( 'timestamp' ) ) + $day * 3600 * 24;
+						?>
+						<option value="<?php echo esc_attr( $value ) ?>">
+							<?php echo esc_html( date_i18n( 'D', $date ) ); ?>
+						</option>
+					<?php endforeach; ?>
+				</optgroup>
+			</select>
+		</p>
+
+		<p>
+			<label for="send_time"><?php esc_html_e( 'Send At', 'hamail' ); ?></label><br />
+			<input type="time" name="send_time" id="send_time" value="<?php echo esc_attr( get_post_meta( $post->ID, 'send_at', '' ) ); ?>" />
+		</p>
+		<?php
 	}
 
 	/**
@@ -64,7 +103,7 @@ class MarketingAutomation extends Singleton {
 	 * @param \WP_Post $post
 	 */
 	public function meta_box_marketing_list( $post ) {
-		wp_nonce_field( 'hamail_marketing', '_hamailmarketing', false );
+		wp_nonce_field( 'hamail_marketing_target', '_hamailmarketing', false );
 		?>
 		<p class="hamail-meta-row">
 			<label for="hamail_marketing_sender" class="block">

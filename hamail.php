@@ -63,6 +63,10 @@ function hamail_plugins_loaded( $plugin ) {
 				}
 			}
 		}
+		// Dynamic emails.
+		Hametuha\Hamail\API\DynamicEmails::get_instance();
+		// Screens.
+		Hametuha\Hamail\Ui\ListTable\RecipientsColumn::get_instance();
 		// Load Pro features if exists.
 		if ( class_exists( 'Hametuha\\Hamail\\Pro\\Bootstrap' ) ) {
 			Hametuha\Hamail\Pro\Bootstrap::get_instance();

@@ -6,6 +6,7 @@ namespace Hametuha\HamailDev;
 use Hametuha\Hamail\Pattern\Singleton;
 use Hametuha\Hamail\Pattern\UserGroup;
 use Hametuha\HamailDev\Groups\TagAuthor;
+use Hametuha\HamailDev\Stab\WeeklyReport;
 
 /**
  * Class Bootstrap
@@ -24,6 +25,11 @@ class Bootstrap extends Singleton {
 		TagAuthor::get_instance();
 		// Change bulk email filter for debug.
 		add_filter( 'hamail_bulk_limit', [ $this, 'bulk_limit' ] );
+		// Register stab.
+		add_filter( 'hamail_dynamic_emails', function( $classes ) {
+			$classes[] = WeeklyReport::class;
+			return $classes;
+		} );
 	}
 
 	/**
@@ -55,7 +61,7 @@ class Bootstrap extends Singleton {
 		];
 		return $groups;
 	}
-	
+
 	/**
 	 * Filter bulk limit for debug.
 	 *

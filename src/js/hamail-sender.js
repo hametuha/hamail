@@ -1,3 +1,5 @@
+'use strict';
+
 /*!
  * Hametuha user selector
  *

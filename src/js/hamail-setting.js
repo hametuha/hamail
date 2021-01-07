@@ -1,3 +1,5 @@
+'use strict';
+
 /*!
  * Admin setting helper.
  *

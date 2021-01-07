@@ -13,6 +13,6 @@
 		"WP_DEBUG": true,
 		"SCRIPT_DEBUG": true,
 		"WP_DEBUG_LOG": true,
-		"HAMAIL_DEBUG": true
+		"HAMAIL_DEBUG": false
 	}
 }

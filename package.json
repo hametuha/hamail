@@ -32,7 +32,7 @@
     "@babel/core": "^7.5.4",
     "@babel/plugin-transform-react-jsx": "^7.0.0",
     "@babel/preset-env": "^7.5.4",
-    "@kunoichi/grab-deps": "^1.1.0",
+    "@kunoichi/grab-deps": "^1.2.0",
     "@wordpress/env": "^2.1.0",
     "@wordpress/eslint-plugin": "^7.3.0",
     "babel-eslint": "^10.0.1",

@@ -32,7 +32,11 @@ add_action( 'plugins_loaded', function() {
 add_action( 'init', function () {
 	// Load setting as array.
 	$root_dir = dirname( __DIR__ );
-	$settings = json_decode( file_get_contents( $root_dir . '/wp-dependencies.json' ), true );
+	$json     = $root_dir . '/wp-dependencies.json';
+	if ( ! file_exists( $json ) ) {
+		return;
+	}
+	$settings = json_decode( file_get_contents( $json ), true );
 	// Register each setting.
 	$dir_base = trailingslashit( $root_dir );
 	$url_base = plugin_dir_url( __DIR__ );

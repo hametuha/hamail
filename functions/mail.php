@@ -82,7 +82,7 @@ if ( hamail_enabled() && ! function_exists( 'wp_mail' ) ) {
 			$to = explode( ',', $to );
 		}
 		$result = hamail_simple_mail( $to, $subject, $message, $additional_header, $attachments );
-		
+
 		return $result && ! is_wp_error( $result );
 	}
 }
@@ -225,7 +225,7 @@ function hamail_guest_name( $email = '' ) {
 	 * @return string
 	 */
 	$guest = apply_filters( 'hamail_guest_name', __( 'Guest', 'hamail' ), $email );
-	
+
 	return ( $email === get_option( 'admin_email' ) ) ? __( 'Site Owner', 'hamail' ) : $guest;
 }
 
@@ -318,11 +318,11 @@ function hamail_get_recipients_data( $recipients, $subject = '', $body = '' ) {
 /**
  * Send single mail
  *
- * @param array|string $recipients
- * @param string $subject
- * @param string $body
- * @param array $additional_headers
- * @param array $attachments
+ * @param string|string[] $recipients
+ * @param string          $subject
+ * @param string          $body
+ * @param array           $additional_headers
+ * @param array           $attachments
  *
  * @return bool|WP_Error
  */
@@ -358,11 +358,11 @@ function hamail_simple_mail( $recipients, $subject, $body, $additional_headers =
 		 *
 		 * Filter if we should apply templates
 		 *
-		 * @param bool $no_woocommerce If WooCommerce exists, no filter.
-		 * @param array $headers
+		 * @param bool   $no_woocommerce If WooCommerce exists, no filter.
+		 * @param array  $headers
 		 * @param string $subject
 		 * @param string $body
-		 * @param array $recipients
+		 * @param array  $recipients
 		 *
 		 * @package hamail
 		 */
@@ -428,15 +428,13 @@ function hamail_simple_mail( $recipients, $subject, $body, $additional_headers =
 	$errors      = new WP_Error();
 	$slots_total = 0;
 	$sent_total  = 0;
-	foreach ( $recipients_slots as $recipients_group ) {
+	foreach ( $recipients_slots as $index => $recipients_group ) {
 		try {
 			// Create mail instance.
-			$mail = new SendGrid\Mail\Mail();
-			$mail->setFrom( $from );
-			$mail->setReplyTo( $reply_to );
+			$mail = new SendGrid\Mail\Mail( $from );
 			$mail->setSubject( $subject );
+			$mail->setReplyTo( $reply_to );
 			$mail->addContent( $content );
-			$mail->setSendAt( current_time( 'timestamp', true ) );
 			// Add attachments.
 			if ( ! empty( $mail_attachments ) ) {
 				$mail->addAttachments( $mail_attachments );
@@ -457,7 +455,7 @@ function hamail_simple_mail( $recipients, $subject, $body, $additional_headers =
 					foreach ( $recipient['substitutions'] as $key => $val ) {
 						$personalization->addSubstitution( $key, (string) $val );
 						if ( '-id-' === $key ) {
-							$arg = new \SendGrid\Mail\CustomArg( 'user_id', $val );
+							$arg = new \SendGrid\Mail\CustomArg( 'user_id', (string) $val );
 							$personalization->addCustomArg( $arg );
 						}
 					}
@@ -475,6 +473,8 @@ function hamail_simple_mail( $recipients, $subject, $body, $additional_headers =
 					$errors->add( 'hamail_personlization_exception', sprintf( '[%s] %s', $e->getCode(), $e->getMessage() ) );
 				}
 			}
+			// Set send at.
+			$mail->setSendAt( current_time( 'timestamp', true ) + $index * 20 );
 			// If debug mode, not sent actually.
 			if ( hamail_is_debug() ) {
 				$slots_total++;
@@ -490,7 +490,7 @@ function hamail_simple_mail( $recipients, $subject, $body, $additional_headers =
 			} else {
 				$error          = json_decode( $response->body() );
 				$error->headers = $response->headers();
-				$errors->add( $code, json_encode( $errors ) );
+				$errors->add( $code, json_encode( $error ) );
 			}
 		} catch ( \Exception $e ) {
 			$errors->add( 'hamail_exception', $e->getMessage() );
@@ -499,7 +499,8 @@ function hamail_simple_mail( $recipients, $subject, $body, $additional_headers =
 	if ( hamail_is_debug() ) {
 		error_log( sprintf( '[HAMAIL] %d slots / %d sent / %d recipients', $slots_total, $sent_total, count( $recipients ) ) );
 	}
-	if ( empty( $errors->get_error_messages() ) ) {
+	$errors_messages = $errors->get_error_messages();
+	if ( empty( $errors_messages ) ) {
 		return true;
 	} else {
 		return $errors;
@@ -650,7 +651,7 @@ function hamail_is_sending( $flag = null ) {
 	if ( ! is_null( $flag ) ) {
 		$sending = (bool) $sending;
 	}
-	
+
 	return $sending;
 }
 
