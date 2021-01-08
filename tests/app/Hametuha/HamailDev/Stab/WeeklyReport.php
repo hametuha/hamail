@@ -54,8 +54,8 @@ class WeeklyReport extends DynamicEmailCronTemplate {
 			// If this is saturday, 1 AM has been past,
 			// Diff should 7 days.
 			$diff = $target - $now_day;
-			if ( 0 === $diff ) {
-				$diff = 7;
+			if ( 1 > $diff ) {
+				$diff += 7;
 			}
 			$now->add( new \DateInterval( "P{$diff}D" ) );
 			$now->setTime( $at, 0 );
