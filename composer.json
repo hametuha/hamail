@@ -8,6 +8,10 @@
         "cs": [
             "phpcs --config-set installed_paths $(pwd)/vendor/wp-coding-standards/wpcs",
             "phpcs --standard=.phpcs.xml"
+        ],
+        "cs:csv": [
+            "phpcs --config-set installed_paths $(pwd)/vendor/wp-coding-standards/wpcs",
+            "phpcs --standard=.phpcs.xml --report=csv | column -s , -t"
         ]
     },
     "authors": [

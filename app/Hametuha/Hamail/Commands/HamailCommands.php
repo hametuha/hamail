@@ -3,14 +3,92 @@
 namespace Hametuha\Hamail\Commands;
 
 
+use Hametuha\Hamail\API\UserSync;
 use Hametuha\Hamail\Service\Extractor;
 
 /**
  * Command utility for hamail.
  *
  * @package hamail
+ * @property-read UserSync $user_sync User sync api.
  */
 class HamailCommands extends \WP_CLI_Command {
+
+	/**
+	 * Add or update user.
+	 *
+	 * ## OPTIONS
+	 *
+	 * <user_id>
+	 * : User id to update.
+	 *
+	 * [--dry-run]
+	 * : If set, never update.
+	 *
+	 * @param array $args  Arguments.
+	 * @param array $assoc Options.
+	 * @synopsis <user_id> [--dry-run]
+	 */
+	public function update_user( $args, $assoc ) {
+		list( $user_id ) = $args;
+		$dry_run = ! empty( $assoc['dry-run'] );
+		$user = get_userdata( $user_id );
+		if ( ! $user ) {
+			\WP_CLI::error( sprintf( __( 'User ID does not exist: %s', ), $user_id ) );
+		}
+		$recipient = $this->user_sync->get_recipient( $user_id );
+		if ( is_wp_error( $recipient ) ) {
+			\WP_CLI::error( $recipient->get_error_message() );
+		}
+		if ( ! $recipient ) {
+			// No recipient, add new.
+			if ( $dry_run ) {
+				\WP_CLI::success( sprintf( __( 'User %d is not found in the contact list %d. Will be added.', 'hamail' ), $user_id, hamail_active_list() ) );
+				exit;
+			}
+		} else {
+			// Found, update.
+			if ( $dry_run ) {
+				\WP_CLI::success( sprintf( __( 'User %d will be updated in the contact list %d.', 'hamail' ), $user_id, hamail_active_list() ) );
+				exit;
+			}
+		}
+		$result = $this->user_sync->push( $user );
+		if ( is_wp_error( $result ) ) {
+			\WP_CLI::error( $result->get_error_message() );
+		} else {
+			\WP_CLI::success( sprintf( __( 'User %d is registered as %s', 'hamail' ), $user_id, $result ) );
+		}
+	}
+
+	/**
+	 * Remove user from recipients.
+	 *
+	 * ## OPTIONS
+	 *
+	 * : <user_id_or_email>
+	 *   ID or email to be deleted from Sendgrid.
+	 *
+	 * @param array $args
+	 * @synopsis <user_id_or_email>
+	 */
+	public function delete_recipient( $args ) {
+		list( $user_id_or_email ) = $args;
+		if ( is_numeric( $user_id_or_email ) ) {
+			$user = get_userdata( $user_id_or_email );
+			if ( ! $user ) {
+				\WP_CLI::error( sprintf( __( 'User %d does not exist.', 'hamail' ), $user_id_or_email ) );
+			}
+			$email = $user->user_email;
+		} else {
+			$email = $user_id_or_email;
+		}
+		$result = $this->user_sync->delete_from_list( $email );
+		if ( is_wp_error( $result ) ) {
+			\WP_CLI::error( $result->get_error_message() );
+		}
+		\WP_CLI::success( sprintf( __( '%s is deleted from contact list.', 'hamail' ), $email ) );
+	}
 
 	/**
 	 * Sync user account to SendGrid
@@ -219,8 +297,8 @@ If this is html mail, <a href="https://example.com">link</a> should work properl
 	/**
 	 * Test css path
 	 *
-	 * @param array $args
-	 * @param array $assoc
+	 * @param array $args  Arguments.
+	 * @param array $assoc Options.
 	 */
 	public function css_test( $args, $assoc ) {
 		$styles = hamail_get_mail_css();
@@ -265,7 +343,7 @@ HTML;
 	 *   Post ID to get recipients.
 	 *
 	 * @synopsis <post_id>
-	 * @param array $args
+	 * @param array $args Arguments.
 	 */
 	public function test_message( $args ) {
 		list( $post_id ) = $args;
@@ -285,6 +363,21 @@ HTML;
 			\WP_CLI::success( __( 'Post is successfully sent.', 'hamail' ) );
 		} else {
 			\WP_CLI::error( __( 'Failed to send message. Because of no post, no recipients, nor already sent.', 'hamail' ) );
+		}
+	}
+
+	/**
+	 * Getter.
+	 *
+	 * @param string $name
+	 * @return mixed Mixed object.
+	 */
+	public function __get( string $name ) {
+		switch ( $name ) {
+			case 'user_sync':
+				return UserSync::get_instance();
+			default:
+				return null;
 		}
 	}
 }

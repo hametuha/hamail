@@ -67,6 +67,12 @@ function hamail_plugins_loaded( $plugin ) {
 		Hametuha\Hamail\API\DynamicEmails::get_instance();
 		// Screens.
 		Hametuha\Hamail\Ui\ListTable\RecipientsColumn::get_instance();
+		// Enable user sync.
+		Hametuha\Hamail\API\UserSync::get_instance();
+		// Register command for CLI.
+		if ( defined( 'WP_CLI' ) && WP_CLI ) {
+			WP_CLI::add_command( 'hamail', Hametuha\Hamail\Commands\HamailCommands::class );
+		}
 		// Load Pro features if exists.
 		if ( class_exists( 'Hametuha\\Hamail\\Pro\\Bootstrap' ) ) {
 			Hametuha\Hamail\Pro\Bootstrap::get_instance();
