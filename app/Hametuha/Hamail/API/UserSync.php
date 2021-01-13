@@ -22,8 +22,8 @@ class UserSync extends Singleton {
 	protected function init() {
 		if ( hamail_active_list() ) {
 			add_action( 'hamail_user_email_changed', [ $this, 'email_change_handler' ], 10, 2 );
-			add_action( 'profile_update', [ $this, 'profile_change_handler' ], 10, 2 );
-			add_action( 'user_register', [ $this, 'created_handler' ], 10 );
+			add_action( 'profile_update', [ $this, 'profile_change_handler' ], 200, 2 );
+			add_action( 'user_register', [ $this, 'created_handler' ], 200 );
 			add_action( 'delete_user', [ $this, 'delete_handler' ] );
 		}
 	}
@@ -35,7 +35,7 @@ class UserSync extends Singleton {
 	 * @return string|\WP_Error Sendgrid ID on success.
 	 */
 	public function push( $user ) {
-		$usr = $this->ensure_wp_user( $user );
+		$user = $this->ensure_wp_user( $user );
 		if ( is_wp_error( $user ) ) {
 			return $user;
 		}
@@ -66,8 +66,11 @@ class UserSync extends Singleton {
 			// Add recipients to list.
 			if ( $existing ) {
 				$recipient_ids = [ $existing['id'] ];
+				update_user_meta( $user->ID, 'hamail_last_synced', current_time( 'mysql' ) );
 			} else {
 				$recipient_ids = $result['persisted_recipients'];
+				update_user_meta( $user->ID, 'hamail_first_synced', current_time( 'mysql' ) );
+				update_user_meta( $user->ID, 'hamail_last_synced', current_time( 'mysql' ) );
 			}
 			$list = $this->push_to_list( $recipient_ids );
 			if ( is_wp_error( $list ) ) {
@@ -79,6 +82,14 @@ class UserSync extends Singleton {
 				'code' => $e->getCode(),
 			] );
 		}
+	}
+
+
+	public function bulk_push( $params ) {
+		$params = array_merge( [
+			'number' => 1000,
+		], $params );
+		$params['number'] = min( 1000, $params['number'] );
 	}
 
 	/**
