@@ -61,7 +61,7 @@ jobs:
     if: contains(github.ref, 'tags/')
     runs-on: ubuntu-16.04
     outputs:
-      upload_url: ${{ steps.create_release.outputs.upload_url }}
+      upload_url: ${{ steps.export.outputs.upload_url }}
     steps:
       - uses: actions/checkout@master
 
@@ -77,6 +77,11 @@ jobs:
             Release Hamail version ${{ github.ref }}.
           draft: false
           prerelease: false
+
+      - name: Export Upload URL
+        id: export
+        run: echo "::set-output name=upload_url::${{ steps.create_release.outputs.upload_url }}"
+
 
   release:
     name: Build Plugin
