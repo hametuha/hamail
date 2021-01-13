@@ -5,6 +5,7 @@ namespace Hametuha\Hamail\Commands;
 
 use Hametuha\Hamail\API\UserSync;
 use Hametuha\Hamail\Service\Extractor;
+use cli\Table;
 
 /**
  * Command utility for hamail.
@@ -142,6 +143,30 @@ SQL;
 		\WP_CLI::line( '' );
 		// translators: %d is amount of data.
 		\WP_CLI::success( sprintf( __( '%d data converted.', 'hamail' ), count( $recipient_data ) ) );
+	}
+
+	/**
+	 * Test user data to be sync.
+	 *
+	 * @param array $args
+	 * @synopsis <user_id>
+	 */
+	public function test_fields( $args ) {
+		list( $user_id ) = $args;
+		$user = get_userdata( $user_id );
+		if ( ! $user ) {
+			\WP_CLI::error( __( 'User %d not found.', 'hamail' ), $user_id );
+		}
+		$fields = hamail_fields_to_save( $user );
+		if ( is_wp_error( $fields ) ) {
+			\WP_CLI::error( $fields->get_error_message() );
+		}
+		$table = new Table();
+		$table->setHeaders( [ 'Field', 'Value' ] );
+		foreach ( $fields as $field => $value ) {
+			$table->addRow( [ $field, $value ] );
+		}
+		$table->display();
 	}
 
 	/**
