@@ -55,10 +55,33 @@ jobs:
       - name: Run test suite
         run: composer test
 
-  release:
-    name: Build Plugin
+  pre_release:
+    name: Create Release
     needs: test
     if: contains(github.ref, 'tags/')
+    runs-on: ubuntu-16.04
+    steps:
+      - uses: actions/checkout@master
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release Hamail ${{ github.ref }}
+          body: |
+            Release Hamail version ${{ github.ref }}.
+          draft: false
+          prerelease: false
+
+      - name: Store Upload URL
+        run: echo "upload_url=${{ steps.create_release.outputs.upload_url }}" >> $GITHUB_ENV
+
+  release:
+    name: Build Plugin
+    needs: pre_release
     runs-on: ubuntu-16.04
     strategy:
       matrix:
@@ -79,19 +102,6 @@ jobs:
       - name: Build package.
         run: bash bin/build.sh ${{ github.ref }} ${{ matrix.zip }}
 
-      - name: Deploy Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: Release Hamail ${{ matrix.zip }} v${{ github.ref }}
-          body: |
-            Release Hamail ${{ matrix.zip }} version ${{ github.ref }}.
-          draft: false
-          prerelease: false
-
       - name: Create Zip
         run: zip -r hamail-${{ matrix.zip }}.zip ./
 
@@ -101,7 +111,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
+          upload_url: $upload_url
           asset_path: ./hamail-${{ matrix.zip }}.zip
           asset_name: hamail-${{ matrix.zip }}.zip
           asset_content_type: application/zip
