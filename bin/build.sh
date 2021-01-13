@@ -8,7 +8,9 @@ if [ $# -lt 2 ]; then
 fi
 
 # Set variables.
-VERSION=$1
+PREFIX="refs/tags/"
+VERSION=${1#"$PREFIX"}
+
 WP_README_ENV=$2
 
 echo "Building Hamail ${WP_README_ENV} v${VERSION}..."
