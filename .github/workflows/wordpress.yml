@@ -57,7 +57,7 @@ jobs:
     runs-on: ubuntu-16.04
     strategy:
       matrix:
-        zip: [ 'hamail' ] # Zip name.
+        zip: [ 'light', 'pro' ] # Zip name.
     steps:
       - uses: actions/checkout@master
 
@@ -72,7 +72,7 @@ jobs:
           node-version: '10'
 
       - name: Build package.
-        run: bash bin/build.sh
+        run: bash bin/build.sh ${{ github.ref }} ${{ matrix.version }}
 
       - name: Deploy Release
         id: create_release
@@ -81,14 +81,14 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
+          release_name: Release Hamail ${{ matrix.version }} v${{ github.ref }}
           body: |
-            Release ${{ github.ref }}
+            Release Hamail ${{ matrix.version }} version ${{ github.ref }}.
           draft: false
           prerelease: false
 
       - name: Create Zip
-        run: zip -r ${{ matrix.zip }}.zip ./
+        run: zip -r hamail-${{ matrix.zip }}.zip ./
 
       - name: Upload Release Zip
         id: upload-release-asset
@@ -97,6 +97,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
-          asset_path: ./${{ matrix.zip }}.zip
-          asset_name: ${{ matrix.zip }}.zip
+          asset_path: ./hamail-${{ matrix.version }}.zip
+          asset_name: hamail-${{ matrix.version }}.zip
           asset_content_type: application/zip

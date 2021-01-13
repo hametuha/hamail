@@ -2,7 +2,7 @@
 
 Tags: email, sendgrid, marketing  
 Contributors: Takahashi_Fumiki, hametuha  
-Tested up to: 5.5  
+Tested up to: 5.6  
 Requires at least: 5.0  
 Requires PHP: 5.6  
 Stable Tag: nightly  
@@ -66,6 +66,11 @@ To get supported, please go to [Kunoichi Market](https://kunoichiwp.com/product/
 </only:light -->
 
 ## Changelog
+
+### 2.2.0
+
+* Refactor recipient selector.
+* Update syncing features.
 
 ### 2.1.0
 
