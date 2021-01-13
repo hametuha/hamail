@@ -102,9 +102,7 @@ class HamailCommands extends \WP_CLI_Command {
 SQL;
 		$total = (int) $wpdb->get_var( $query );
 		\WP_CLI::confirm( sprintf( __( 'You have %d users. This will take %d seconds approximately. Are you ready?', 'hamail' ), $total, $total / 1000 * 5 ) );
-
-		var_dump( $total );
-		exit;
+		\WP_CLI::line( __( 'Syncing...', 'hamail' ) );
 		$result = $this->user_sync->bulk_push( [
 			'number' => 1000,
 		] );
