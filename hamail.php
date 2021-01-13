@@ -78,7 +78,7 @@ function hamail_plugins_loaded( $plugin ) {
 			Hametuha\Hamail\Pro\Bootstrap::get_instance();
 		}
 		// Load test file if exists.
-		if ( class_exists( 'Hametuha\\HamailDev\\Bootstrap' ) ) {
+		if ( class_exists( 'Hametuha\\HamailDev\\Bootstrap' ) && ! defined( 'HAMAIL_NO_TEST_MODULES' ) ) {
 			Hametuha\HamailDev\Bootstrap::get_instance();
 		}
 	} catch ( Exception $e ) {

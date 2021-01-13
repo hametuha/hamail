@@ -4,7 +4,7 @@
 /*!
  * Incremental search default.
  *
- * @deps wp-api-fetch, backbone, jquery-ui-autocomplete, wp-i18n;
+ * @deps wp-api-fetch, backbone, jquery-ui-autocomplete, wp-i18n
  */
 
 /* global _:false */
