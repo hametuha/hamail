@@ -266,45 +266,9 @@ function hamail_fields_to_save( WP_User $user ) {
 }
 
 /**
- * Push all users
- *
- * @param array $query
- * @param bool  $execute If true, push data. Else, just display.
- * @return WP_Error|array|\stdClass
- */
-function hamail_push_users( $query, $execute = false ) {
-	if ( isset( $query['number'] ) ) {
-		$query['number'] = min( 1000, $query['number'] );
-	}
-	$users = new WP_User_Query( $query );
-	$data  = [];
-	foreach ( $users->get_results() as $user ) {
-		$user_data = hamail_fields_to_save( $user );
-		if ( $user_data && ! is_wp_error( $user_data ) ) {
-			$data[] = $user_data;
-		}
-	}
-	if ( ! $data ) {
-		return [];
-	}
-	if ( ! $execute ) {
-		return $data;
-	}
-	// Execute syncing.
-	$sg = hamail_client();
-	try {
-		$response = $sg->client->contactdb()->recipients()->patch( $data );
-		return json_decode( $response->body() );
-	} catch ( \Exception $e ) {
-		return new WP_Error( 'error', $e->getMessage(), [
-			'status' => $e->getCode(),
-		] );
-	}
-}
-
-/**
  * Sync account
  *
+ * @deprecated
  * @param int $paged
  * @param int $per_page
  */

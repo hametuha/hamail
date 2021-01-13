@@ -84,12 +84,58 @@ class UserSync extends Singleton {
 		}
 	}
 
-
-	public function bulk_push( $params ) {
+	/**
+	 * Bulk push users.
+	 *
+	 * @param array $query_params
+	 * @return int|\WP_Error Updated count. If failed, return error.
+	 */
+	public function bulk_push( $query_params ) {
+		if ( ! hamail_active_list() ) {
+			return new \WP_Error( 'hamail_user_api_error', __( 'No account is set.', 'hamail' ) );
+		}
 		$params = array_merge( [
 			'number' => 1000,
-		], $params );
+		], $query_params );
 		$params['number'] = min( 1000, $params['number'] );
+		$offset = 0;
+		$errors = new \WP_Error();
+		$sg = hamail_client();
+		do {
+			$has_next           = false;
+			$params[ 'offset' ] = $offset;
+			$user_query         = new \WP_User_Query( $params );
+			$offset            += $user_query->get_total();
+			$users_data         = [];
+			foreach ( $user_query->get_results() as $user ) {
+				$user_data = hamail_fields_to_save( $user );
+				if ( is_wp_error( $user_data ) ) {
+					$errors->add( $user_data->get_error_code(), $user_data->get_error_message() );
+				} else {
+					$users_data[] = $user_data;
+				}
+			}
+			if ( $users_data ) {
+				// Sendgrid
+				$response = $sg->client->contactdb()->recipients()->post( $users_data );
+				$result   = $this->convert_response_to_error( $response );
+				if ( is_wp_error( $result ) ) {
+					$errors->add( $result->get_error_code(), $result->get_error_message() );
+				} else {
+					// Recipients added.
+					$recipients_ids = $result['persisted_recipients'];
+					if ( $recipients_ids ) {
+						$result = $this->push_to_list( $recipients_ids );
+						if ( is_wp_error( $result ) ) {
+							$errors->add( $result->get_error_code(), $result->get_error_message() );
+						}
+					}
+					$has_next = true;
+					sleep( 1 );
+				}
+			}
+		} while ( $has_next );
+		return $errors->get_error_messages() ? $errors : $offset;
 	}
 
 	/**

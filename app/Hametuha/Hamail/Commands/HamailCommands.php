@@ -92,49 +92,30 @@ class HamailCommands extends \WP_CLI_Command {
 
 	/**
 	 * Sync user account to SendGrid
+	 *
 	 */
 	public function sync() {
-		// Sync user while it exists.
-		$cur_page = 1;
-		while ( true ) {
-			$query = apply_filters( 'hamail_user_push_query', [
-//				'role' => 'administrator',
-				'role__not_in' => [ 'pending' ],
-				'paged'        => $cur_page,
-				'number'       => 1000,
-			] );
-			$result = hamail_push_users( $query, true );
-			if ( is_wp_error( $result ) ) {
-				\WP_CLI::error( $result->get_error_message() );
-				break;
-			} elseif ( ! $result ) {
-				\WP_CLI::line( 'All user are synced.' );
-				break;
-			} else {
-				foreach ( $result->errors as $error ) {
-					\WP_CLI::warning( $error->message );
-				}
-				echo '.';
-				sleep( 2 );
-				$cur_page++;
+		\WP_CLI::line( __( 'Start syncing all users to sendgrid list.', 'hamail' ) );
+		global $wpdb;
+		$query = <<<SQL
+			SELECT COUNT(ID) FROM {$wpdb->users}
+SQL;
+		$total = (int) $wpdb->get_var( $query );
+		\WP_CLI::confirm( sprintf( __( 'You have %d users. This will take %d seconds approximately. Are you ready?', 'hamail' ), $total, $total / 1000 * 5 ) );
+
+		var_dump( $total );
+		exit;
+		$result = $this->user_sync->bulk_push( [
+			'number' => 1000,
+		] );
+		if ( is_wp_error( $result ) ) {
+			foreach ( $result->get_error_messages() as $message ) {
+				\WP_CLI::warning( $message );
 			}
+			\WP_CLI::error( __( 'Syncing failed.', 'hamail' ) );
+		} else {
+			\WP_CLI::success( sprintf( __( '%d users synced.', 'hamail' ), $result ) );
 		}
-		// Update all recipients to list.
-		$cur_page = 1;
-		while ( true ) {
-			$updated = hamail_sync_account( $cur_page );
-			if ( ! $updated ) {
-				\WP_CLI::line( 'All user are move to list.' );
-				break;
-			} elseif ( is_wp_error( $updated ) ) {
-				\WP_CLI::error( $updated->get_error_message() );
-			} else {
-				echo '.';
-			}
-			$cur_page++;
-			sleep( 1 );
-		}
-		\WP_CLI::success( 'Done.' );
 	}
 
 	/**
