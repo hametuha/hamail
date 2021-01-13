@@ -22,7 +22,9 @@ jobs:
     services:
       mysql:
         image: mysql:5.7
-        options: --health-cmd "mysqladmin ping -h localhost" --health-interval 20s --health-timeout 10s --health-retries 10
+        options: --health-cmd "mysqladmin ping --host 127.0.0.1 --port 3306" --health-interval 20s --health-timeout 10s --health-retries 10
+        ports:
+          - 3306/tcp
         env:
           MYSQL_ROOT_PASSWORD: root
     name: WordPress ${{ matrix.wp }} in PHP ${{ matrix.php }} UnitTest
