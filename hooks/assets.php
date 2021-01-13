@@ -30,16 +30,34 @@ add_action( 'plugins_loaded', function() {
  * Register assets
  */
 add_action( 'init', function () {
-	$dir = plugin_dir_url( __DIR__ ) . 'assets';
-
-	// Sender
-	wp_register_style( 'hamail-sender', $dir . '/css/hamail.css', [], HAMAIL_VERSION );
-	wp_register_script( 'hamail-sender', $dir . '/js/user.js', [ 'backbone', 'jquery-ui-autocomplete' ], HAMAIL_VERSION, true );
-
-	// Setting Helper
-	wp_register_style( 'hamail-setting', $dir . '/css/hamail-setting.css', [], HAMAIL_VERSION );
-	wp_register_script( 'hamail-setting', $dir . '/js/setting.js', [ 'jquery' ], HAMAIL_VERSION, true );
-	
-	// Reply Helper.
-	wp_register_script( 'hamail-reply', $dir . '/js/reply.js', [ 'wp-api-request' ], HAMAIL_VERSION, true );
+	// Load setting as array.
+	$root_dir = dirname( __DIR__ );
+	$json     = $root_dir . '/wp-dependencies.json';
+	if ( ! file_exists( $json ) ) {
+		return;
+	}
+	$settings = json_decode( file_get_contents( $json ), true );
+	// Register each setting.
+	$dir_base = trailingslashit( $root_dir );
+	$url_base = plugin_dir_url( __DIR__ );
+	foreach ( $settings as $setting ) {
+		$path = $dir_base . $setting['path'];
+		$url  = $url_base . $setting['path'];
+		if ( ! file_exists( $path ) ) {
+			continue;
+		}
+		$time   = filemtime( $path );
+		$handle = preg_replace( '/\.(js|css)$/', '', basename( $setting['path'] ) );
+		$deps   = $setting['deps'];
+		switch ( $setting['ext'] ) {
+			case 'js':
+				// Register JavaScript.
+				wp_register_script( $handle, $url, $deps, $time, true );
+				break;
+			case 'css':
+				// This is CSS.
+				wp_register_style( $handle, $url, $deps, $time );
+				break;
+		}
+	}
 }, 11 );

@@ -1,0 +1,60 @@
+$wp-blue: #1E8CBE;
+
+@keyframes rotation {
+	0% {
+		transform: rotate(0deg);
+	}
+	700% {
+		transform: rotate(180deg);
+	}
+	100% {
+		transform: rotate(360deg);
+	}
+}
+
+.hamail-dynamics {
+
+	&-toggle {
+		&+label {
+			display: inline-block;
+			width: 8em;
+			position: relative;
+			.active {
+				display: none;
+				color: $wp-blue;
+			}
+			.inactive {
+				display: inline;
+				color: #cbcbcb;
+			}
+			.dashicons {
+				display: none;
+				color: $wp-blue;
+				opacity: .6;
+			}
+
+			&.loading {
+				.dashicons {
+					display: inline-block;
+					animation: rotation 1s ease-in-out infinite;
+				}
+			}
+
+			.message {
+				position: absolute;
+				color: $wp-blue;
+				top: 100%;
+				left: 0;
+			}
+		}
+		&:checked + label {
+			.active {
+				display: inline;
+			}
+			.inactive {
+				display: none;
+			}
+		}
+	}
+
+}

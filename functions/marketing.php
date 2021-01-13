@@ -8,19 +8,109 @@
 /**
  * Get available list via API
  *
+ * @param string|null $no_list Label for no list is selected.
  * @return array
  */
-function hamail_available_lists() {
-	$return = [
-		'' => __( 'No sync', 'hamail' ),
-	];
-	$sg = hamail_client();
-	$response = $sg->client->contactdb()->lists()->get();
-	if ( 200 == $response->statusCode() ) {
-		$lists = json_decode( $response->body() )->lists;
-		foreach ( $lists as $list ) {
-			$return[ $list->id ] = sprintf( '%s(%d)', $list->name, $list->recipient_count );
+function hamail_available_lists( $no_list = '' ) {
+	$return = [];
+	if ( ! is_null( $no_list ) ) {
+		if ( ! $no_list ) {
+			$no_list = __( 'No sync', 'hamail' );
 		}
+		$return[''] = $no_list;
+	}
+	try {
+		$sg       = hamail_client();
+		$response = $sg->client->contactdb()->lists()->get();
+		if ( 200 === $response->statusCode() ) {
+			$lists = json_decode( $response->body() )->lists;
+			foreach ( $lists as $list ) {
+				$return[ $list->id ] = sprintf( '%s(%d)', $list->name, $list->recipient_count );
+			}
+		}
+	} catch ( \Exception $e ) {
+		error_log( sprintf( "[HAMAIL_LOG %d]\t%s", $e->getCode(), $e->getMessage() ) );
+	}
+	return $return;
+}
+
+/**
+ * Get all segments.
+ *
+ * @return array[]
+ */
+function hamail_available_segments() {
+	foreach ( hamail_available_lists( null ) as $id => $label ) {
+		$segments[] = [
+			'type'  => 'list',
+			'id'    => $id,
+			'label' => $label,
+		];
+	}
+	$segments = [];
+	try {
+		$sg = hamail_client();
+		// Get lists.
+		$response = $sg->client->contactdb()->lists()->get();
+		if ( 200 === $response->statusCode() ) {
+			$lists = json_decode( $response->body() )->lists;
+			foreach ( $lists as $list ) {
+				$segments[] = [
+					'type'    => 'list',
+					'id'      => $list->id,
+					'label'   => $list->name,
+					'count'   => $list->recipient_count,
+					'list_id' => $list->id,
+				];
+			}
+		}
+		// Get segments.
+		$response = $sg->client->contactdb()->segments()->get();
+		if ( 200 === $response->statusCode() ) {
+			$lists = json_decode( $response->body() )->segments;
+			foreach ( $lists as $list ) {
+				$segments[] = [
+					'type'    => 'segment',
+					'id'      => $list->id,
+					'label'   => $list->name,
+					'count'   => $list->recipient_count,
+					'list_id' => $list->list_id,
+				];
+			}
+		}
+	} catch ( \Exception $e ) {
+		error_log( sprintf( "[HAMAIL_LOG %d]\t%s", $e->getCode(), $e->getMessage() ) );
+	}
+	return $segments;
+}
+
+/**
+ * Get sender ID list.
+ *
+ * @param string|null $no_list
+ * @return array
+ */
+function hamail_available_senders( $no_list = '' ) {
+	$return = [];
+	if ( ! is_null( $no_list ) ) {
+		if ( ! $no_list ) {
+			$no_list = __( 'No Sender ID', 'hamail' );
+		}
+		$return[''] = $no_list;
+	}
+	try {
+		$sg       = hamail_client();
+		$response = $sg->client->senders()->get();
+		if ( 200 === $response->statusCode() ) {
+			$lists = json_decode( $response->body() );
+			if ( $lists ) {
+				foreach ( $lists as $sender ) {
+					$return[ $sender->id ] = sprintf( '%s <%s>', $sender->nickname, $sender->from->email );
+				}
+			}
+		}
+	} catch ( \Exception $e ) {
+		error_log( sprintf( "[HAMAIL_LOG %d]\t%s", $e->getCode(), $e->getMessage() ) );
 	}
 	return $return;
 }
@@ -41,16 +131,16 @@ function hamail_active_list() {
  */
 function hamail_get_custom_fields() {
 	$fields = [
-		'email' => false,
+		'email'      => false,
 		'first_name' => false,
-		'last_name' => false,
+		'last_name'  => false,
 	];
 	if ( ! hamail_enabled() ) {
 		return $fields;
 	}
 	$sg = hamail_client();
 	try {
-		$response = $sg->client->contactdb()->custom_fields()->get();
+		$response      = $sg->client->contactdb()->custom_fields()->get();
 		$custom_fields = json_decode( $response->body() );
 		if ( isset( $custom_fields->custom_fields ) ) {
 			foreach ( $custom_fields->custom_fields as $field ) {
@@ -112,8 +202,8 @@ function hamail_available_roles() {
 		'author',
 		'contributor',
 		'subscriber',
-		'customer', // WooCommerce,
-		'seller', // Makibishi
+		'customer', // WooCommerce.
+		'seller', // Makibishi.
 	];
 	/**
 	 * hamail_available_roles
@@ -142,10 +232,10 @@ function hamail_fields_to_save( WP_User $user ) {
 	foreach ( $fields as $sendgrid => $wordpress ) {
 		if ( 'role' === $wordpress ) {
 			// Get user role.
-			$roles = hamail_available_roles();
+			$roles      = hamail_available_roles();
 			$fixed_role = '';
 			foreach ( $user->roles as $role ) {
-				if ( in_array( $role, $roles ) ) {
+				if ( in_array( $role, $roles, true ) ) {
 					$fixed_role = $role;
 				}
 			}
@@ -176,51 +266,15 @@ function hamail_fields_to_save( WP_User $user ) {
 }
 
 /**
- * Push all users
- *
- * @param array $query
- * @param bool  $execute If true, push data. Else, just display.
- * @return WP_Error|array|\stdClass
- */
-function hamail_push_users( $query, $execute = false ) {
-	if ( isset( $query['number'] ) ) {
-		$query['number'] = min( 1000, $query['number'] );
-	}
-	$users = new WP_User_Query( $query );
-	$data = [];
-	foreach ( $users->get_results() as $user ) {
-		$user_data = hamail_fields_to_save( $user );
-		if ( $user_data && ! is_wp_error( $user_data ) ) {
-			$data[] = $user_data;
-		}
-	}
-	if ( ! $data ) {
-		return [];
-	}
-	if ( ! $execute ) {
-		return $data;
-	}
-	// Execute syncing
-	$sg = hamail_client();
-	try {
-		$response = $sg->client->contactdb()->recipients()->patch( $data );
-		return json_decode( $response->body() );
-	} catch ( \Exception $e ) {
-		return new WP_Error( 'error', $e->getMessage(), [
-			'status' => $e->getCode(),
-		] );
-	}
-}
-
-/**
  * Sync account
  *
+ * @deprecated
  * @param int $paged
  * @param int $per_page
  */
 function hamail_sync_account( $paged = 1, $per_page = 1000 ) {
 	$list = (int) get_option( 'hamail_list_to_sync' );
-	$key = get_option( 'hamail_site_key' );
+	$key  = get_option( 'hamail_site_key' );
 	if ( ! $list || ! $key ) {
 		return new WP_Error( 'bad_option', __( 'List or site key is not set.', 'hamail' ), [
 			'status' => 500,
@@ -229,9 +283,9 @@ function hamail_sync_account( $paged = 1, $per_page = 1000 ) {
 	// Get all contacts and push them to list.
 	$sg = hamail_client();
 	try {
-		$ids = [];
-		$response = $sg->client->contactdb()->recipients()->get(null, [
-			'page' => $paged,
+		$ids        = [];
+		$response   = $sg->client->contactdb()->recipients()->get(null, [
+			'page'      => $paged,
 			'page_size' => $per_page,
 		] );
 		$recipients = json_decode( $response->body() )->recipients;
@@ -240,7 +294,7 @@ function hamail_sync_account( $paged = 1, $per_page = 1000 ) {
 		}
 		foreach ( $recipients as $recipient ) {
 			foreach ( $recipient->custom_fields as $field ) {
-				if ( ( $key == $field->name ) && $field->value ) {
+				if ( ( $key === $field->name ) && $field->value ) {
 					$ids[] = $recipient->id;
 				}
 			}
@@ -249,8 +303,8 @@ function hamail_sync_account( $paged = 1, $per_page = 1000 ) {
 			return false;
 		}
 		// Push to list.
-		$response = $sg->client->contactdb()->lists()->_($list)->recipients()->post( $ids );
-		return 201 == $response->statusCode();
+		$response = $sg->client->contactdb()->lists()->_( $list )->recipients()->post( $ids );
+		return 201 === $response->statusCode();
 	} catch ( \Exception $e ) {
 		return new WP_Error( 'response_failed', $e->getMessage(), [
 			'status' => $e->getCode(),
@@ -269,12 +323,12 @@ function hamail_get_recipient_id( $user_id ) {
 	if ( is_wp_error( $fields ) ) {
 		return '';
 	}
-	$user_id_key = array_search( 'ID', $fields );
-	$sg = hamail_client();
-	$response = $sg->client->contactdb()->recipients()->search()->get(null, [
+	$user_id_key = array_search( 'ID', $fields, true );
+	$sg          = hamail_client();
+	$response    = $sg->client->contactdb()->recipients()->search()->get(null, [
 		$user_id_key => $user_id,
 	] );
-	if ( 200 != $response->statusCode() ) {
+	if ( 200 !== $response->statusCode() ) {
 		return '';
 	}
 	$result = json_decode( $response->body() );

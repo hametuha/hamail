@@ -1,11 +1,11 @@
-# Hamail
+# Hamail - Send Email via SendGrid
 
 Tags: email, sendgrid, marketing  
 Contributors: Takahashi_Fumiki, hametuha  
-Tested up to: 5.2.3  
-Requires at least: 5.0.0  
+Tested up to: 5.6  
+Requires at least: 5.0  
 Requires PHP: 5.6  
-Stable Tag: 2.1.0  
+Stable Tag: nightly  
 License: GPLv3 or later  
 License URI: http://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -15,6 +15,16 @@ A WordPress plugin to send contact mail to your users via Sendgrid.
 
 This plugin enables you to send emails to each of your users.
 No more long **to** or BCCs.
+
+### Features
+
+- User contact email.
+- HTML SendGrid email Template.
+- Override default email functions.
+- Marketing Email creator **[PRO]**
+- Periodical Email **[PRO]**
+
+Pro version is available at [Kunoichi Market](https://kunoichiwp.com/product/plugin/hamail-pro).
 
 ## Installation
 
@@ -27,12 +37,12 @@ Click install and activate it.
 Composer and NPM are required.
 
 ```
-# Go to your wp-content/plugins and run git
+ # Go to your wp-content/plugins and run git
 cd wp-content/plugins
 git clone https://github.com/hametuha/hamail.git hamail
-# Then move into
+ # Then move into
 cd hamail
-# Install dependencies
+ # Install dependencies
 composer install
 npm install && npm start
 ```
@@ -43,7 +53,24 @@ You need [SendGrid API Key](https://sendgrid.com/docs/Classroom/Send/How_Emails_
 
 For more details, go to hamail setting screen.
 
+## FAQ
+
+### Where can I get supported?
+
+<!-- only:pro>
+Please Go to [Kunoichi Market](https://kunoichiwp.com/product/plugin/hamail-pro) to get supported.
+</only:pro -->
+
+<!-- only:light>
+To get supported, please go to [Kunoichi Market](https://kunoichiwp.com/product/plugin/hamail-pro).
+</only:light -->
+
 ## Changelog
+
+### 2.2.0
+
+* Refactor recipient selector.
+* Update syncing features.
 
 ### 2.1.0
 
