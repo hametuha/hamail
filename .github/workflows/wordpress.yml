@@ -43,7 +43,7 @@ jobs:
         run: composer install --prefer-dist --no-progress --no-suggest
 
       - name: Install WordPress
-        run: bash bin/install-wp-tests.sh wordpress root root 127.0.0.1 ${{ matrix.wp }}
+        run: bash bin/install-wp-tests.sh wordpress root root 127.0.0.1:3306 ${{ matrix.wp }}
 
       - name: Remove Pro directory for light version.
         if: matrix.version != 'pro'
