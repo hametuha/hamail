@@ -93,6 +93,9 @@ jobs:
     steps:
       - uses: actions/checkout@master
 
+      - name: Confirm
+        run: echo ${{ needs.pre_release.outputs.upload_url }}
+
       - name: Setup PHP
         uses: nanasess/setup-php@master
         with:
@@ -115,7 +118,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ needs.pre_release.outputs.upoad_url }}
+          upload_url: ${{ needs.pre_release.outputs.upload_url }}
           asset_path: ./hamail-${{ matrix.zip }}.zip
           asset_name: hamail-${{ matrix.zip }}.zip
           asset_content_type: application/zip
