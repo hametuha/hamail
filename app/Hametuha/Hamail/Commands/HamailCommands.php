@@ -35,7 +35,7 @@ class HamailCommands extends \WP_CLI_Command {
 		$dry_run = ! empty( $assoc['dry-run'] );
 		$user = get_userdata( $user_id );
 		if ( ! $user ) {
-			\WP_CLI::error( sprintf( __( 'User ID does not exist: %s', ), $user_id ) );
+			\WP_CLI::error( sprintf( __( 'User ID does not exist: %s', 'hamail' ), $user_id ) );
 		}
 		$recipient = $this->user_sync->get_recipient( $user_id );
 		if ( is_wp_error( $recipient ) ) {
@@ -94,6 +94,7 @@ class HamailCommands extends \WP_CLI_Command {
 	/**
 	 * Sync user account to SendGrid
 	 *
+	 * @deprecated
 	 */
 	public function sync() {
 		\WP_CLI::line( __( 'Start syncing all users to sendgrid list.', 'hamail' ) );
@@ -114,6 +115,90 @@ SQL;
 			\WP_CLI::error( __( 'Syncing failed.', 'hamail' ) );
 		} else {
 			\WP_CLI::success( sprintf( __( '%d users synced.', 'hamail' ), $result ) );
+		}
+	}
+
+	/**
+	 * Export users as csv.
+	 *
+	 * ## OPTIONS
+	 *
+	 * : [--destination=<destination>]
+	 *   Optional. If specified, output as CSV file.
+	 *
+	 * @param array $args
+	 * @param array $assoc
+	 * @synopsis [--destination=<destination>]
+	 */
+	public function export( $args, array $assoc ) {
+		$destination = ! empty( $assoc['destination'] ) ? $assoc['destination'] : false;
+		$table = new Table();
+		$csv   = null;
+		if ( $destination ) {
+			if ( file_exists( $destination ) ) {
+				\WP_CLI::error( sprintf( __( 'File %s already exists.', 'hamail' ), $destination ) );
+			}
+			$parent = realpath( dirname( $destination ) );
+			if ( ! is_dir( $parent ) || ! is_writeable( $parent ) ) {
+				\WP_CLI::error( sprintf( __( 'Parent directory %s is not writable.', 'hamail' ), $destination ) );
+			}
+			$csv = new \SplFileObject( $destination, 'w' );
+			$set_header = function( $headers ) use ( &$csv ) {
+				$csv->fputcsv( $headers );
+			};
+			$set_row = function( $fields ) use ( &$csv ) {
+				$csv->fputcsv( $fields );
+			};
+		} else {
+			$set_header = function( $headers ) use ( &$table ) {
+				$table->setHeaders( $headers );
+			};
+			$set_row    = function( $fields ) use ( &$table ) {
+				$table->addRow( $fields );
+			};
+		}
+
+		\WP_CLI::line( __( 'Exporting 1000 users per dot. Please be patient.', 'hamail' ) );
+		$has_next = true;
+		$paged    = 1;
+		$header   = false;
+		$count    = 0;
+		while ( $has_next ) {
+			$user_query = new \WP_User_Query( [
+				'number' => 1000,
+				'paged'  => $paged,
+			] );
+			$users = $user_query->get_results();
+			if ( count( $users ) ) {
+				$paged++;
+				foreach ( $users as $user ) {
+					$fields = hamail_fields_to_save( $user );
+					if ( is_wp_error( $fields ) ) {
+						continue;
+					}
+					if ( ! $header ) {
+						$header = true;
+						$set_header( array_keys( $fields ) );
+					}
+					$set_row( array_values( $fields ) );
+					$count++;
+				}
+				echo '.';
+			} else {
+				$has_next = false;
+			}
+		}
+		\WP_CLI::line( '' );
+		if ( ! $count ) {
+			\WP_CLI::error( __( 'No user found. Please check your setting.', 'hamail' ) );
+		} else {
+			\WP_CLI::line( sprintf( __( '%d users found.', 'hamail' ), $count ) );
+		}
+
+		if ( $destination ) {
+			\WP_CLI::success( sprintf( __( 'CSV is output: %s', 'hamail' ), $destination ) );
+		} else {
+			$table->display();
 		}
 	}
 

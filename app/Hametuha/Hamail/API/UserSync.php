@@ -87,6 +87,7 @@ class UserSync extends Singleton {
 	/**
 	 * Bulk push users.
 	 *
+	 * @deprecated Not reliable.
 	 * @param array $query_params
 	 * @return int|\WP_Error Updated count. If failed, return error.
 	 */

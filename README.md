@@ -71,6 +71,7 @@ To get supported, please go to [Kunoichi Market](https://kunoichiwp.com/product/
 
 * Refactor recipient selector.
 * Update syncing features.
+* Add WP-CLI command for export users.
 
 ### 2.1.0
 
