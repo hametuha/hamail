@@ -5,3 +5,4 @@ package-lock.json
 composer.lock
 /wordpress/
 wp-dependencies.json
+hamail-userdata.csv

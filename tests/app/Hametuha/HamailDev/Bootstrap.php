@@ -30,6 +30,12 @@ class Bootstrap extends Singleton {
 			$classes[] = WeeklyReport::class;
 			return $classes;
 		} );
+		// Add filter for fields.
+		add_filter( 'hamail_user_field', function( $fields, \WP_User $user ) {
+			$fields['hametuha'] = 'hamail';
+			$fields['pseudo']   = preg_match( '/(example\.com|@pesuedo)/u', $user->user_email ) ? 'pseudo' : 'valid';
+			return $fields;
+		}, 10, 2 );
 	}
 
 	/**
@@ -53,6 +59,12 @@ class Bootstrap extends Singleton {
 		return $groups;
 	}
 
+	/**
+	 * Add generic user group.
+	 *
+	 * @param array $groups
+	 * @return array
+	 */
 	public function generic_user_group( $groups ) {
 		$groups[] = [
 			'id'       => 'hamail_tag_authors',
