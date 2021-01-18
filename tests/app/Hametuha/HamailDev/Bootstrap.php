@@ -36,6 +36,11 @@ class Bootstrap extends Singleton {
 			$fields['pseudo']   = preg_match( '/(example\.com|@pesuedo)/u', $user->user_email ) ? 'pseudo' : 'valid';
 			return $fields;
 		}, 10, 2 );
+		// Add shortcode.
+		add_shortcode( 'hamail-date', function( $atts, $content = '' ) {
+			$atts = shortcode_atts( [], $atts, 'hamail-date' );
+			return sprintf( '<p>This email #%d created at %s</p>', get_the_ID(), get_the_date() );
+		} );
 	}
 
 	/**

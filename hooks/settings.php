@@ -13,6 +13,7 @@ add_action( 'admin_notices', function () {
 		printf(
 			'<div class="error"><p>%s</p></div>',
 			wp_kses_post( sprintf(
+				// translators: %s is link.
 				__( 'No API key is set. Please go to <a href="%s">Setting Page</a>.', 'hamail' ),
 				admin_url( 'options-general.php?page=hamail-setting' )
 			) )
@@ -27,11 +28,13 @@ add_action( 'admin_notices', function () {
 		if ( hamail_is_debug() ) {
 			printf(
 				'<div class="notice notice-info"><p>%s</p></div>',
-				wp_kses_post( __( 'Hamail is now <strong>debug mode</strong>. SendGrid API will never used. To disabled debug mode, change <code>define( \'HAMAIL_DEBUG\', false )</code> in your wp-config.php.', 'hamail' ) ) );
+				wp_kses_post( __( 'Hamail is now <strong>debug mode</strong>. SendGrid API will never used. To disabled debug mode, change <code>define( \'HAMAIL_DEBUG\', false )</code> in your wp-config.php.', 'hamail' ) )
+			);
 		} elseif ( WP_DEBUG ) {
 			printf(
 				'<div class="notice notice-warning"><p>%s</p></div>',
-				wp_kses_post( __( 'WordPress debug mode <code>WP_DEBUG</code> detected. If this is development production, please consider <code>define( \'HAMAIL_DEBUG\', true )</code> in your wp-config.php. Hamail may sent real email to your users via Web API even if you don\'t have local mail server!', 'hamail' ) ) );
+				wp_kses_post( __( 'WordPress debug mode <code>WP_DEBUG</code> detected. If this is development production, please consider <code>define( \'HAMAIL_DEBUG\', true )</code> in your wp-config.php. Hamail may sent real email to your users via Web API even if you don\'t have local mail server!', 'hamail' ) )
+			);
 		}
 	}
 } );
@@ -55,7 +58,7 @@ add_action( 'admin_menu', function () {
 		<div class="wrap">
 			<h2>
 				<span class="dashicons dashicons-email-alt"></span>
-				<?php esc_html_e( 'Hamail Setting', 'hamail' ) ?>
+				<?php esc_html_e( 'Hamail Setting', 'hamail' ); ?>
 			</h2>
 
 			<form method="post" action="options.php">
@@ -68,57 +71,53 @@ add_action( 'admin_menu', function () {
 
 			<hr/>
 
-			<h2><?php esc_html_e( 'Test Mail', 'hamail' ) ?></h2>
+			<h2><?php esc_html_e( 'Test Mail', 'hamail' ); ?></h2>
 
 			<?php if ( ! hamail_enabled() ) : ?>
 				<p class="description">
-					<?php esc_html_e( 'You can test email after setting up SendGrid API key.', 'hamail' ) ?>
+					<?php esc_html_e( 'You can test email after setting up SendGrid API key.', 'hamail' ); ?>
 				</p>
 			<?php else : ?>
 
 				<?php if ( filter_input( INPUT_GET, 'mail_sent' ) ) : // Show message if mail is sent. ?>
 					<div class="updated">
-						<p><?php esc_html_e( 'Mail sent successfully. Please check how it looks like on your mail client.', 'hamail' ) ?></p>
+						<p><?php esc_html_e( 'Mail sent successfully. Please check how it looks like on your mail client.', 'hamail' ); ?></p>
 					</div>
 				<?php endif; ?>
 
 				<p class="description">
-					<?php esc_html_e( 'Try sending mail via SendGrid.', 'hamail' ) ?>
+					<?php esc_html_e( 'Try sending mail via SendGrid.', 'hamail' ); ?>
 				</p>
 
-				<form action="<?php echo esc_attr( admin_url( 'options-general.php' ) ) ?>?page=hamail-setting"
-					  method="post">
-					<?php wp_nonce_field( 'hamail_test' ) ?>
+				<form action="<?php echo esc_attr( admin_url( 'options-general.php' ) ); ?>?page=hamail-setting" method="post">
+					<?php wp_nonce_field( 'hamail_test' ); ?>
 					<table class="form-table">
 						<tr>
 							<th>
-								<label for="hamail_subject"><?php esc_html_e( 'Subject', 'hamail' ) ?></label>
+								<label for="hamail_subject"><?php esc_html_e( 'Subject', 'hamail' ); ?></label>
 							</th>
 							<td>
-								<input type="text" name="hamail_subject" id="hamail_subject" class="regular-text"
-									   value=""/>
+								<input type="text" name="hamail_subject" id="hamail_subject" class="regular-text" value="" />
 							</td>
 						</tr>
 						<tr>
 							<th>
-								<label for="hamail_to"><?php esc_html_e( 'Mail to', 'hamail' ) ?></label>
+								<label for="hamail_to"><?php esc_html_e( 'Mail to', 'hamail' ); ?></label>
 							</th>
 							<td>
-								<input type="email" name="hamail_to" id="hamail_to" class="regular-text"
-									   value=""/>
+								<input type="email" name="hamail_to" id="hamail_to" class="regular-text" value="" />
 							</td>
 						</tr>
 						<tr>
 							<th>
-								<label for="hamail_body"><?php esc_html_e( 'Mail Body', 'hamail' ) ?></label>
+								<label for="hamail_body"><?php esc_html_e( 'Mail Body', 'hamail' ); ?></label>
 							</th>
 							<td>
-                            <textarea rows="5" type="text" name="hamail_body" id="hamail_body"
-									  style="width: 90%"></textarea>
+                            <textarea rows="5" type="text" name="hamail_body" id="hamail_body" style="width: 90%"></textarea>
 							</td>
 						</tr>
 					</table>
-					<?php submit_button( __( 'Send mail', 'hamail' ) ) ?>
+					<?php submit_button( __( 'Send mail', 'hamail' ) ); ?>
 				</form>
 			<?php endif; ?>
 		</div><!-- //.wrap -->
@@ -141,8 +140,8 @@ add_action( 'admin_init', function () {
 	}, 'hamail-setting' );
 	foreach (
 		[
-			'hamail_api_key' => [ __( 'SendGrid API key', 'hamail' ), '', '' ],
-			'hamail_default_from' => [ __( 'Default Mail From', 'hamail' ), '', get_option( 'admin_email' ) ],
+			'hamail_api_key'             => [ __( 'SendGrid API key', 'hamail' ), '', '' ],
+			'hamail_default_from'        => [ __( 'Default Mail From', 'hamail' ), '', get_option( 'admin_email' ) ],
 			TemplateSelector::OPTION_KEY => [
 				__( 'Template ID', 'hamail' ),
 				sprintf(
@@ -158,27 +157,29 @@ add_action( 'admin_init', function () {
 		add_settings_field( $key, $label, function () use ( $key, $description, $placeholder ) {
 			// Set message and input type.
 			$message = '';
-			$type = 'text';
-			$input = '';
+			$type    = 'text';
+			$input   = '';
 			switch ( $key ) {
 				case TemplateSelector::OPTION_KEY:
 					// If API key is not set,
 					// Hide style option.
 					if ( ! hamail_enabled() ) {
-						$type = 'hidden';
+						$type    = 'hidden';
 						$message = __( 'If SendGrid API key is valid, you can set template.', 'hamail' );
 					} else {
-						$value = TemplateSelector::get_default_template();
+						$value     = TemplateSelector::get_default_template();
 						$templates = TemplateSelector::get_template_pull_down();
 						if ( is_wp_error( $templates ) ) {
 							$message = $templates->get_error_message();
-							$type = 'text';
+							$type    = 'text';
 						} else {
 							$input = $templates;
 						}
-						if ( $styles = hamail_get_mail_css() ) {
+						$styles = hamail_get_mail_css();
+						if ( $styles ) {
 							// translators: %s is csv list of stylesheets path.
 							$message = sprintf(
+								// translators: %s is stylesheet.
 								__( 'Stylesheet %s will be applied to your mail body.', 'hamail' ),
 								implode( ', ', array_map( function ( $path ) {
 									return sprintf( '<code>%s</code>', esc_html( $path ) );

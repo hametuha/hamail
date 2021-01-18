@@ -1,16 +1,19 @@
 <?php
 
-namespace Hametuha\Hamail\Pro\Addons;
+namespace Hametuha\Hamail\API;
 
 
 use Hametuha\Hamail\Pattern\Singleton;
+use Hametuha\Hamail\Utility\ApiUtility;
 
 /**
  * Marketing feature.
  *
  * @package Hametuha\Hamail\Pro\Addons
  */
-class MarketingAutomation extends Singleton {
+class MarketingEmail extends Singleton {
+
+	use ApiUtility;
 
 	const POST_TYPE = 'marketing-mail';
 
@@ -22,14 +25,12 @@ class MarketingAutomation extends Singleton {
 	 * Constructor.
 	 */
 	protected function init() {
-		// TODO: implement.
-		return;
+		if ( ! hamail_enabled() ) {
+			return;
+		}
 		add_action( 'init', [ $this, 'register_post_type' ], 11 );
-		add_filter( 'hamail_template_selectable_post_type', [ $this, 'add_post_type' ] );
-		add_filter( 'hamail_should_show_placeholder_meta_box', [ $this, 'hamail_placeholder_meta_box' ], 10, 2 );
 		add_action( 'add_meta_boxes', [ $this, 'add_meta_boxes' ] );
 		add_action( 'save_post_' . self::POST_TYPE, [ $this, 'save_post' ], 10, 2 );
-
 	}
 
 	/**
@@ -58,43 +59,13 @@ class MarketingAutomation extends Singleton {
 	public function add_meta_boxes( $post_type ) {
 		if ( self::POST_TYPE === $post_type ) {
 			add_meta_box( 'hamail-marketing-target', __( 'Marketing Setting', 'hamail' ), [ $this, 'meta_box_marketing_list' ], $post_type, 'side', 'high' );
-			add_meta_box( 'hamail-marketing-timing', __( 'Schedule', 'hamail' ), [ $this, 'meta_box_marketing_schedule' ], $post_type, 'side', 'high' );
+			add_meta_box( 'hamail-marketing-fields', __( 'Available Fields', 'hamail' ), [ $this, 'meta_box_marketing_fields' ], $post_type, 'advanced', 'high' );
 		}
 	}
 
-	/**
-	 * Render schedule selector.
-	 *
-	 * @param \WP_Post $post
-	 */
-	public function meta_box_marketing_schedule( $post ) {
-		wp_nonce_field( 'hamail_marketing_schedule', '_hamailmarketingschedule', false );
-		$frequency = get_post_meta( $post->ID, '_frequency', true );
-		?>
-		<p>
-			<label for="send_frequency"><?php esc_html_e( 'Frequency', 'hanmail' ) ?></labelf><br />
-			<select id="send_frequency" name="send_frequency">
-				<option disabled value=""><?php esc_html_e( 'Select Frequency', 'hamail' ); ?></option>
-				<option value="yearly"<?php selected( 'yearly', $frequency ) ?>><?php esc_html_e( 'Yearly', 'hamail' ); ?></option>
-				<option value="monthly"<?php selected( 'monthly', $frequency ) ?>><?php esc_html_e( 'Monthly', 'hamail' ); ?></option>
-				<optgroup label="<?php esc_attr_e( 'Weekly', 'hamail' ) ?>">
-					<?php foreach ( range( 0, 6 ) as $day ) :
-						$value = 'weekly_' . $day;
-						$date = strtotime( 'last sunday', current_time( 'timestamp' ) ) + $day * 3600 * 24;
-						?>
-						<option value="<?php echo esc_attr( $value ) ?>">
-							<?php echo esc_html( date_i18n( 'D', $date ) ); ?>
-						</option>
-					<?php endforeach; ?>
-				</optgroup>
-			</select>
-		</p>
+	public function get_marketing_id( $post ) {
+		$post = get_post( $post );
 
-		<p>
-			<label for="send_time"><?php esc_html_e( 'Send At', 'hamail' ); ?></label><br />
-			<input type="time" name="send_time" id="send_time" value="<?php echo esc_attr( get_post_meta( $post->ID, 'send_at', '' ) ); ?>" />
-		</p>
-		<?php
 	}
 
 	/**
@@ -105,6 +76,17 @@ class MarketingAutomation extends Singleton {
 	public function meta_box_marketing_list( $post ) {
 		wp_nonce_field( 'hamail_marketing_target', '_hamailmarketing', false );
 		?>
+		<p class="hamail-meta-row">
+			<label for="hamail_marketing_id" class="block">
+				<?php esc_html_e( 'Marketing ID', 'hamail' ); ?>
+			</label>
+			<select name="hamail_marketing_sender" id="hamail_marketing_sender">
+				<?php foreach ( hamail_available_senders() as $id => $label ) : ?>
+					<option value="<?php echo esc_attr( $id ); ?>" <?php selected( $id, $this->get_post_sender( $post ) ); ?>><?php echo esc_html( $label ); ?></option>
+				<?php endforeach; ?>
+			</select>
+		</p>
+		<hr />
 		<p class="hamail-meta-row">
 			<label for="hamail_marketing_sender" class="block">
 				<?php esc_html_e( 'Sender ID', 'hamail' ); ?>
@@ -163,6 +145,51 @@ class MarketingAutomation extends Singleton {
 	}
 
 	/**
+	 * Render available fields meta box.
+	 *
+	 * @param \WP_Post $post
+	 */
+	public function meta_box_marketing_fields( $post ) {
+		$custom_fields = $this->get_custom_fields();
+		wp_enqueue_style( 'hamail-sender' );
+		?>
+		<div class="hamail-instruction">
+			<?php if ( empty( $custom_fields ) ) : ?>
+				<p class="wp-ui-text-notification">
+					<?php esc_html_e( 'Failed to get custom fields. Please check API key is valid.', 'hamail' ); ?>
+				</p>
+			<?php else : ?>
+				<table class="hamail-instruction-table">
+					<thead>
+					<tr>
+						<th><?php esc_html_e( 'Place Holder', 'hamail' ); ?></th>
+						<th><?php esc_html_e( 'Type', 'hamail' ); ?></th>
+						<th><?php esc_html_e( 'Reserved', 'hamail' ); ?></th>
+						<th>&nbsp;</th>
+					</tr>
+					<tbody>
+					<?php foreach ( $custom_fields as $field ) : ?>
+						<tr>
+							<td><?php echo esc_html( $field['name'] ); ?></td>
+							<td><?php echo esc_html( $field['type'] ); ?></td>
+							<td><?php echo $field['reserved'] ? '<span class="dashicons dashicons-yes wp-ui-text-primary"></span>' : '<span style="color: lightgrey">--</span>'; ?></td>
+							<td>
+								<button class="button" onclick="window.prompt( this.dataset.title, '{%' + this.dataset.text + '%}' );"
+										data-title="<?php esc_attr_e( 'Please copy this as place holder.', 'hamail' ) ?>"
+										data-text="<?php echo esc_attr( $field['reserved'] ? $field['name'] : ( $field['name'] . ' | ' . __( 'Default Value', 'hamail' ) ) ) ?>">
+									<?php esc_html_e( 'Copy', 'hamail' ); ?>
+								</button>
+							</td>
+						</tr>
+					<?php endforeach; ?>
+					</tbody>
+				</table>
+			<?php endif; ?>
+		</div>
+		<?php
+	}
+
+	/**
 	 * Get post sender ID.
 	 *
 	 * @param int|\WP_Post|null $post
@@ -179,7 +206,7 @@ class MarketingAutomation extends Singleton {
 	public function register_post_type() {
 		$hamail_post_type = get_post_type_object( 'hamail' );
 		$args             = apply_filters( 'hamail_marketing_post_type_arg', [
-			'label'             => __( 'Automated Marketing', 'hamail' ),
+			'label'             => __( 'Marketing Email', 'hamail' ),
 			'public'            => false,
 			'show_ui'           => true,
 			'show_in_rest'      => true,
@@ -189,27 +216,5 @@ class MarketingAutomation extends Singleton {
 			'capability_type'   => 'page',
 		] );
 		register_post_type( self::POST_TYPE, $args );
-	}
-
-	/**
-	 * Post type supports.
-	 *
-	 * @param string[] $post_types
-	 * @return string[]
-	 */
-	public function add_post_type( $post_types ) {
-		$post_types[] = self::POST_TYPE;
-		return $post_types;
-	}
-
-	/**
-	 * Add placeholder meta box.
-	 *
-	 * @param bool   $show
-	 * @param string $post_type
-	 * @return bool
-	 */
-	public function hamail_placeholder_meta_box( $show, $post_type ) {
-		return self::POST_TYPE === $post_type ? true : $show;
 	}
 }

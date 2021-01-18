@@ -14,6 +14,5 @@ use Hametuha\Hamail\Pro\Addons\MarketingAutomation;
 class Bootstrap extends Singleton {
 
 	protected function init() {
-		MarketingAutomation::get_instance();
 	}
 }

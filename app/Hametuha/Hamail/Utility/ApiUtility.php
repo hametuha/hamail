@@ -12,6 +12,67 @@ use SendGrid\Response;
 trait ApiUtility {
 
 	/**
+	 * Get list of custom fields.
+	 *
+	 * @param array $args     Arguments. [ 'reserved' => true, 'custom' => true, ].
+	 * @param bool  $wp_error If true, return WP_Error on failure.
+	 * @return array
+	 */
+	protected function get_custom_fields( $args = [], $wp_error = false ) {
+		$targets = wp_parse_args( $args, [
+			'reserved' => true,
+			'custom'   => true,
+		] );
+		$custom_fields = [];
+		$errors        = new \WP_Error();
+		$sg            = hamail_client();
+		foreach ( $targets as $key => $include ) {
+			if ( ! $include ) {
+				continue;
+			}
+			switch ( $key ) {
+				case 'custom':
+					$response = $sg->client->contactdb()->custom_fields()->get();
+					$result   = $this->convert_response_to_error( $response );
+					if ( is_wp_error( $result ) ) {
+						$errors->add( $result->get_error_code(), $result->get_error_message() );
+					} else {
+						foreach ( $result['custom_fields'] as $field ) {
+							$custom_fields[] = [
+								'id'       => $field['id'],
+								'name'     => $field['name'],
+								'type'     => $field['type'],
+								'reserved' => false,
+							];
+						}
+					}
+					break;
+				case 'reserved':
+					$response = $sg->client->contactdb()->reserved_fields()->get();
+					$result   = $this->convert_response_to_error( $response );
+					if ( is_wp_error( $result ) ) {
+						$errors->add( $result->get_error_code(), $result->get_error_message() );
+					} else {
+						foreach ( $result['reserved_fields'] as $field ) {
+							$custom_fields[] = [
+								'id'       => 0,
+								'name'     => $field['name'],
+								'type'     => $field['type'],
+								'reserved' => true,
+							];
+						}
+					}
+					break;
+			}
+		}
+		if ( $wp_error ) {
+			return $errors->get_error_messages() ? $errors : $custom_fields;
+		} else {
+			return $custom_fields;
+		}
+	}
+
+	/**
 	 * If response is error, convert it to WP_Error
 	 *
 	 * @param Response $response
