@@ -19,7 +19,13 @@ class MarketingEmail extends Singleton {
 
 	const META_KEY_SENDER = '_hamail_sender';
 
+	const META_KEY_MARKETING_ID = '_hamail_marketing_id';
+
 	const META_KEY_SEGMENT = '_hamail_segments';
+
+	const META_KEY_UNSUBSCRIBE = '_hamail_unsubscribe';
+
+	const META_KEY_UNSUBSCRIBE_URL = '_hamail_unsubscribe_url';
 
 	/**
 	 * Constructor.
@@ -31,6 +37,7 @@ class MarketingEmail extends Singleton {
 		add_action( 'init', [ $this, 'register_post_type' ], 11 );
 		add_action( 'add_meta_boxes', [ $this, 'add_meta_boxes' ] );
 		add_action( 'save_post_' . self::POST_TYPE, [ $this, 'save_post' ], 10, 2 );
+		add_action( 'save_post_' . self::POST_TYPE, [ $this, 'save_post_and_sync' ], 10, 2 );
 	}
 
 	/**
@@ -43,12 +50,118 @@ class MarketingEmail extends Singleton {
 		if ( ! wp_verify_nonce( filter_input( INPUT_POST, '_hamailmarketing' ), 'hamail_marketing_target' ) ) {
 			return;
 		}
-		update_post_meta( $post_id, self::META_KEY_SENDER, filter_input( INPUT_POST, 'hamail_marketing_sender' ) );
+		// Sender ID.
+		update_post_meta( $post_id, static::META_KEY_SENDER, filter_input( INPUT_POST, 'hamail_marketing_sender' ) );
+		// List and group.
 		if ( empty( $_POST['hamail_marketing_targets'] ) ) {
-			delete_post_meta( $post_id, self::META_KEY_SEGMENT );
+			delete_post_meta( $post_id, static::META_KEY_SEGMENT );
 		} else {
-			update_post_meta( $post_id, self::META_KEY_SEGMENT, implode( ',', array_map( 'trim', $_POST['hamail_marketing_targets'] ) ) );
+			update_post_meta( $post_id, static::META_KEY_SEGMENT, implode( ',', array_map( 'trim', $_POST['hamail_marketing_targets'] ) ) );
 		}
+		// Unsubscribe group.
+		update_post_meta( $post_id, static::META_KEY_UNSUBSCRIBE, filter_input( INPUT_POST, 'hamail_unsubscribe' ) );
+		// Unsubscribe URL.
+		update_post_meta( $post_id, static::META_KEY_UNSUBSCRIBE_URL, filter_input( INPUT_POST, 'hamail_unsubscribe_url' ) );
+	}
+
+	/**
+	 * Test post as valid
+	 *
+	 * @param \WP_Post $post
+	 * @return \WP_Error|true
+	 */
+	public function is_valid_as_marketing( $post ) {
+		$errors = new \WP_Error();
+		// Unsubscribe.
+		$unsubscribe     = get_post_meta( $post->ID, static::META_KEY_UNSUBSCRIBE, true );
+		$unsubscribe_url = get_post_meta( $post->ID, static::META_KEY_UNSUBSCRIBE_URL, true );
+		if ( ! ( $unsubscribe_url || $unsubscribe ) ) {
+			$errors->add( 'hamail_marketing_error', __( 'Either Unsubscribe group or custom URL is required.', 'hamail' ) );
+		} elseif ( $unsubscribe && ! is_numeric( $unsubscribe ) ) {
+			$errors->add( 'hamail_marketing_error', __( 'Unsubscribe group should be numerice.', 'hamail' ) );
+		}
+		// Sender.
+		if ( ! $this->get_post_sender( $post ) ) {
+			$errors->add( 'hamail_marketing_error', __( 'Sender is required.', 'hamail' ) );
+		}
+		// Post content.
+		if ( empty( $post->post_content ) ) {
+			$errors->add( 'hamail_marketing_error', __( 'Post content is empty. This will be mail body.', 'hamail' ) );
+		}
+		// Title.
+		if ( empty( $post->post_title ) ) {
+			$errors->add( 'hamail_marketing_error', __( 'Post title is empty. This will be mail subject.', 'hamail' ) );
+		}
+		// Target.
+		$targets = $this->get_post_segment( $post );
+		if ( empty( $targets ) ) {
+			$errors->add( 'hamail_marketing_error', __( 'Target is requied.', 'hamail' ) );
+		}
+		return $errors->get_error_messages() ? $errors : true;
+	}
+
+	/**
+	 * Sync post with Sendgrid
+	 *
+	 * @param \WP_Post $post
+	 * @return string|\WP_Error
+	 */
+	public function sync( $post ) {
+		$errors = $this->is_valid_as_marketing( $post );
+		if ( is_wp_error( $errors ) ) {
+			return $errors;
+		}
+		$marketing_id = $this->get_marketing_id( $post );
+		if ( $marketing_id ) {
+
+		} else {
+
+		}
+	}
+
+	/**
+	 * Convert post object to json.
+	 *
+	 * @param \WP_Post $post
+	 */
+	public function post_to_marketing( $post ) {
+		$terms             = get_the_terms( $post, hamail_marketing_category_taxonomy() );
+		$json              = [
+			'title'       => sprintf( '#%d %s', $post->ID, get_the_title( $post ) ),
+			'subject'     => get_the_title( $post ),
+			'sender_id'   => (int) $this->get_post_sender( $post ),
+			'list_ids'    => [],
+			'segment_ids' => [],
+			'categories'  => ( ! $terms || is_wp_error( $terms ) ) ? [] : array_map( function( $term ) {
+				return $term->name;
+			}, $terms ),
+		];
+		$unsubscribe_group = $this->get_unsubscribe_group( $post );
+		$unsubscribe_url   = get_post_meta( $post->ID, static::META_KEY_UNSUBSCRIBE_URL, true );
+		if ( $unsubscribe_url ) {
+			$json['custom_unsubscribe_url'] = $unsubscribe_url;
+		} else {
+			$json['suppression_group_id'] = (int) $unsubscribe_group;
+		}
+		foreach ( $this->get_post_segment( $post ) as $segment ) {
+			if ( preg_match( '/(list|segment)_(\d+)/u', $segment, $match ) ) {
+				$json[ $match[1] . '_ids' ][] = (int) $match[2];
+			}
+		}
+		return $json;
+	}
+
+	/**
+	 * Save post and sync with Sendgrid.
+	 *
+	 * @param int      $post_id
+	 * @param \WP_Post $post
+	 */
+	public function save_post_and_sync( $post_id, $post ) {
+		if ( ! wp_verify_nonce( filter_input( INPUT_POST, '_hamailmarketing' ), 'hamail_marketing_target' ) ) {
+			return;
+		}
+		$this->sync( $post );
 	}
 
 	/**
@@ -63,11 +176,6 @@ class MarketingEmail extends Singleton {
 		}
 	}
 
-	public function get_marketing_id( $post ) {
-		$post = get_post( $post );
-
-	}
-
 	/**
 	 * Render marketing list.
 	 *
@@ -75,6 +183,10 @@ class MarketingEmail extends Singleton {
 	 */
 	public function meta_box_marketing_list( $post ) {
 		wp_nonce_field( 'hamail_marketing_target', '_hamailmarketing', false );
+		$error = $this->is_valid_as_marketing( $post );
+		if ( is_wp_error( $error ) ) {
+			printf( '<p class="wp-ui-text-notification">%s</p>', implode( '<br />', array_map( 'esc_html', $error->get_error_messages() ) ) );
+		}
 		?>
 		<p class="hamail-meta-row">
 			<label for="hamail_marketing_id" class="block">
@@ -101,9 +213,7 @@ class MarketingEmail extends Singleton {
 		<h4><?php esc_html_e( 'Target Group', 'hamail' ); ?></h4>
 		<?php
 		$groups  = [];
-		$current = array_filter( explode( ',', get_post_meta( $post->ID, self::META_KEY_SEGMENT, true ) ), function( $id ) {
-			return preg_match( '/(segment|list)_\d+/u', $id );
-		} );
+		$current = $this->get_post_segment( $post );
 		foreach ( hamail_available_segments() as $list ) {
 			if ( $list['id'] === $list['list_id'] ) {
 				// This is list.
@@ -142,6 +252,48 @@ class MarketingEmail extends Singleton {
 				<?php
 			}
 		}
+		$unsubscribe_groups  = $this->get_unsubscribe_group();
+		$current_unsubscribe = get_post_meta( $post->ID, static::META_KEY_UNSUBSCRIBE, true );
+		?>
+		<hr />
+		<h4><?php esc_html_e( 'Unsubscribe' ); ?></h4>
+		<p class="description">
+			<?php esc_html_e( 'Specify unsubscribe group for this marketing email. Custom URL priors.', 'hamail' ); ?>
+		</p>
+		<p class="hamail-meta-row">
+			<label for="hamail_unsubscribe" class="block">
+				<?php esc_html_e( 'Unsubscribe Group', 'hamail' ); ?>
+			</label>
+			<?php if ( empty( $unsubscribe_groups ) ) : ?>
+				<br />
+				<span class="wp-ui-text-notification"><?php esc_html_e( 'Failed to get unsubscribe groups.', 'hamail' ); ?></span>
+				<input type="hidden" name="hamail_unsubscribe" value="<?php echo esc_attr( $current_unsubscribe ); ?>" />
+			<?php else : ?>
+				<select name="hamail_unsubscribe" id="hamail_unsubscribe">
+					<option value=""<?php selected( $current_unsubscribe, false ); ?>>
+						<?php esc_html_e( 'Please Select', 'hamail' ); ?>
+					</option>
+					<?php foreach ( $unsubscribe_groups as $group ) : ?>
+						<option value="<?php echo esc_attr( $group['id'] ); ?>" <?php selected( $group['id'], $current_unsubscribe ); ?>>
+							<?php
+							echo esc_html( $group['name'] );
+							if ( $group['is_default'] ) {
+								esc_html_e( '(Default)', 'hamail' );
+							}
+							?>
+						</option>
+					<?php endforeach; ?>
+				</select>
+			<?php endif; ?>
+		</p>
+		<p class="hamail-meta-row">
+			<label for="hamail_unsubscribe_url" class="block">
+				<?php esc_html_e( 'Custom Unsubscribe URL', 'hamail' ); ?>
+			</label>
+			<input name="hamail_unsubscribe_url" id="hamail_unsubscribe_url" type="url"
+				value="<?php echo esc_attr( get_post_meta( $post->ID, static::META_KEY_UNSUBSCRIBE_URL, true ) ); ?>" />
+		</p>
+		<?php
 	}
 
 	/**
@@ -152,6 +304,9 @@ class MarketingEmail extends Singleton {
 	public function meta_box_marketing_fields( $post ) {
 		$custom_fields = $this->get_custom_fields();
 		wp_enqueue_style( 'hamail-sender' );
+		echo '<pre>';
+		var_dump( $this->post_to_marketing( $post ) );
+		echo '</pre>';
 		?>
 		<div class="hamail-instruction">
 			<?php if ( empty( $custom_fields ) ) : ?>
@@ -175,8 +330,8 @@ class MarketingEmail extends Singleton {
 							<td><?php echo $field['reserved'] ? '<span class="dashicons dashicons-yes wp-ui-text-primary"></span>' : '<span style="color: lightgrey">--</span>'; ?></td>
 							<td>
 								<button class="button" onclick="window.prompt( this.dataset.title, '{%' + this.dataset.text + '%}' );"
-										data-title="<?php esc_attr_e( 'Please copy this as place holder.', 'hamail' ) ?>"
-										data-text="<?php echo esc_attr( $field['reserved'] ? $field['name'] : ( $field['name'] . ' | ' . __( 'Default Value', 'hamail' ) ) ) ?>">
+										data-title="<?php esc_attr_e( 'Please copy this as place holder.', 'hamail' ); ?>"
+										data-text="<?php echo esc_attr( $field['reserved'] ? $field['name'] : ( $field['name'] . ' | ' . __( 'Default Value', 'hamail' ) ) ); ?>">
 									<?php esc_html_e( 'Copy', 'hamail' ); ?>
 								</button>
 							</td>
@@ -197,7 +352,31 @@ class MarketingEmail extends Singleton {
 	 */
 	public function get_post_sender( $post = null ) {
 		$post = get_post( $post );
-		return (string) get_post_meta( $post->ID, self::META_KEY_SENDER, true );
+		return (string) get_post_meta( $post->ID, static::META_KEY_SENDER, true );
+	}
+
+	/**
+	 * Get post's target.
+	 *
+	 * @param null|int|\WP_Post $post
+	 * @return string[]
+	 */
+	public function get_post_segment( $post = null ) {
+		$post = get_post( $post );
+		return array_filter( explode( ',', get_post_meta( $post->ID, static::META_KEY_SEGMENT, true ) ), function( $id ) {
+			return preg_match( '/(segment|list)_\d+/u', $id );
+		} );
+	}
+
+	/**
+	 * Get marketing ID.
+	 *
+	 * @param int|null|\WP_Post $post
+	 * @return string
+	 */
+	public function get_marketing_id( $post ) {
+		$post = get_post( $post );
+		return (string) get_post_meta( $post->ID, static::META_KEY_MARKETING_ID, true );
 	}
 
 	/**
@@ -211,9 +390,12 @@ class MarketingEmail extends Singleton {
 			'show_ui'           => true,
 			'show_in_rest'      => true,
 			'show_in_admin_bar' => false,
-			'show_in_menu'      => 'edit.php?post_type=' . $hamail_post_type->name,
+			'show_in_menu'      => true,
+			'menu_position'     => 51,
+			'menu_icon'         => 'dashicons-email-alt2',
 			'supports'          => [ 'title', 'editor', 'author' ],
 			'capability_type'   => 'page',
+			'taxonomies'        => [ hamail_marketing_category_taxonomy() ],
 		] );
 		register_post_type( self::POST_TYPE, $args );
 	}

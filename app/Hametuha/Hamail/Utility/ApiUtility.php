@@ -16,10 +16,10 @@ trait ApiUtility {
 	 *
 	 * @param array $args     Arguments. [ 'reserved' => true, 'custom' => true, ].
 	 * @param bool  $wp_error If true, return WP_Error on failure.
-	 * @return array
+	 * @return array|\WP_Error
 	 */
 	protected function get_custom_fields( $args = [], $wp_error = false ) {
-		$targets = wp_parse_args( $args, [
+		$targets       = wp_parse_args( $args, [
 			'reserved' => true,
 			'custom'   => true,
 		] );
@@ -69,6 +69,24 @@ trait ApiUtility {
 			return $errors->get_error_messages() ? $errors : $custom_fields;
 		} else {
 			return $custom_fields;
+		}
+	}
+
+	/**
+	 * Get list of unsubscibe group.
+	 *
+	 * @param bool $wp_error If set to true, returns WP_Error.
+	 * @return array|\WP_Error
+	 */
+	public function get_unsubscribe_group( $wp_error = false ) {
+		$errors   = new \WP_Error();
+		$client   = hamail_client();
+		$response = $client->client->asm()->groups()->get();
+		$result   = $this->convert_response_to_error( $response );
+		if ( is_wp_error( $result ) ) {
+			return $wp_error ? $result : [];
+		} else {
+			return $result;
 		}
 	}
 
