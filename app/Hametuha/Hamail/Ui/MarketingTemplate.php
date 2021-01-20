@@ -5,6 +5,7 @@ namespace Hametuha\Hamail\Ui;
 
 use Hametuha\Hamail\API\MarketingEmail;
 use Hametuha\Hamail\Pattern\Singleton;
+use Hametuha\Hamail\Utility\MailRenderer;
 
 /**
  * Create marketing template.
@@ -12,6 +13,8 @@ use Hametuha\Hamail\Pattern\Singleton;
  * @package hamail
  */
 class MarketingTemplate extends Singleton {
+
+	use MailRenderer;
 
 	const POST_TYPE = 'marketing-template';
 
@@ -28,6 +31,7 @@ class MarketingTemplate extends Singleton {
 		add_action( 'init', [ $this, 'register_post_type' ] );
 		add_action( 'add_meta_boxes', [ $this, 'add_meta_boxes' ] );
 		add_action( 'save_post_' . self::POST_TYPE, [ $this, 'save_post' ], 10, 2 );
+		add_action( 'rest_api_init', [ $this, 'preview_rest' ] );
 	}
 
 	/**
@@ -58,6 +62,7 @@ class MarketingTemplate extends Singleton {
 		}
 		add_meta_box( 'hamail-template-content', __( 'Mail Template', 'hamail' ), [ $this, 'template_meta_box' ], $post_type, 'advanced', 'high' );
 		add_meta_box( 'hamail-template-type', __( 'Template Type', 'hamail' ), [ $this, 'type_meta_box' ], $post_type, 'side', 'low' );
+		add_action( 'post_submitbox_minor_actions', [ $this, 'preview_box' ] );
 	}
 
 	/**
@@ -111,7 +116,7 @@ class MarketingTemplate extends Singleton {
 			<li>
 				<?php
 				// translators: %s is {%subject%}.
-				echo wp_kses_post( sprintf( __( '%s will be replaced with mail body.', 'hamail' ), '<code>{%subject%}</code>' ) );
+				echo wp_kses_post( sprintf( __( '%s will be replaced with mail body.', 'hamail' ), '<code>{%body%}</code>' ) );
 				?>
 				<span class="required"><?php echo esc_html_x( 'Required', 'Required input element', 'hamail' ); ?></span>
 			</li>
@@ -152,5 +157,107 @@ class MarketingTemplate extends Singleton {
 			</label>
 		</p>
 		<?php
+	}
+
+	/**
+	 * Display preview link.
+	 *
+	 * @param \WP_Post $post
+	 */
+	public function preview_box( $post ) {
+		$preview_link = esc_url( add_query_arg( [
+			'_wpnonce' => wp_create_nonce( 'wp_rest' ),
+		], rest_url( 'hamail/v1/template/preview/' . $post->ID ) ) );
+		?>
+		<div>
+			<a class="button" href="<?php echo $preview_link; ?>" target="hamail-preview-<?php echo $post->ID; ?>">
+				<?php esc_html_e( 'Preview', 'hamail' ); ?>
+			</a>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Register REST route for preview.
+	 */
+	public function preview_rest() {
+		register_rest_route( 'hamail/v1', 'template/preview/(?P<post_id>\d+)', [
+			[
+				'methods'             => 'GET',
+				'args'                => [
+					'post_id' => [
+						'required'          => true,
+						'type'              => 'integer',
+						'description'       => __( 'Post ID of marketing template to preview.', 'hamail' ),
+						'validate_callback' => function( $var ) {
+							if ( ! is_numeric( $var ) ) {
+								return false;
+							}
+							$post = get_post( $var );
+							return $post && ( self::POST_TYPE === $post->post_type );
+						},
+					],
+					'subject' => [
+						'type'        => 'string',
+						'description' => __( 'Mail subject.', 'hamail' ),
+						'default'     => __( 'Re: Hello from {%first_name | Guest%}', 'hamail' ),
+					],
+					'body'    => [
+						'type'        => 'string',
+						'description' => __( 'Mail Body.', 'hamail' ),
+						'default'     => __( "Hi, {%first_name | Guest%}!\nYou are now member ob our site. Please click the link below.\n{%url%}", 'hamail' ),
+					],
+				],
+				'callback'            => [ $this, 'preview_callback' ],
+				'permission_callback' => [ $this, 'preview_permission' ],
+			],
+		] );
+	}
+
+	/**
+	 * Permission callback.
+	 *
+	 * @param \WP_REST_Request $request Request object.
+	 * @return bool
+	 */
+	public function preview_permission( $request ) {
+		return current_user_can( 'edit_post', $request->get_param( 'post_id' ) );
+	}
+
+	/**
+	 * Preview post item.
+	 *
+	 * @param \WP_REST_Request $request Request object.
+	 * @return void
+	 */
+	public function preview_callback( \WP_REST_Request $request ) {
+		$post = get_post( $request->get_param( 'post_id' ) );
+		$string = $this->apply_template( $post, $request->get_param( 'subject' ), $request->get_param( 'body' ) );
+		$type = get_post_meta( $post->ID, self::META_KEY_TYPE, true );
+		switch ( $type ) {
+			case 'html':
+				$type = 'text/html';
+				break;
+			case 'text':
+			default:
+				$type = 'text/plain';
+				break;
+		}
+		header( sprintf( 'Content-Type: %s; charset=UTF-8', $type ) );
+		echo $string;
+		exit;
+	}
+
+	/**
+	 * Apply template to body and subject.
+	 *
+	 * @param string $post
+	 * @param string $subject
+	 * @param string $body
+	 * @return string
+	 */
+	public function apply_template( $post, $subject, $body ) {
+		$content = (string) get_post_meta( $post->ID, self::META_KEY_BODY, true );
+		return $this->replace( $content, $subject, $body );
 	}
 }
