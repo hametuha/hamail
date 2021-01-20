@@ -4,6 +4,7 @@ namespace Hametuha\Hamail\API;
 
 
 use Hametuha\Hamail\Pattern\Singleton;
+use Hametuha\Hamail\Ui\MarketingTemplate;
 use Hametuha\Hamail\Utility\ApiUtility;
 
 /**
@@ -34,6 +35,9 @@ class MarketingEmail extends Singleton {
 		if ( ! hamail_enabled() ) {
 			return;
 		}
+		// Enable marketing template.
+		MarketingTemplate::get_instance();
+		// Register hooks.
 		add_action( 'init', [ $this, 'register_post_type' ], 11 );
 		add_action( 'add_meta_boxes', [ $this, 'add_meta_boxes' ] );
 		add_action( 'save_post_' . self::POST_TYPE, [ $this, 'save_post' ], 10, 2 );

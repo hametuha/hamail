@@ -7,7 +7,7 @@ use Hametuha\Hamail\Pattern\DynamicEmailTemplate;
 use Hametuha\Hamail\Pattern\Singleton;
 
 /**
- * Dyanmic email bootstrap.
+ * Dynamic email bootstrap.
  *
  * @package hamail
  */
