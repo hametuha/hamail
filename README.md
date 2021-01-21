@@ -67,6 +67,10 @@ To get supported, please go to [Kunoichi Market](https://kunoichiwp.com/product/
 
 ## Changelog
 
+### 2.3.0
+
+* Marketing mail is supported.
+
 ### 2.2.0
 
 * Refactor recipient selector.
