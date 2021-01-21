@@ -10,7 +10,8 @@ use Hametuha\Hamail\Utility\ApiUtility;
 /**
  * Marketing feature.
  *
- * @package Hametuha\Hamail\Pro\Addons
+ * @package hamail
+ * @property-read MarketingTemplate $template
  */
 class MarketingEmail extends Singleton {
 
@@ -27,6 +28,10 @@ class MarketingEmail extends Singleton {
 	const META_KEY_UNSUBSCRIBE = '_hamail_unsubscribe';
 
 	const META_KEY_UNSUBSCRIBE_URL = '_hamail_unsubscribe_url';
+
+	const META_KEY_HTML_TEMPLATE = '_hamail_html_template';
+
+	const META_KEY_TEXT_TEMPLATE = '_hamail_text_template';
 
 	/**
 	 * Constructor.
@@ -66,6 +71,10 @@ class MarketingEmail extends Singleton {
 		update_post_meta( $post_id, static::META_KEY_UNSUBSCRIBE, filter_input( INPUT_POST, 'hamail_unsubscribe' ) );
 		// Unsubscribe URL.
 		update_post_meta( $post_id, static::META_KEY_UNSUBSCRIBE_URL, filter_input( INPUT_POST, 'hamail_unsubscribe_url' ) );
+		// Templlates.
+		update_post_meta( $post_id, static::META_KEY_HTML_TEMPLATE, filter_input( INPUT_POST, 'hamail_html_template' ) );
+		update_post_meta( $post_id, static::META_KEY_TEXT_TEMPLATE, filter_input( INPUT_POST, 'hamail_text_template' ) );
+
 	}
 
 	/**
@@ -297,6 +306,46 @@ class MarketingEmail extends Singleton {
 			<input name="hamail_unsubscribe_url" id="hamail_unsubscribe_url" type="url"
 				value="<?php echo esc_attr( get_post_meta( $post->ID, static::META_KEY_UNSUBSCRIBE_URL, true ) ); ?>" />
 		</p>
+		<hr />
+		<h4><?php esc_html_e( 'Template' ); ?></h4>
+		<?php
+		foreach ( [
+			[ 'html', 'HTML', static::META_KEY_HTML_TEMPLATE ],
+			[ 'text', __( 'Plain Text', 'hamail' ), static::META_KEY_TEXT_TEMPLATE ],
+		] as list( $key, $label, $meta_key ) ) {
+			$id = "hamail_{$key}_template";
+			?>
+			<p class="hamail-meta-row">
+				<label for="<?php echo esc_attr( $id ); ?>" class="block">
+					<?php echo esc_html( $label ); ?>
+				</label>
+				<?php $cur_template = get_post_meta( $post->ID, $meta_key, true ); ?>
+				<select name="<?php echo esc_attr( $id ); ?>" id="<?php echo esc_attr( $id ); ?>">
+					<option value="" <?php selected( $cur_template, false ); ?>><?php esc_html_e( 'Default', 'hamail' ); ?></option>
+					<?php if ( 'html' === $key ) : ?>
+						<option value="no" <?php selected( $cur_template, 'no' ); ?>><?php esc_html_e( 'No HTML mail', 'hamail' ); ?></option>
+					<?php endif; ?>
+					<?php foreach ( $this->template->get_templates( $key ) as $template ) : ?>
+						<option value="<?php echo esc_attr( $template->ID ); ?>"<?php selected( $template->ID, $cur_template ); ?>>
+							<?php
+							echo esc_html( get_the_title( $template ) );
+							if ( $template->_is_default ) {
+								printf( '(%s)', esc_html__( 'Default', 'hamail' ) );
+							}
+							?>
+						</option>
+					<?php endforeach; ?>
+				</select>
+				<a class="button" href="<?php echo esc_url( $this->template->get_preview_link( $post, $key ) ); ?>" style="margin-top: 10px;" target="wp-preview-<?php echo $post->ID; ?>" rel="noopener no-referer">
+					<?php
+					// translators: %s is format.
+					echo esc_html( sprintf( _x( 'Preview %s', 'Preview link', 'hamail' ), $label ) );
+					?>
+				</a>
+			</p>
+			<?php
+		}
+		?>
 		<?php
 	}
 
@@ -308,9 +357,6 @@ class MarketingEmail extends Singleton {
 	public function meta_box_marketing_fields( $post ) {
 		$custom_fields = $this->get_custom_fields();
 		wp_enqueue_style( 'hamail-sender' );
-		echo '<pre>';
-		var_dump( $this->post_to_marketing( $post ) );
-		echo '</pre>';
 		?>
 		<div class="hamail-instruction">
 			<?php if ( empty( $custom_fields ) ) : ?>
@@ -402,5 +448,20 @@ class MarketingEmail extends Singleton {
 			'taxonomies'        => [ hamail_marketing_category_taxonomy() ],
 		] );
 		register_post_type( self::POST_TYPE, $args );
+	}
+
+	/**
+	 * Getter.
+	 *
+	 * @param string $name
+	 * @return mixed
+	 */
+	public function __get( $name ) {
+		switch ( $name ) {
+			case 'template':
+				return MarketingTemplate::get_instance();
+			default:
+				return null;
+		}
 	}
 }

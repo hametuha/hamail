@@ -35,6 +35,17 @@ class MarketingTemplate extends Singleton {
 	}
 
 	/**
+	 * Detect if post type is ready for marketing.
+	 *
+	 * @param string $post_type
+	 * @return bool
+	 */
+	public function has_template( $post_type ) {
+		$marketing_post_type = apply_filters( 'hamail_marketing_post_types', [ MarketingEmail::POST_TYPE ] );
+		return in_array( $post_type, $marketing_post_type, true );
+	}
+
+	/**
 	 * Register post type.
 	 */
 	public function register_post_type() {
@@ -49,6 +60,41 @@ class MarketingTemplate extends Singleton {
 			'supports'          => [ 'title', 'excerpt' ],
 			'capability_type'   => 'page',
 		] );
+	}
+
+	/**
+	 * Get templates.
+	 *
+	 * @param string $type    Template type. "text" or "html". If not specified, return all.
+	 * @param false  $default Default template.
+	 * @param int    $post_id Template post id.
+	 * @return \WP_Post[]
+	 */
+	public function get_templates( $type = '', $default = false, $post_id = 0 ) {
+		$args = [
+			'post_type'      => self::POST_TYPE,
+			'post_status'    => 'publish',
+			'orderby'        => [ 'date' => 'DESC' ],
+			'meta_query'     => [],
+			'posts_per_page' => -1,
+		];
+		if ( $default ) {
+			$args['meta_query'][] = [
+				'key'   => self::META_KEY_DEFAULT,
+				'value' => 1,
+			];
+		}
+		if ( $type ) {
+			$args['meta_query'][] = [
+				'key'   => self::META_KEY_TYPE,
+				'value' => $type,
+			];
+		}
+		if ( $post_id ) {
+			$args['p'] = $post_id;
+		}
+		$query = new \WP_Query( $args );
+		return $query->posts;
 	}
 
 	/**
@@ -120,8 +166,19 @@ class MarketingTemplate extends Singleton {
 				?>
 				<span class="required"><?php echo esc_html_x( 'Required', 'Required input element', 'hamail' ); ?></span>
 			</li>
+			<li>
+				<?php
+				// translators: %s is {%subject%}.
+				echo wp_kses_post( sprintf( __( '%s will be replaced with unsubscribing link.', 'hamail' ), '<code>[unsubscribe]</code>' ) );
+				?>
+				<span class="required"><?php echo esc_html_x( 'Required', 'Required input element', 'hamail' ); ?></span>
+			</li>
 		</ol>
 		<textarea id="hamail-template-body" name="template_body" class="code-input"><?php echo esc_textarea( get_post_meta( $post->ID, self::META_KEY_BODY, true ) ); ?></textarea>
+		<p class="description">
+			<strong><?php esc_html_e( 'Tips:', 'hamail' ); ?></strong>
+			<?php esc_html_e( 'Creating HTML mail template is difficult. You can create a designed HTML campaign with WYSIWYG in Sendgrid and copy its HTML.', 'hamail' ); ?>
+		</p>
 		<?php
 	}
 
@@ -165,12 +222,9 @@ class MarketingTemplate extends Singleton {
 	 * @param \WP_Post $post
 	 */
 	public function preview_box( $post ) {
-		$preview_link = esc_url( add_query_arg( [
-			'_wpnonce' => wp_create_nonce( 'wp_rest' ),
-		], rest_url( 'hamail/v1/template/preview/' . $post->ID ) ) );
 		?>
 		<div>
-			<a class="button" href="<?php echo $preview_link; ?>" target="hamail-preview-<?php echo $post->ID; ?>">
+			<a class="button" href="<?php echo esc_url( $this->get_preview_link( $post ) ); ?>" target="hamail-preview-<?php echo $post->ID; ?>">
 				<?php esc_html_e( 'Preview', 'hamail' ); ?>
 			</a>
 		</div>
@@ -181,6 +235,7 @@ class MarketingTemplate extends Singleton {
 	 * Register REST route for preview.
 	 */
 	public function preview_rest() {
+		// Template Preview.
 		register_rest_route( 'hamail/v1', 'template/preview/(?P<post_id>\d+)', [
 			[
 				'methods'             => 'GET',
@@ -205,7 +260,35 @@ class MarketingTemplate extends Singleton {
 					'body'    => [
 						'type'        => 'string',
 						'description' => __( 'Mail Body.', 'hamail' ),
-						'default'     => __( "Hi, {%first_name | Guest%}!\nYou are now member ob our site. Please click the link below.\n{%url%}", 'hamail' ),
+						'default'     => __( "Hi, {%first_name | Guest%}!\nYou are now member of our site. Please click the link below.\n{%url%}", 'hamail' ),
+					],
+				],
+				'callback'            => [ $this, 'preview_callback' ],
+				'permission_callback' => [ $this, 'preview_permission' ],
+			],
+		] );
+		// Marketing Previews.
+		register_rest_route( 'hamail/v1', 'marketing/(?P<post_id>\d+)/preview/(?P<format>text|html)', [
+			[
+				'methods'             => 'GET',
+				'args'                => [
+					'post_id' => [
+						'required'          => true,
+						'type'              => 'integer',
+						'description'       => __( 'Post ID of marketing email.', 'hamail' ),
+						'validate_callback' => function( $var ) {
+							if ( ! is_numeric( $var ) ) {
+								return false;
+							}
+							$post = get_post( $var );
+							return $post && $this->has_template( $post->post_type );
+						},
+					],
+					'format'  => [
+						'required'    => true,
+						'type'        => 'string',
+						'enum'        => [ 'text', 'html' ],
+						'description' => __( 'Preview format. "text" or "html"', 'hamail' ),
 					],
 				],
 				'callback'            => [ $this, 'preview_callback' ],
@@ -232,8 +315,15 @@ class MarketingTemplate extends Singleton {
 	 */
 	public function preview_callback( \WP_REST_Request $request ) {
 		$post = get_post( $request->get_param( 'post_id' ) );
-		$string = $this->apply_template( $post, $request->get_param( 'subject' ), $request->get_param( 'body' ) );
-		$type = get_post_meta( $post->ID, self::META_KEY_TYPE, true );
+		if ( $this->has_template( $post->post_type ) ) {
+			// Search template.
+			$type   = $request->get_param( 'format' );
+			$string = $this->render_marketing( $post, $type );
+		} else {
+			// This is marketing template.
+			$string = $this->apply_template( $post, $request->get_param( 'subject' ), $request->get_param( 'body' ) );
+			$type   = get_post_meta( $post->ID, self::META_KEY_TYPE, true );
+		}
 		switch ( $type ) {
 			case 'html':
 				$type = 'text/html';
@@ -259,5 +349,73 @@ class MarketingTemplate extends Singleton {
 	public function apply_template( $post, $subject, $body ) {
 		$content = (string) get_post_meta( $post->ID, self::META_KEY_BODY, true );
 		return $this->replace( $content, $subject, $body );
+	}
+
+	/**
+	 * Render marketing solution.
+	 *
+	 * @param \WP_Post $post   Post object.
+	 * @param string   $format Format for text.
+	 * @return string
+	 */
+	public function render_marketing( $post, $format = 'text' ) {
+		$meta = get_post_meta( $post->ID, "_hamail_{$format}_template", true );
+		if ( ( 'no' === $meta ) && 'html' === $format ) {
+			return '';
+		}
+		$template = null;
+		if ( is_numeric( $meta ) ) {
+			$templates = $this->get_templates( $format, false, $meta );
+		} else {
+			$templates = $this->get_templates( $format, true );
+		}
+		$string = '';
+		if ( $templates ) {
+			$template = $templates[0];
+			$string   = get_post_meta( $template->ID, self::META_KEY_BODY, true );
+		} else {
+			// No template and if this is html, return empty string.
+			if ( 'html' === $format ) {
+				return '';
+			} else {
+				$string = '{%body%}';
+			}
+		}
+		// Building subject.
+		$subject = apply_filters( 'hamail_marketing_title', get_the_title( $post ), $post, $format );
+		// Building body.
+		setup_postdata( $post );
+		$body = apply_filters( 'the_content', $post->post_content );
+		if ( 'html' !== $format ) {
+			$body = hamail_html_body_to_plain( $body );
+		}
+		// Replace placeholder.
+		$body = strtr( $body, [
+			'{%' => '[%',
+			'%}' => '%]',
+		] );
+		wp_reset_postdata();
+		$body = apply_filters( 'hamail_marketing_body', $body, $post, $format );
+		// Replace body and subject.
+		return $this->replace( $string, $subject, $body );
+	}
+
+	/**
+	 * Get preview link.
+	 *
+	 * @param null|int|\WP_Post $post    Post to preview.
+	 * @param string            $format 'text' or 'html'. If set empty, render nothing.
+	 * @return string
+	 */
+	public function get_preview_link( $post = null, $format = 'text' ) {
+		$post = get_post( $post );
+		if ( self::POST_TYPE === $post->post_type ) {
+			$url = rest_url( 'hamail/v1/template/preview/' . $post->ID );
+		} else {
+			$url = rest_url( sprintf( 'hamail/v1/marketing/%d/preview/%s', $post->ID, $format ) );
+		}
+		return add_query_arg( [
+			'_wpnonce' => wp_create_nonce( 'wp_rest' ),
+		], $url );
 	}
 }

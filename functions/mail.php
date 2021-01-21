@@ -375,7 +375,7 @@ function hamail_simple_mail( $recipients, $subject, $body, $additional_headers =
 		/**
 		 * hamail_body_before_send
 		 *
-		 * @param string $body Mail body.
+		 * @param string $body     Mail body.
 		 * @param string $context 'html' or 'plain'
 		 *
 		 * @return string
@@ -692,4 +692,65 @@ function hamail_bulk_limit() {
 	 * @return int Integer from 2 to 1000.
 	 */
 	return min( 1000, max( 2, apply_filters( 'hamail_bulk_limit', 1000 ) ) );
+}
+
+/**
+ * Convert HTML email to plain.
+ *
+ * @param string $string
+ * @return string
+ */
+function hamail_html_body_to_plain( $string ) {
+	$original = $string;
+	$string   = strip_shortcodes( $string );
+	foreach ( [
+		'#<a[^>]*href="([^"]+)"[^>]*>(.*?)</a>#u' => '$2 ($1) ',
+		'#<hr[^>]*?>#u'                           => apply_filters( 'hamail_plain_mail_separator', '---------', $string ),
+		'#<h([1-6])[^>]*?>(.*?)</h[1-6]>#u'       => function( $matches ) {
+			list( $all, $level, $text ) = $matches;
+			$prefix = [ '#### ', '### ', '## ', '# ', '', '' ][ $level - 1 ];
+			$prefix = apply_filters( 'hamail_plain_mail_heading_prefix', $prefix, $level );
+			return $prefix . $text;
+		},
+		'#<blockquote[^>]*?>(.*)</blockquote>#u'  => apply_filters( 'hamail_prefix', '> ', 'blockquote' ) . '$1',
+		'#<(o|u|d)l>(.*?)</(o|u|d)l>#us'          => function( $matches ) {
+			list( $all, $tag, $content, $tag2 ) = $matches;
+			$prefix = '';
+			switch ( $tag ) {
+				case 'd':
+					$prefix  = apply_filters( 'hamail_prefix', _x( '# ', 'prefix-dt', 'hamail' ), 'dt' );
+					$content = preg_replace( '#<dt[^>]*?>(.*)</dt>#', "{$prefix}$1\n", $content );
+					$content = preg_replace( '#<dd[^>]*?>(.*)</dd>#', "$1\n", $content );
+					return $content;
+				case 'o':
+					// translators: %d is list counter.
+					$prefix  = apply_filters( 'hamail_prefix', _x( '%d. ', 'prefix-ol', 'hamail' ), 'ol' );
+					break;
+				case 'u':
+					$prefix  = apply_filters( 'hamail_prefix', _x( '- ', 'prefix-ul', 'hamail' ), 'ul' );
+					break;
+			}
+			$counter = 0;
+			return preg_replace_callback( '#<li[^>]*?>(.*?)</li>#', function( $m ) use ( $prefix, &$counter ) {
+				$counter++;
+				if ( false !== strpos( $prefix, '%d' ) ) {
+					$prefix = sprintf( $prefix, $counter );
+				}
+				return $prefix . $m[1] . "\n";
+			}, $content );
+		},
+	] as $preg => $callback ) {
+		if ( is_callable( $callback ) ) {
+			$string = preg_replace_callback( $preg, $callback, $string );
+		} else {
+			$string = preg_replace( $preg, $callback, $string );
+		}
+	}
+	// Remove tags.
+	$string = strip_tags( $string );
+	// Convert successive line break to 3.
+	$string = preg_replace( '/\n{3,}/u', "\n\n\n", $string );
+	// Convert 2 successive line break to 1.
+	$string = preg_replace( '/(?<!\n)\n{2}(?!\n)/u', "\n", $string );
+	return apply_filters( 'hamail_html_to_plain_text', $string, $original );
 }
