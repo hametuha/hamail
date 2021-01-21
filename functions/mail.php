@@ -20,14 +20,23 @@ function hamail_client() {
 	return $instance;
 }
 
-if ( hamail_enabled() && ! function_exists( 'wp_mail' ) ) {
+/**
+ * Detect if hamail should override wp_mail function.
+ *
+ * @return bool
+ */
+function hamail_override_wp_mail() {
+	return ! get_option( 'hamail_keep_wp_mail', '' );
+}
+
+if ( hamail_enabled() && ! function_exists( 'wp_mail' ) && hamail_override_wp_mail() ) {
 
 	/**
 	 * Override wp_mail
 	 *
 	 * @param string|array $to Array or comma-separated list of email addresses to send message.
-	 * @param string $subject Email subject
-	 * @param string $message Message contents
+	 * @param string       $subject Email subject.
+	 * @param string       $message Message contents.
 	 * @param string|array $headers Optional. Additional headers.
 	 * @param string|array $attachments Optional. Files to attach.
 	 *
@@ -90,6 +99,7 @@ if ( hamail_enabled() && ! function_exists( 'wp_mail' ) ) {
 function hamail_guest_information() {
 
 }
+
 
 /**
  * Get placeholders
@@ -375,7 +385,7 @@ function hamail_simple_mail( $recipients, $subject, $body, $additional_headers =
 		/**
 		 * hamail_body_before_send
 		 *
-		 * @param string $body Mail body.
+		 * @param string $body     Mail body.
 		 * @param string $context 'html' or 'plain'
 		 *
 		 * @return string
@@ -692,4 +702,65 @@ function hamail_bulk_limit() {
 	 * @return int Integer from 2 to 1000.
 	 */
 	return min( 1000, max( 2, apply_filters( 'hamail_bulk_limit', 1000 ) ) );
+}
+
+/**
+ * Convert HTML email to plain.
+ *
+ * @param string $string
+ * @return string
+ */
+function hamail_html_body_to_plain( $string ) {
+	$original = $string;
+	$string   = strip_shortcodes( $string );
+	foreach ( [
+		'#<a[^>]*href="([^"]+)"[^>]*>(.*?)</a>#u' => '$2 ($1) ',
+		'#<hr[^>]*?>#u'                           => apply_filters( 'hamail_plain_mail_separator', '---------', $string ),
+		'#<h([1-6])[^>]*?>(.*?)</h[1-6]>#u'       => function( $matches ) {
+			list( $all, $level, $text ) = $matches;
+			$prefix = [ '#### ', '### ', '## ', '# ', '', '' ][ $level - 1 ];
+			$prefix = apply_filters( 'hamail_plain_mail_heading_prefix', $prefix, $level );
+			return $prefix . $text;
+		},
+		'#<blockquote[^>]*?>(.*)</blockquote>#u'  => apply_filters( 'hamail_prefix', '> ', 'blockquote' ) . '$1',
+		'#<(o|u|d)l>(.*?)</(o|u|d)l>#us'          => function( $matches ) {
+			list( $all, $tag, $content, $tag2 ) = $matches;
+			$prefix = '';
+			switch ( $tag ) {
+				case 'd':
+					$prefix  = apply_filters( 'hamail_prefix', _x( '# ', 'prefix-dt', 'hamail' ), 'dt' );
+					$content = preg_replace( '#<dt[^>]*?>(.*)</dt>#', "{$prefix}$1\n", $content );
+					$content = preg_replace( '#<dd[^>]*?>(.*)</dd>#', "$1\n", $content );
+					return $content;
+				case 'o':
+					// translators: %d is list counter.
+					$prefix  = apply_filters( 'hamail_prefix', _x( '%d. ', 'prefix-ol', 'hamail' ), 'ol' );
+					break;
+				case 'u':
+					$prefix  = apply_filters( 'hamail_prefix', _x( '- ', 'prefix-ul', 'hamail' ), 'ul' );
+					break;
+			}
+			$counter = 0;
+			return preg_replace_callback( '#<li[^>]*?>(.*?)</li>#', function( $m ) use ( $prefix, &$counter ) {
+				$counter++;
+				if ( false !== strpos( $prefix, '%d' ) ) {
+					$prefix = sprintf( $prefix, $counter );
+				}
+				return $prefix . $m[1] . "\n";
+			}, $content );
+		},
+	] as $preg => $callback ) {
+		if ( is_callable( $callback ) ) {
+			$string = preg_replace_callback( $preg, $callback, $string );
+		} else {
+			$string = preg_replace( $preg, $callback, $string );
+		}
+	}
+	// Remove tags.
+	$string = strip_tags( $string );
+	// Convert successive line break to 3.
+	$string = preg_replace( '/\n{3,}/u', "\n\n\n", $string );
+	// Convert 2 successive line break to 1.
+	$string = preg_replace( '/(?<!\n)\n{2}(?!\n)/u', "\n", $string );
+	return apply_filters( 'hamail_html_to_plain_text', $string, $original );
 }

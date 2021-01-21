@@ -41,22 +41,21 @@ add_action( 'init', function () {
 	$dir_base = trailingslashit( $root_dir );
 	$url_base = plugin_dir_url( __DIR__ );
 	foreach ( $settings as $setting ) {
-		$path = $dir_base . $setting['path'];
-		$url  = $url_base . $setting['path'];
-		if ( ! file_exists( $path ) ) {
+		if ( ! $setting ) {
 			continue;
 		}
-		$time   = filemtime( $path );
+		$path   = $dir_base . $setting['path'];
+		$url    = $url_base . $setting['path'];
 		$handle = preg_replace( '/\.(js|css)$/', '', basename( $setting['path'] ) );
 		$deps   = $setting['deps'];
 		switch ( $setting['ext'] ) {
 			case 'js':
 				// Register JavaScript.
-				wp_register_script( $handle, $url, $deps, $time, true );
+				wp_register_script( $handle, $url, $deps, $setting['hash'], $setting['footer'] );
 				break;
 			case 'css':
 				// This is CSS.
-				wp_register_style( $handle, $url, $deps, $time );
+				wp_register_style( $handle, $url, $deps, $setting['hash'], $setting['media'] );
 				break;
 		}
 	}

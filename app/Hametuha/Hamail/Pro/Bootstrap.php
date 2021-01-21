@@ -4,7 +4,6 @@ namespace Hametuha\Hamail\Pro;
 
 
 use Hametuha\Hamail\Pattern\Singleton;
-use Hametuha\Hamail\Pro\Addons\MarketingAutomation;
 
 /**
  * Pro feature.
@@ -14,6 +13,5 @@ use Hametuha\Hamail\Pro\Addons\MarketingAutomation;
 class Bootstrap extends Singleton {
 
 	protected function init() {
-		MarketingAutomation::get_instance();
 	}
 }

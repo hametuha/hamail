@@ -1,4 +1,3 @@
-$wp-blue: #1E8CBE;
 
 @keyframes rotation {
 	0% {
@@ -21,7 +20,7 @@ $wp-blue: #1E8CBE;
 			position: relative;
 			.active {
 				display: none;
-				color: $wp-blue;
+				color: $sg-blue;
 			}
 			.inactive {
 				display: inline;
@@ -29,7 +28,7 @@ $wp-blue: #1E8CBE;
 			}
 			.dashicons {
 				display: none;
-				color: $wp-blue;
+				color: $sg-blue;
 				opacity: .6;
 			}
 
@@ -42,7 +41,7 @@ $wp-blue: #1E8CBE;
 
 			.message {
 				position: absolute;
-				color: $wp-blue;
+				color: $sg-blue;
 				top: 100%;
 				left: 0;
 			}

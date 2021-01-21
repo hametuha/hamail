@@ -38,13 +38,14 @@ add_action( 'init', function () {
 		return;
 	}
 	$args = [
-		'label'           => __( 'User Contact', 'hamail' ),
+		'label'           => __( 'Transaction Mail', 'hamail' ),
 		'public'          => false,
 		'show_ui'         => true,
-		'menu_icon'       => 'dashicons-email-alt',
+		'menu_icon'       => 'dashicons-buddicons-pm',
 		'supports'        => [ 'title', 'editor', 'author' ],
 		'capability_type' => 'page',
 		'show_in_rest'    => true,
+		'menu_position'   => 50,
 	];
 	/**
 	 * Arguments for hamail custom post type.

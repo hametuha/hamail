@@ -32,9 +32,10 @@ class HamailCommands extends \WP_CLI_Command {
 	 */
 	public function update_user( $args, $assoc ) {
 		list( $user_id ) = $args;
-		$dry_run = ! empty( $assoc['dry-run'] );
-		$user = get_userdata( $user_id );
+		$dry_run         = ! empty( $assoc['dry-run'] );
+		$user            = get_userdata( $user_id );
 		if ( ! $user ) {
+			// translators: %s is user ID.
 			\WP_CLI::error( sprintf( __( 'User ID does not exist: %s', 'hamail' ), $user_id ) );
 		}
 		$recipient = $this->user_sync->get_recipient( $user_id );
@@ -44,13 +45,15 @@ class HamailCommands extends \WP_CLI_Command {
 		if ( ! $recipient ) {
 			// No recipient, add new.
 			if ( $dry_run ) {
-				\WP_CLI::success( sprintf( __( 'User %d is not found in the contact list %d. Will be added.', 'hamail' ), $user_id, hamail_active_list() ) );
+				// translators: %1$d is user id, %2$d is list id.
+				\WP_CLI::success( sprintf( __( 'User %1$d is not found in the contact list %2$d. Will be added.', 'hamail' ), $user_id, hamail_active_list() ) );
 				exit;
 			}
 		} else {
 			// Found, update.
 			if ( $dry_run ) {
-				\WP_CLI::success( sprintf( __( 'User %d will be updated in the contact list %d.', 'hamail' ), $user_id, hamail_active_list() ) );
+				// translators: %1$d is user id, %2$d is list id.
+				\WP_CLI::success( sprintf( __( 'User %1$d will be updated in the contact list %2$d.', 'hamail' ), $user_id, hamail_active_list() ) );
 				exit;
 			}
 		}
@@ -58,7 +61,8 @@ class HamailCommands extends \WP_CLI_Command {
 		if ( is_wp_error( $result ) ) {
 			\WP_CLI::error( $result->get_error_message() );
 		} else {
-			\WP_CLI::success( sprintf( __( 'User %d is registered as %s', 'hamail' ), $user_id, $result ) );
+			// translators: %1$d is user id, %2$s is sendgrid ID.
+			\WP_CLI::success( sprintf( __( 'User %1$d is registered as %2$s', 'hamail' ), $user_id, $result ) );
 		}
 	}
 
@@ -78,7 +82,8 @@ class HamailCommands extends \WP_CLI_Command {
 		if ( is_numeric( $user_id_or_email ) ) {
 			$user = get_userdata( $user_id_or_email );
 			if ( ! $user ) {
-				\WP_CLI::error( sprintf( __( 'User %d does not exist.', 'hamail' ), $user_id_or_email ) );
+				// translators: %d is user id or email.
+				\WP_CLI::error( sprintf( __( 'User %s does not exist.', 'hamail' ), $user_id_or_email ) );
 			}
 			$email = $user->user_email;
 		} else {
@@ -88,6 +93,7 @@ class HamailCommands extends \WP_CLI_Command {
 		if ( is_wp_error( $result ) ) {
 			\WP_CLI::error( $result->get_error_message() );
 		}
+		// translators: %s is email address.
 		\WP_CLI::success( sprintf( __( '%s is deleted from contact list.', 'hamail' ), $email ) );
 	}
 
@@ -95,15 +101,14 @@ class HamailCommands extends \WP_CLI_Command {
 	 * Sync user account to SendGrid
 	 *
 	 * @deprecated
+	 * @global $wpdb;
 	 */
 	public function sync() {
 		\WP_CLI::line( __( 'Start syncing all users to sendgrid list.', 'hamail' ) );
 		global $wpdb;
-		$query = <<<SQL
-			SELECT COUNT(ID) FROM {$wpdb->users}
-SQL;
-		$total = (int) $wpdb->get_var( $query );
-		\WP_CLI::confirm( sprintf( __( 'You have %d users. This will take %d seconds approximately. Are you ready?', 'hamail' ), $total, $total / 1000 * 5 ) );
+		$total = (int) $wpdb->get_var( "SELECT COUNT(ID) FROM {$wpdb->users}" );
+		// translators: %1$d is user count, %2$d is operation time.
+		\WP_CLI::confirm( sprintf( __( 'You have %1$d users. This will take %2$d seconds approximately. Are you ready?', 'hamail' ), $total, $total / 1000 * 5 ) );
 		\WP_CLI::line( __( 'Syncing...', 'hamail' ) );
 		$result = $this->user_sync->bulk_push( [
 			'number' => 1000,
@@ -132,21 +137,23 @@ SQL;
 	 */
 	public function export( $args, array $assoc ) {
 		$destination = ! empty( $assoc['destination'] ) ? $assoc['destination'] : false;
-		$table = new Table();
-		$csv   = null;
+		$table       = new Table();
+		$csv         = null;
 		if ( $destination ) {
 			if ( file_exists( $destination ) ) {
+				// translators: %s id file path.
 				\WP_CLI::error( sprintf( __( 'File %s already exists.', 'hamail' ), $destination ) );
 			}
 			$parent = realpath( dirname( $destination ) );
 			if ( ! is_dir( $parent ) || ! is_writeable( $parent ) ) {
+				// translators: %s is directory.
 				\WP_CLI::error( sprintf( __( 'Parent directory %s is not writable.', 'hamail' ), $destination ) );
 			}
-			$csv = new \SplFileObject( $destination, 'w' );
+			$csv        = new \SplFileObject( $destination, 'w' );
 			$set_header = function( $headers ) use ( &$csv ) {
 				$csv->fputcsv( $headers );
 			};
-			$set_row = function( $fields ) use ( &$csv ) {
+			$set_row    = function( $fields ) use ( &$csv ) {
 				$csv->fputcsv( $fields );
 			};
 		} else {
@@ -157,7 +164,6 @@ SQL;
 				$table->addRow( $fields );
 			};
 		}
-
 		\WP_CLI::line( __( 'Exporting 1000 users per dot. Please be patient.', 'hamail' ) );
 		$has_next = true;
 		$paged    = 1;
@@ -168,7 +174,7 @@ SQL;
 				'number' => 1000,
 				'paged'  => $paged,
 			] );
-			$users = $user_query->get_results();
+			$users      = $user_query->get_results();
 			if ( count( $users ) ) {
 				$paged++;
 				foreach ( $users as $user ) {
@@ -192,10 +198,12 @@ SQL;
 		if ( ! $count ) {
 			\WP_CLI::error( __( 'No user found. Please check your setting.', 'hamail' ) );
 		} else {
+			// translators: %d is user count.
 			\WP_CLI::line( sprintf( __( '%d users found.', 'hamail' ), $count ) );
 		}
 
 		if ( $destination ) {
+			// translators: %s is CSV path.
 			\WP_CLI::success( sprintf( __( 'CSV is output: %s', 'hamail' ), $destination ) );
 		} else {
 			$table->display();
@@ -238,8 +246,9 @@ SQL;
 	 */
 	public function test_fields( $args ) {
 		list( $user_id ) = $args;
-		$user = get_userdata( $user_id );
+		$user            = get_userdata( $user_id );
 		if ( ! $user ) {
+			// translators: %d is user id.
 			\WP_CLI::error( __( 'User %d not found.', 'hamail' ), $user_id );
 		}
 		$fields = hamail_fields_to_save( $user );

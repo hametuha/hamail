@@ -12,7 +12,8 @@
     "jed": "po2json languages/hamail-$LOCALE.po languages/hamail-$LOCALE-hamail-i18n.json -f jed",
     "jed-ja": "po2json languages/hamail-ja.po languages/hamail-ja-hamail-i18n.json -f jed",
     "env": "wp-env",
-    "cli": "wp-env run cli wp"
+    "cli": "wp-env run cli wp",
+    "export": "wp-env run cli \"wp hamail export --destination=wp-content/plugins/hamail/hamail-userdata.csv\""
   },
   "repository": {
     "type": "git",
