@@ -142,6 +142,7 @@ add_action( 'admin_init', function () {
 		[
 			'hamail_api_key'             => [ __( 'SendGrid API key', 'hamail' ), '', '' ],
 			'hamail_default_from'        => [ __( 'Default Mail From', 'hamail' ), '', get_option( 'admin_email' ) ],
+			'hamail_keep_wp_mail'        => [ __( 'wp_mail function', 'hamail' ), __( 'Hamail overrides all mail sent with <code>wp_mail</code> function. If you want to keep email sender, check this option.', 'hamail' ), __( 'Keep default <code>wp_mail</code>.', 'hamail' ) ],
 			TemplateSelector::OPTION_KEY => [
 				__( 'Template ID', 'hamail' ),
 				sprintf(
@@ -189,6 +190,14 @@ add_action( 'admin_init', function () {
 							$message = __( 'If you put <code>hamail.css</code> in your theme\'s directory, they will be applied to mail body as inline css.', 'hamail' );
 						}
 					}
+					break;
+				case 'hamail_keep_wp_mail':
+					$input = sprintf(
+						'<label><input type="checkbox" name="%s" value="1" %s /> %s</label>',
+						esc_attr( $key ),
+						checked( get_option( $key, '' ), 1, false ),
+						wp_kses_post( $placeholder )
+					);
 					break;
 			}
 			if ( ! $input ) {

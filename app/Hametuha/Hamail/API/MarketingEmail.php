@@ -6,6 +6,8 @@ namespace Hametuha\Hamail\API;
 use Hametuha\Hamail\Pattern\Singleton;
 use Hametuha\Hamail\Ui\MarketingTemplate;
 use Hametuha\Hamail\Utility\ApiUtility;
+use Hametuha\Hamail\Utility\Logger;
+use Hametuha\Hamail\Utility\RestApiPermission;
 
 /**
  * Marketing feature.
@@ -15,11 +17,17 @@ use Hametuha\Hamail\Utility\ApiUtility;
  */
 class MarketingEmail extends Singleton {
 
-	use ApiUtility;
+	use ApiUtility,
+		Logger,
+		RestApiPermission;
 
 	const POST_TYPE = 'marketing-mail';
 
 	const META_KEY_SENDER = '_hamail_sender';
+
+	const META_KEY_SENT_AT = '_hamail_sent_at';
+
+	const META_KEY_SCHEDULED_AT = '_hamail_scheduled_at';
 
 	const META_KEY_MARKETING_ID = '_hamail_marketing_id';
 
@@ -45,8 +53,10 @@ class MarketingEmail extends Singleton {
 		// Register hooks.
 		add_action( 'init', [ $this, 'register_post_type' ], 11 );
 		add_action( 'add_meta_boxes', [ $this, 'add_meta_boxes' ] );
-		add_action( 'save_post_' . self::POST_TYPE, [ $this, 'save_post' ], 10, 2 );
-		add_action( 'save_post_' . self::POST_TYPE, [ $this, 'save_post_and_sync' ], 10, 2 );
+		add_action( 'save_post_' . static::POST_TYPE, [ $this, 'save_post' ], 10, 2 );
+		add_action( 'save_post_' . static::POST_TYPE, [ $this, 'save_post_and_sync' ], 20, 2 );
+		add_action( 'save_post_' . static::POST_TYPE, [ $this, 'publish_if_possible' ], 30, 2 );
+		add_action( 'rest_api_init', [ $this, 'register_rest_api' ] );
 	}
 
 	/**
@@ -71,7 +81,7 @@ class MarketingEmail extends Singleton {
 		update_post_meta( $post_id, static::META_KEY_UNSUBSCRIBE, filter_input( INPUT_POST, 'hamail_unsubscribe' ) );
 		// Unsubscribe URL.
 		update_post_meta( $post_id, static::META_KEY_UNSUBSCRIBE_URL, filter_input( INPUT_POST, 'hamail_unsubscribe_url' ) );
-		// Templlates.
+		// Templates.
 		update_post_meta( $post_id, static::META_KEY_HTML_TEMPLATE, filter_input( INPUT_POST, 'hamail_html_template' ) );
 		update_post_meta( $post_id, static::META_KEY_TEXT_TEMPLATE, filter_input( INPUT_POST, 'hamail_text_template' ) );
 
@@ -108,7 +118,7 @@ class MarketingEmail extends Singleton {
 		// Target.
 		$targets = $this->get_post_segment( $post );
 		if ( empty( $targets ) ) {
-			$errors->add( 'hamail_marketing_error', __( 'Target is requied.', 'hamail' ) );
+			$errors->add( 'hamail_marketing_error', __( 'Target is required.', 'hamail' ) );
 		}
 		return $errors->get_error_messages() ? $errors : true;
 	}
@@ -125,17 +135,43 @@ class MarketingEmail extends Singleton {
 			return $errors;
 		}
 		$marketing_id = $this->get_marketing_id( $post );
+		$json         = $this->post_to_marketing( $post );
+		$sg           = hamail_client();
 		if ( $marketing_id ) {
-
+			// Update.
+			// Before update, check if this is not published.
+			$response = $sg->client->campaigns()->_( $marketing_id )->get();
+			$result   = $this->convert_response_to_error( $response );
+			if ( is_wp_error( $result ) ) {
+				return $result;
+			}
+			// Check status and if this is not draft,
+			// impossible to edit.
+			if ( 'Draft' !== $result['status'] ) {
+				return $marketing_id;
+			}
+			$response = $sg->client->campaigns()->_( (int) $marketing_id )->patch( $json );
 		} else {
-
+			// Newly create.
+			$response = $sg->client->campaigns()->post( $json );
 		}
+		$result = $this->convert_response_to_error( $response );
+		// If failed, return errors.
+		if ( is_wp_error( $result ) ) {
+			return $result;
+		}
+		// Save ID.
+		if ( ! $marketing_id ) {
+			update_post_meta( $post->ID, self::META_KEY_MARKETING_ID, $result['id'] );
+		}
+		return $result['id'];
 	}
 
 	/**
 	 * Convert post object to json.
 	 *
 	 * @param \WP_Post $post
+	 * @return array
 	 */
 	public function post_to_marketing( $post ) {
 		$terms             = get_the_terms( $post, hamail_marketing_category_taxonomy() );
@@ -149,18 +185,22 @@ class MarketingEmail extends Singleton {
 				return $term->name;
 			}, $terms ),
 		];
-		$unsubscribe_group = $this->get_unsubscribe_group( $post );
+		$unsubscribe_group = get_post_meta( $post->ID, static::META_KEY_UNSUBSCRIBE, true );
 		$unsubscribe_url   = get_post_meta( $post->ID, static::META_KEY_UNSUBSCRIBE_URL, true );
 		if ( $unsubscribe_url ) {
 			$json['custom_unsubscribe_url'] = $unsubscribe_url;
+			$json['suppression_group_id']   = null;
 		} else {
-			$json['suppression_group_id'] = (int) $unsubscribe_group;
+			$json['suppression_group_id']   = (int) $unsubscribe_group;
+			$json['custom_unsubscribe_url'] = '';
 		}
 		foreach ( $this->get_post_segment( $post ) as $segment ) {
 			if ( preg_match( '/(list|segment)_(\d+)/u', $segment, $match ) ) {
 				$json[ $match[1] . '_ids' ][] = (int) $match[2];
 			}
 		}
+		$json['html_content']  = $this->template->render_marketing( $post, 'html' );
+		$json['plain_content'] = $this->template->render_marketing( $post, 'text' );
 		return $json;
 	}
 
@@ -174,7 +214,119 @@ class MarketingEmail extends Singleton {
 		if ( ! wp_verify_nonce( filter_input( INPUT_POST, '_hamailmarketing' ), 'hamail_marketing_target' ) ) {
 			return;
 		}
-		$this->sync( $post );
+		$result = $this->sync( $post );
+		if ( is_wp_error( $result ) ) {
+			$this->error_log( $result, $post );
+		}
+	}
+
+	/**
+	 * Update schedule.
+	 *
+	 * @param int      $post_id
+	 * @param \WP_Post $post
+	 */
+	public function publish_if_possible( $post_id, $post ) {
+		if ( ! wp_verify_nonce( filter_input( INPUT_POST, '_hamailmarketing' ), 'hamail_marketing_target' ) ) {
+			return;
+		}
+		$result = $this->publish( $post );
+		if ( is_wp_error( $result ) ) {
+			$this->error_log( $result, $post );
+		}
+	}
+
+	/**
+	 * Publish if possible.
+	 *
+	 * @param \WP_Post $post
+	 * @return bool|\WP_Error
+	 */
+	public function publish( $post ) {
+		$marketing_id = get_post_meta( $post->ID, static::META_KEY_MARKETING_ID, true );
+		$scheduled    = (int) get_post_meta( $post->ID, static::META_KEY_SCHEDULED_AT, true );
+		if ( ! $marketing_id ) {
+			return false;
+		}
+		if ( hamail_is_debug() ) {
+			return false;
+		}
+		if ( $scheduled && ( $scheduled < time() ) ) {
+			// Already published.
+			return false;
+		}
+		$publish_now  = time() + 60 * 10;
+		$new_schedule = 0;
+		$create       = false;
+		$cancel       = false;
+		switch ( $post->post_status ) {
+			case 'future':
+				$will_publish_at = (int) get_gmt_from_date( $post->post_date, 'U' );
+				// This is future post.
+				if ( ! $scheduled ) {
+					// This is first requested.
+					$new_schedule = $will_publish_at;
+					$create       = true;
+				} elseif ( ( $scheduled !== $will_publish_at ) && $will_publish_at > $publish_now ) {
+					// Update schedule.
+					$new_schedule = $will_publish_at;
+				}
+				break;
+			case 'publish':
+				$publish_at = (int) get_gmt_from_date( $post->post_date, 'U' );
+				if ( $publish_at < time() - 60 ) {
+					// This is old post.
+					return false;
+				}
+				if ( $scheduled && ( $publish_now < $scheduled ) ) {
+					// Put forward.
+					$new_schedule = $publish_now;
+				} elseif ( ! $scheduled ) {
+					// Schedule immediately.
+					$new_schedule = $publish_now;
+					$create       = true;
+				}
+				break;
+			default:
+				if ( $scheduled ) {
+					// This should be cancel.
+					$cancel = true;
+				}
+				break;
+		}
+		$sg = hamail_client();
+		if ( $cancel ) {
+			// Cancel schedule.
+			$response = $sg->client->campaigns()->_( $marketing_id )->schedules()->delete();
+			$result   = $this->convert_response_to_error( $response );
+			if ( is_wp_error( $result ) ) {
+				return $result;
+			} else {
+				delete_post_meta( $post->ID, self::META_KEY_SCHEDULED_AT );
+				return true;
+			}
+		} elseif ( ! $new_schedule ) {
+			// Nothing to do.
+			return false;
+		} else {
+			$request = [
+				'send_at' => $new_schedule,
+			];
+			if ( $create ) {
+				// Create schedule.
+				$response = $sg->client->campaigns()->_( $marketing_id )->schedules()->post( $request );
+			} else {
+				// Update schedule.
+				$response = $sg->client->campaigns()->_( $marketing_id )->schedules()->patch( $request );
+			}
+			$result = $this->convert_response_to_error( $response );
+			if ( is_wp_error( $result ) ) {
+				return $result;
+			} else {
+				update_post_meta( $post->ID, self::META_KEY_SCHEDULED_AT, $new_schedule );
+				return true;
+			}
+		}
 	}
 
 	/**
@@ -200,17 +352,13 @@ class MarketingEmail extends Singleton {
 		if ( is_wp_error( $error ) ) {
 			printf( '<p class="wp-ui-text-notification">%s</p>', implode( '<br />', array_map( 'esc_html', $error->get_error_messages() ) ) );
 		}
+		wp_enqueue_script( 'hamail-marketing-email' );
+		wp_enqueue_style( 'hamail-marketing-email-editor' );
 		?>
-		<p class="hamail-meta-row">
-			<label for="hamail_marketing_id" class="block">
-				<?php esc_html_e( 'Marketing ID', 'hamail' ); ?>
-			</label>
-			<select name="hamail_marketing_sender" id="hamail_marketing_sender">
-				<?php foreach ( hamail_available_senders() as $id => $label ) : ?>
-					<option value="<?php echo esc_attr( $id ); ?>" <?php selected( $id, $this->get_post_sender( $post ) ); ?>><?php echo esc_html( $label ); ?></option>
-				<?php endforeach; ?>
-			</select>
+		<p class="description">
+			<?php esc_html_e( 'Valid email marketing will be sent after you publish or schedule.', 'hamail' ); ?>
 		</p>
+		<div id="hamail-marketing-info" class="hamail-marketing" data-id="<?php echo $post->ID ?>"></div>
 		<hr />
 		<p class="hamail-meta-row">
 			<label for="hamail_marketing_sender" class="block">
@@ -322,9 +470,6 @@ class MarketingEmail extends Singleton {
 				<?php $cur_template = get_post_meta( $post->ID, $meta_key, true ); ?>
 				<select name="<?php echo esc_attr( $id ); ?>" id="<?php echo esc_attr( $id ); ?>">
 					<option value="" <?php selected( $cur_template, false ); ?>><?php esc_html_e( 'Default', 'hamail' ); ?></option>
-					<?php if ( 'html' === $key ) : ?>
-						<option value="no" <?php selected( $cur_template, 'no' ); ?>><?php esc_html_e( 'No HTML mail', 'hamail' ); ?></option>
-					<?php endif; ?>
 					<?php foreach ( $this->template->get_templates( $key ) as $template ) : ?>
 						<option value="<?php echo esc_attr( $template->ID ); ?>"<?php selected( $template->ID, $cur_template ); ?>>
 							<?php
@@ -345,8 +490,6 @@ class MarketingEmail extends Singleton {
 			</p>
 			<?php
 		}
-		?>
-		<?php
 	}
 
 	/**
@@ -448,6 +591,95 @@ class MarketingEmail extends Singleton {
 			'taxonomies'        => [ hamail_marketing_category_taxonomy() ],
 		] );
 		register_post_type( self::POST_TYPE, $args );
+	}
+
+	/**
+	 * Register REST API.
+	 */
+	public function register_rest_api() {
+		register_rest_route( 'hamail/v1', 'marketing/(?P<post_id>\d+)', [
+			[
+				'methods'             => [ 'GET', 'DELETE', 'POST' ],
+				'args'                => [
+					'post_id' => [
+						'required'          => true,
+						'type'              => 'integer',
+						'description'       => __( 'Marketing post ID.', 'hamail' ),
+						'validate_callback' => function( $var ) {
+							if ( ! is_numeric( $var ) ) {
+								return false;
+							}
+							$post = get_post( $var );
+							return $post && self::POST_TYPE === $post->post_type;
+						},
+					],
+				],
+				'permission_callback' => [ $this, 'preview_permission' ],
+				'callback'            => [ $this, 'marketing_template_callback' ],
+			],
+		] );
+	}
+
+	/**
+	 * Handle REST API request.
+	 *
+	 * @param \WP_REST_Request $request
+	 * @return \WP_Error|\WP_REST_Response
+	 */
+	public function marketing_template_callback( $request ) {
+		$post         = get_post( $request->get_param( 'post_id' ) );
+		$method       = strtolower( $request->get_method() );
+		$marketing_id = get_post_meta( $post->ID, self::META_KEY_MARKETING_ID, true );
+		if ( ! $marketing_id ) {
+			if ( 'post' ) {
+				$marketing_id = $this->sync( $post );
+				if ( is_wp_error( $marketing_id ) ) {
+					return $marketing_id;
+				}
+			} else {
+				return new \WP_Error( 'hamail_marketing_error', __( 'Campaign dose not exist.', 'hamail' ), [
+					'status' => 404,
+				] );
+			}
+		}
+		$sg       = hamail_client();
+		$response = $sg->client->campaigns()->_( $marketing_id )->get();
+		$result   = $this->convert_response_to_error( $response );
+		if ( is_wp_error( $result ) ) {
+			return $result;
+		}
+		switch ( $method ) {
+			case 'get':
+			case 'post':
+				return new \WP_REST_Response( $result );
+			case 'delete':
+				$response = $sg->client->campaigns()->_( $marketing_id )->delete();
+				$result   = $this->convert_response_to_error( $response );
+				if ( is_wp_error( $result ) ) {
+					return $result;
+				} else {
+					delete_post_meta( $post->ID, self::META_KEY_MARKETING_ID );
+					return new \WP_REST_Response( [
+						'id'      => $marketing_id,
+						'message' => __( 'Campaign is deleted from SendGrid.', 'hamail' ),
+					] );
+				}
+			default:
+				return new \WP_Error( 'hamail_marketing_error', __( 'Method not allowd.', 'hamail' ), [
+					'status' => 400,
+				] );
+		}
+	}
+
+	/**
+	 * Check if this mail is sent.
+	 *
+	 * @param \WP_Post $post
+	 * @return bool
+	 */
+	public function is_sent( $post ) {
+		$sent_at = (int) get_post_meta( $post->ID, self::META_KEY_SENT_AT, true );
+		return $sent_at && ( time() >= $sent_at );
 	}
 
 	/**

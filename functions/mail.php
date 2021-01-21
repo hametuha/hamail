@@ -20,14 +20,23 @@ function hamail_client() {
 	return $instance;
 }
 
-if ( hamail_enabled() && ! function_exists( 'wp_mail' ) ) {
+/**
+ * Detect if hamail should override wp_mail function.
+ *
+ * @return bool
+ */
+function hamail_override_wp_mail() {
+	return ! get_option( 'hamail_keep_wp_mail', '' );
+}
+
+if ( hamail_enabled() && ! function_exists( 'wp_mail' ) && hamail_override_wp_mail() ) {
 
 	/**
 	 * Override wp_mail
 	 *
 	 * @param string|array $to Array or comma-separated list of email addresses to send message.
-	 * @param string $subject Email subject
-	 * @param string $message Message contents
+	 * @param string       $subject Email subject.
+	 * @param string       $message Message contents.
 	 * @param string|array $headers Optional. Additional headers.
 	 * @param string|array $attachments Optional. Files to attach.
 	 *
@@ -90,6 +99,7 @@ if ( hamail_enabled() && ! function_exists( 'wp_mail' ) ) {
 function hamail_guest_information() {
 
 }
+
 
 /**
  * Get placeholders

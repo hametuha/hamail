@@ -6,6 +6,7 @@ namespace Hametuha\Hamail\Ui;
 use Hametuha\Hamail\API\MarketingEmail;
 use Hametuha\Hamail\Pattern\Singleton;
 use Hametuha\Hamail\Utility\MailRenderer;
+use Hametuha\Hamail\Utility\RestApiPermission;
 
 /**
  * Create marketing template.
@@ -14,7 +15,8 @@ use Hametuha\Hamail\Utility\MailRenderer;
  */
 class MarketingTemplate extends Singleton {
 
-	use MailRenderer;
+	use MailRenderer,
+		RestApiPermission;
 
 	const POST_TYPE = 'marketing-template';
 
@@ -298,16 +300,6 @@ class MarketingTemplate extends Singleton {
 	}
 
 	/**
-	 * Permission callback.
-	 *
-	 * @param \WP_REST_Request $request Request object.
-	 * @return bool
-	 */
-	public function preview_permission( $request ) {
-		return current_user_can( 'edit_post', $request->get_param( 'post_id' ) );
-	}
-
-	/**
 	 * Preview post item.
 	 *
 	 * @param \WP_REST_Request $request Request object.
@@ -359,11 +351,9 @@ class MarketingTemplate extends Singleton {
 	 * @return string
 	 */
 	public function render_marketing( $post, $format = 'text' ) {
-		$meta = get_post_meta( $post->ID, "_hamail_{$format}_template", true );
-		if ( ( 'no' === $meta ) && 'html' === $format ) {
-			return '';
-		}
-		$template = null;
+		$meta         = get_post_meta( $post->ID, "_hamail_{$format}_template", true );
+		$default_html = '<html><head><title>{%subject%}</title></head><body>{%body%}</body></html>';
+		$template     = null;
 		if ( is_numeric( $meta ) ) {
 			$templates = $this->get_templates( $format, false, $meta );
 		} else {
@@ -374,9 +364,9 @@ class MarketingTemplate extends Singleton {
 			$template = $templates[0];
 			$string   = get_post_meta( $template->ID, self::META_KEY_BODY, true );
 		} else {
-			// No template and if this is html, return empty string.
+			// No template.
 			if ( 'html' === $format ) {
-				return '';
+				$string = $default_html;
 			} else {
 				$string = '{%body%}';
 			}

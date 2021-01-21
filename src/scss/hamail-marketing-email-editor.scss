@@ -1,0 +1,18 @@
+/*!
+ * Marketing email.
+ */
+
+@import "variables";
+
+.text-sg-green {
+	color: $sg-green;
+}
+
+.text-sg-red {
+	color: $sg-red !important;
+}
+
+.hamail-marketing-status {
+	display: block;
+	margin: 15px 0 10px;
+}
