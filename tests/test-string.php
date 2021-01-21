@@ -25,7 +25,7 @@ TXT;
 </body>
 TXT;
 		$body_string = 'Thi is a body.';
-		$this->assertEquals( $body, MarketingTemplate::get_instance()->replace_subject( $template, $body_string ) );
+		$this->assertEquals( $body, MarketingTemplate::get_instance()->replace_body( $template, $body_string ) );
 
 		// Subject.
 		$subject  = 'Re: This is a subject';
