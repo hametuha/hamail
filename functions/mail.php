@@ -58,12 +58,16 @@ if ( hamail_enabled() && ! function_exists( 'wp_mail' ) && hamail_override_wp_ma
 		) {
 			$filtered[ $key ] = isset( $arguments[ $key ] ) ? $arguments[ $key ] : $default;
 		}
-		$to          = array_filter( array_map( 'trim', explode( ',', $filtered[ 'to' ] ) ) );
+		$to = $filtered['to'];
+		if ( ! is_array( $to ) ) {
+			$to = explode( ',', $to );
+		}
+		$to          = array_filter( array_map( 'trim', $to ) );
 		$subject     = $filtered[ 'subject' ];
 		$message     = $filtered[ 'message' ];
 		$headers     = $filtered[ 'headers' ];
 		$attachments = $filtered[ 'attachments' ];
-		if ( ! $to || ! $subject || ! $message ) {
+		if ( empty( $to ) || ! $subject || ! $message ) {
 			return false;
 		}
 		$additional_header = [];
