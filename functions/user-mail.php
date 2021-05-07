@@ -59,3 +59,18 @@ function hamail_create_user_contact( $subject, $body, $to = [], $parent = 0, $au
 	}
 	return get_post( $post_id );
 }
+
+// Stop notifications if constant set.
+$stop_notification = defined( 'HAMAIL_STOP_REGISTRATION_NOTICES' ) && HAMAIL_STOP_REGISTRATION_NOTICES;
+if ( apply_filters( 'hamail_stop_notification', $stop_notification, 'password_change' ) && ! function_exists( 'wp_password_change_notification' ) ) {
+	/**
+	 * Stop sending email to admin if password changed.
+	 *
+	 * @see {wp-includes/pluggable.php}
+	 * @param WP_User $user User object.
+	 */
+	function wp_password_change_notification( $user ) {
+		// Do nothing.
+		do_action( 'hamail_user_password_changed', $user );
+	}
+}
