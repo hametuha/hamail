@@ -395,13 +395,30 @@ If this is html mail, <a href="https://example.com">link</a> should work properl
 	/**
 	 * Test css path
 	 *
+	 * ## OPTIONS
+	 *
+	 * : [<file>]
+	 * If set, this css wil be used.
+	 *
+	 * @synopsis [<file>]
 	 * @param array $args  Arguments.
 	 * @param array $assoc Options.
 	 */
 	public function css_test( $args, $assoc ) {
+		if ( isset( $args[0] ) ) {
+			$file = $args[0];
+			if ( file_exists( $file ) ) {
+				add_filter( 'hamail_css_path', function( $path ) use ( $file ) {
+					$path[] = $file;
+					return $path;
+				} );
+			} else {
+				\WP_CLI::error( sprintf( 'No file found: %s', $file ) );
+			}
+		}
 		$styles = hamail_get_mail_css();
 		if ( ! $styles ) {
-			\WP_CLI::error( 'No stylesheet exsits.' );
+			\WP_CLI::error( 'No stylesheet exists.' );
 		}
 		\WP_CLI::line( 'These stylesheets will be applied:' );
 		foreach ( $styles as $style ) {

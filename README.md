@@ -2,7 +2,7 @@
 
 Tags: email, sendgrid, marketing  
 Contributors: Takahashi_Fumiki, hametuha  
-Tested up to: 5.6  
+Tested up to: 5.7  
 Requires at least: 5.0  
 Requires PHP: 5.6  
 Stable Tag: nightly  
