@@ -144,11 +144,11 @@ jobs:
       - name: Build package.
         run: bash bin/build.sh ${{ github.ref }} light
 
-      name: WordPress Plugin Deploy
+      - name: WordPress Plugin Deploy
         id: deploy
         uses: 10up/action-wordpress-plugin-deploy@stable
         with:
-          generate-zip: true
+          generate-zip: false
         env:
           SVN_USERNAME: ${{ secrets.WP_ORG_USERNAME }}
           SVN_PASSWORD: ${{ secrets.WP_ORG_PASSWORD }}
