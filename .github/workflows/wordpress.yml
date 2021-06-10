@@ -109,6 +109,9 @@ jobs:
       - name: Build package.
         run: bash bin/build.sh ${{ github.ref }} ${{ matrix.zip }}
 
+      - name: Cleanup package.
+        run: bash bin/clean.sh
+
       - name: Create Zip
         run: zip -r hamail-${{ matrix.zip }}.zip ./
 
