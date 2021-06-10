@@ -7,6 +7,6 @@ files=(`cat ".distignore"`)
 
 for item in "${files[@]}"; do
   if [ -e $item ]; then
-    rm -fr $item
+    rm -frv $item
   fi
 done
