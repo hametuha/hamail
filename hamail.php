@@ -65,6 +65,8 @@ function hamail_plugins_loaded( $plugin ) {
 		}
 		// Dynamic emails.
 		Hametuha\Hamail\API\DynamicEmails::get_instance();
+		// SMTP Handlers
+		\Hametuha\Hamail\Controller\SmtpController::get_instance();
 		// Screens.
 		Hametuha\Hamail\Ui\ListTable\RecipientsColumn::get_instance();
 		// Enable user sync.
@@ -72,10 +74,6 @@ function hamail_plugins_loaded( $plugin ) {
 		// Register command for CLI.
 		if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			WP_CLI::add_command( 'hamail', Hametuha\Hamail\Commands\HamailCommands::class );
-		}
-		// Load Pro features if exists.
-		if ( class_exists( 'Hametuha\\Hamail\\Pro\\Bootstrap' ) ) {
-			Hametuha\Hamail\Pro\Bootstrap::get_instance();
 		}
 		// Load test file if exists.
 		if ( class_exists( 'Hametuha\\HamailDev\\Bootstrap' ) && ! defined( 'HAMAIL_NO_TEST_MODULES' ) ) {
