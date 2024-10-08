@@ -9,5 +9,8 @@ const $ = jQuery;
 /* global HamailCodeEditor:false */
 
 $( () => {
-	wp.codeEditor.initialize( document.getElementById( 'hamail-template-body' ), HamailCodeEditor );
+	wp.codeEditor.initialize(
+		document.getElementById( 'hamail-template-body' ),
+		HamailCodeEditor
+	);
 } );

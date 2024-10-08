@@ -1,66 +1,95 @@
 {
-  "name": "hamail",
-  "version": "1.0.0",
-  "description": "A WordPress plugin to enable balk email.",
-  "main": "gulpfile.js",
-  "scripts": {
-    "start": "wp-env start",
-    "update": "wp-env start --update",
-    "package": "gulp build",
-    "watch": "gulp watch",
-    "gulp": "gulp",
-    "jed": "po2json languages/hamail-$LOCALE.po languages/hamail-$LOCALE-hamail-i18n.json -f jed",
-    "jed-ja": "po2json languages/hamail-ja.po languages/hamail-ja-hamail-i18n.json -f jed",
-    "env": "wp-env",
-    "cli": "wp-env run cli wp",
-    "export": "wp-env run cli \"wp hamail export --destination=wp-content/plugins/hamail/hamail-userdata.csv\""
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/hametuha/hamail.git"
-  },
-  "keywords": [
-    "WordPress",
-    "SendGrid"
-  ],
-  "author": "Hametuha INC.",
-  "license": "GPL-3.0",
-  "bugs": {
-    "url": "https://github.com/hametuha/hamail/issues"
-  },
-  "homepage": "https://github.com/hametuha/hamail#readme",
-  "devDependencies": {
-    "@babel/core": "^7.5.4",
-    "@babel/plugin-transform-react-jsx": "^7.0.0",
-    "@babel/preset-env": "^7.5.4",
-    "@kunoichi/grab-deps": "^1.2.0",
-    "@wordpress/env": "^2.1.0",
-    "@wordpress/eslint-plugin": "^7.3.0",
-    "babel-eslint": "^10.0.1",
-    "babel-loader": "^8.0.5",
-    "eslint": "^7.12.1",
-    "gulp": "^4.0.0",
-    "gulp-autoprefixer": "^7.0.1",
-    "gulp-eslint": "^6.0.0",
-    "gulp-imagemin": "^7.1.0",
-    "gulp-load-plugins": "^2.0.5",
-    "gulp-notify": "^3.2.0",
-    "gulp-plumber": "^1.2.1",
-    "gulp-rename": "^2.0.0",
-    "gulp-sass": "^4.0",
-    "gulp-sass-glob": "^1.1.0",
-    "gulp-sourcemaps": "^2.6.5",
-    "gulp-stylelint": "^13.0.0",
-    "gulp-svgmin": "^3.0.0",
-    "imagemin-mozjpeg": "^9.0.0",
-    "imagemin-pngquant": "^9.0.1",
-    "merge-stream": "^2.0.0",
-    "po2json": "^1.0.0-alpha",
-    "stylelint": "^13.7.2",
-    "stylelint-config-wordpress": "^17.0.0",
-    "terser-webpack-plugin": "^5.0.3",
-    "vinyl-named": "^1.1.0",
-    "webpack": "^5.3.0",
-    "webpack-stream": "^6.1.0"
-  }
+	"name": "hamail",
+	"version": "1.0.0",
+	"description": "A WordPress plugin to enable balk email.",
+	"main": "index.js",
+	"scripts": {
+		"start": "wp-env start",
+		"update": "wp-env start --update",
+		"stop": "wp-env stop",
+		"env": "wp-env",
+		"env:install": "wp core download --path=wordpress --locale=ja",
+		"env:download": "node ./bin/compiler.js env",
+		"cli": "wp-env run cli wp",
+		"cli:test": "wp-env run tests-cli wp",
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"test:plugin": "RESULT=${PWD##*/} && wp-env run tests-cli ./wp-content/plugins/$RESULT/vendor/bin/phpunit -c ./wp-content/plugins/$RESULT/phpunit.xml.dist",
+		"package": "npm run build:js && npm run build:css && npm run dump",
+		"build:css": "sass ./src/scss/:./assets/css/ --style=compressed && postcss ./assets/css/**/*.css --replace --use autoprefixer",
+		"build:js": "node ./bin/compiler.js js",
+		"dump": "node ./bin/compiler.js dump",
+		"lint": "npm run lint:js && npm run lint:css",
+		"lint:css": "wp-scripts lint-style './src/scss/**/*.scss'",
+		"lint:js": "wp-scripts lint-js './src/js/**/*.js'",
+		"format:js": "eslint --fix ./src/js",
+		"format:css": "stylelint --fix ./src/scss",
+		"watch": "npm-watch"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/hametuha/hamail.git"
+	},
+	"keywords": [
+		"wordpress"
+	],
+	"engines": {
+		"node": ">20.18.0"
+	},
+	"volta": {
+		"node": "20.18.0"
+	},
+	"author": "Hametuha INC.",
+	"license": "GPL-3.0-or-later",
+	"bugs": {
+		"url": "https://github.com/hametuha/hamail/issues"
+	},
+	"homepage": "https://github.com/hametuha/hamail#readme",
+	"devDependencies": {
+		"@kunoichi/grab-deps": "^1.3.1",
+		"@wordpress/env": "^9.10.0",
+		"@wordpress/scripts": "^30.0.0",
+		"cssnano": "^7.0.1",
+		"glob": "^11.0.0",
+		"imagemin": "^9.0.0",
+		"imagemin-gifsicle": "^7.0.0",
+		"imagemin-jpegtran": "^8.0.0",
+		"imagemin-pngquant": "^10.0.0",
+		"imagemin-svgo": "^11.0.1",
+		"npm-watch": "^0.13.0",
+		"postcss-cli": "^11.0.0"
+	},
+	"watch": {
+		"build:css": {
+			"extensions": "scss",
+			"patterns": [
+				"src/scss"
+			]
+		},
+		"build:js": {
+			"extensions": "js",
+			"patterns": [
+				"src/js"
+			]
+		},
+		"dump": {
+			"extensions": "js,css,php,json",
+			"patterns": [
+				"assets/js",
+				"assets/css",
+				"assets/blocks"
+			]
+		},
+		"lint:css": {
+			"extensions": "scss",
+			"patterns": [
+				"src/scss"
+			]
+		},
+		"lint:js": {
+			"extensions": "js",
+			"patterns": [
+				"src"
+			]
+		}
+	}
 }

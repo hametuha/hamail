@@ -12,7 +12,7 @@ use Hametuha\Pattern\RestApi;
  * @since 2.1.0
  */
 abstract class AbstractRest extends Singleton {
-	
+
 	/**
 	 * @var bool If deprecated, turn this to true.
 	 */
@@ -47,10 +47,10 @@ abstract class AbstractRest extends Singleton {
 		foreach ( [ 'GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS', 'HEAD' ] as $http_method ) {
 			$method_name = 'handle_' . strtolower( $http_method );
 			if ( method_exists( $this, $method_name ) ) {
-				$arg = [
-					'methods'  => $http_method,
-					'callback' => [ $this, 'callback' ],
-					'args'     => $this->get_args( $http_method ),
+				$arg    = [
+					'methods'             => $http_method,
+					'callback'            => [ $this, 'callback' ],
+					'args'                => $this->get_args( $http_method ),
 					'permission_callback' => [ $this, 'permission_callback' ],
 				];
 				$args[] = $arg;

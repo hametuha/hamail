@@ -2,9 +2,9 @@
 	"core": null,
 	"plugins": [
 		".",
-		"https://downloads.wordpress.org/plugin/contact-form-7.latest-stable.zip",
-		"https://downloads.wordpress.org/plugin/flamingo.latest-stable.zip",
-		"https://downloads.wordpress.org/plugin/jetpack.latest-stable.zip"
+		"./vendor/wp-plugins/contact-form-7/",
+		"./vendor/wp-plugins/flamingo/",
+		"./vendor/wp-plugins/jetpack/"
 	],
 	"themes": [
 		"https://downloads.wordpress.org/theme/twentytwenty.latest-stable.zip"

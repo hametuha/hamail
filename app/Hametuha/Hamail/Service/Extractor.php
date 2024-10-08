@@ -4,13 +4,13 @@ namespace Hametuha\Hamail\Service;
 
 
 class Extractor {
-	
+
 	/**
 	 * Avoid "new"
 	 */
 	private function __construct() {
 	}
-	
+
 	/**
 	 * Extract mail from post object.
 	 *
@@ -43,7 +43,7 @@ class Extractor {
 			] );
 		}
 	}
-	
+
 	/**
 	 * Extract mail body from Jetpack feedback.
 	 *
@@ -52,7 +52,7 @@ class Extractor {
 	 */
 	protected static function extract_feedback( $post ) {
 		list( $body, $args ) = explode( '<!--more-->', $post->post_content );
-		$result = [
+		$result              = [
 			'body' => trim( $body ),
 		];
 		if ( preg_match( '/AUTHOR EMAIL: (.*)/u', $args, $matches ) ) {

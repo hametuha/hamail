@@ -63,7 +63,7 @@ add_action( 'init', function () {
 /**
  * Save data before sending.
  */
-add_action( 'save_post_hamail', function( $post_id, $post ) {
+add_action( 'save_post_hamail', function ( $post_id, $post ) {
 	if ( hamail_is_sent( $post ) ) {
 		// If sent, nothing will be updated.
 		return;
@@ -130,7 +130,7 @@ add_action( 'add_meta_boxes', function ( $post_type ) {
  *
  * @param string $post_type
  */
-add_action( 'add_meta_boxes', function( $post_type ) {
+add_action( 'add_meta_boxes', function ( $post_type ) {
 	if ( 'hamail' !== $post_type ) {
 		return;
 	}
@@ -154,7 +154,7 @@ function hamail_placeholders_meta_box( $post, $args ) {
 	$place_holders = $args['args']['placeholders'];
 	?>
 	<p class="description">
-		<?php esc_html_e( 'You can use placeholders below in mail body and subject.', 'hamail' ) ?>
+		<?php esc_html_e( 'You can use placeholders below in mail body and subject.', 'hamail' ); ?>
 	</p>
 	<div class="hamail-instruction">
 		<table class="hamail-instruction-table">
@@ -254,7 +254,10 @@ function hamail_recipients_meta_box( $post ) {
 									value="<?php echo esc_attr( $search['endpoint'] ); ?>" <?php checked( $checked ); ?> />
 								<?php echo esc_html( $search['label'] ); ?>
 							</label>
-						<?php $checked = false; endforeach; ?>
+							<?php
+							$checked = false;
+endforeach;
+						?>
 					</div>
 					<input class="hamail-search-value" type="hidden" name="hamail_recipients_id"
 						value="<?php echo esc_attr( get_post_meta( $post->ID, '_hamail_recipients_id', true ) ); ?>" />
@@ -286,30 +289,37 @@ function hamail_recipients_meta_box( $post ) {
  * @param WP_Post $post
  */
 function hamail_status_meta_box( $post ) {
-	if ( hamail_is_sent() ) : ?>
+	if ( hamail_is_sent() ) :
+		?>
 		<p class="hamail-success">
 			<span class="dashicons dashicons-yes"></span>
-			<?php echo esc_html( sprintf(
+			<?php
+			echo esc_html( sprintf(
 				__( 'This message was sent at %1$s as %2$s.', 'hamail' ),
 				hamail_sent_at( $post, get_option( 'date_format' ) . ' ' . get_option( 'time_format' ) ),
 				get_post_meta( $post->ID, '_hamail_as_admin', true ) ? __( 'Site Admin', 'hamail' ) : get_the_author_meta( 'display_name', $post->post_author )
-			) ) ?>
+			) )
+			?>
 		</p>
 	<?php else : ?>
-		<?php wp_nonce_field( 'hamail_as_admin', '_hamailadminnonce', false ) ?>
+		<?php wp_nonce_field( 'hamail_as_admin', '_hamailadminnonce', false ); ?>
 		<p class="description">
-			<?php esc_html_e( 'This message is not sent yet.', 'hamail' ) ?>
+			<?php esc_html_e( 'This message is not sent yet.', 'hamail' ); ?>
 		</p>
 		<label class="hamail-block">
 			<input type="checkbox" name="hamail_as_admin" value="1"
-				<?php checked( get_post_meta( $post->ID, '_hamail_as_admin', true ) ) ?> />
-			<?php esc_html_e( 'Send as Site Admin', 'hamail' ) ?>
+				<?php checked( get_post_meta( $post->ID, '_hamail_as_admin', true ) ); ?> />
+			<?php esc_html_e( 'Send as Site Admin', 'hamail' ); ?>
 		</label>
 	<?php endif; ?>
-	<?php if ( $logs = get_post_meta( $post->ID, '_hamail_log' ) ) : ?>
-		<h4><?php esc_html_e( 'Error Logs', 'hamail' ) ?></h4>
+	<?php
+	$logs = get_post_meta( $post->ID, '_hamail_log' );
+	if ( $logs ) :
+		?>
+		<h4><?php esc_html_e( 'Error Logs', 'hamail' ); ?></h4>
 		<?php foreach ( $logs as $log ) : ?>
-			<pre class="hamail-success-log"><?php echo nl2br( esc_html( $log ) ) ?></pre>
+			<pre class="hamail-success-log"><?php echo nl2br( esc_html( $log ) ); ?></pre>
 		<?php endforeach; ?>
-	<?php endif;
+		<?php
+	endif;
 }

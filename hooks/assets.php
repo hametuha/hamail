@@ -6,7 +6,7 @@
 /**
  * Load all API's
  */
-add_action( 'plugins_loaded', function() {
+add_action( 'plugins_loaded', function () {
 	$dir = [ 'API' ];
 	foreach ( $dir as $d ) {
 		$path = dirname( __DIR__ ) . '/app/Hametuha/Hamail/' . $d;

@@ -80,7 +80,7 @@ function hamail_sent_at( $post = null, $format = 'Y-m-d H:i' ) {
  * @return bool
  */
 function hamail_has_role( $role, $post = null ) {
-	$post = get_post( $post );
+	$post  = get_post( $post );
 	$roles = array_filter( explode( ',', get_post_meta( $post->ID, '_hamail_roles', true ) ) );
-	return false !== array_search( $role, $roles );
+	return in_array( $role, $roles, true );
 }

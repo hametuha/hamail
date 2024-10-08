@@ -17,9 +17,9 @@ use Hametuha\Hamail\Utility\RestApiPermission;
  */
 class MarketingEmail extends Singleton {
 
-	use ApiUtility,
-		Logger,
-		RestApiPermission;
+	use ApiUtility;
+	use Logger;
+	use RestApiPermission;
 
 	const POST_TYPE = 'marketing-mail';
 
@@ -75,7 +75,7 @@ class MarketingEmail extends Singleton {
 		if ( empty( $_POST['hamail_marketing_targets'] ) ) {
 			delete_post_meta( $post_id, static::META_KEY_SEGMENT );
 		} else {
-			update_post_meta( $post_id, static::META_KEY_SEGMENT, implode( ',', array_map( 'trim', filter_input( INPUT_POST, 'hamail_marketing_targets', FILTER_DEFAULT,FILTER_REQUIRE_ARRAY ) ) ) );
+			update_post_meta( $post_id, static::META_KEY_SEGMENT, implode( ',', array_map( 'trim', filter_input( INPUT_POST, 'hamail_marketing_targets', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY ) ) ) );
 		}
 		// Unsubscribe group.
 		update_post_meta( $post_id, static::META_KEY_UNSUBSCRIBE, filter_input( INPUT_POST, 'hamail_unsubscribe' ) );
@@ -84,7 +84,6 @@ class MarketingEmail extends Singleton {
 		// Templates.
 		update_post_meta( $post_id, static::META_KEY_HTML_TEMPLATE, filter_input( INPUT_POST, 'hamail_html_template' ) );
 		update_post_meta( $post_id, static::META_KEY_TEXT_TEMPLATE, filter_input( INPUT_POST, 'hamail_text_template' ) );
-
 	}
 
 	/**
@@ -181,7 +180,7 @@ class MarketingEmail extends Singleton {
 			'sender_id'   => (int) $this->get_post_sender( $post ),
 			'list_ids'    => [],
 			'segment_ids' => [],
-			'categories'  => ( ! $terms || is_wp_error( $terms ) ) ? [] : array_map( function( $term ) {
+			'categories'  => ( ! $terms || is_wp_error( $terms ) ) ? [] : array_map( function ( $term ) {
 				return $term->name;
 			}, $terms ),
 		];
@@ -358,7 +357,7 @@ class MarketingEmail extends Singleton {
 		<p class="description">
 			<?php esc_html_e( 'Valid email marketing will be sent after you publish or schedule.', 'hamail' ); ?>
 		</p>
-		<div id="hamail-marketing-info" class="hamail-marketing" data-id="<?php echo $post->ID ?>"></div>
+		<div id="hamail-marketing-info" class="hamail-marketing" data-id="<?php echo $post->ID; ?>"></div>
 		<hr />
 		<p class="hamail-meta-row">
 			<label for="hamail_marketing_sender" class="block">
@@ -556,7 +555,7 @@ class MarketingEmail extends Singleton {
 	 */
 	public function get_post_segment( $post = null ) {
 		$post = get_post( $post );
-		return array_filter( explode( ',', get_post_meta( $post->ID, static::META_KEY_SEGMENT, true ) ), function( $id ) {
+		return array_filter( explode( ',', get_post_meta( $post->ID, static::META_KEY_SEGMENT, true ) ), function ( $id ) {
 			return preg_match( '/(segment|list)_\d+/u', $id );
 		} );
 	}
@@ -605,7 +604,7 @@ class MarketingEmail extends Singleton {
 						'required'          => true,
 						'type'              => 'integer',
 						'description'       => __( 'Marketing post ID.', 'hamail' ),
-						'validate_callback' => function( $var ) {
+						'validate_callback' => function ( $var ) {
 							if ( ! is_numeric( $var ) ) {
 								return false;
 							}

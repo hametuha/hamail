@@ -15,8 +15,8 @@ use Hametuha\Hamail\Utility\RestApiPermission;
  */
 class MarketingTemplate extends Singleton {
 
-	use MailRenderer,
-		RestApiPermission;
+	use MailRenderer;
+	use RestApiPermission;
 
 	const POST_TYPE = 'marketing-template';
 
@@ -246,7 +246,7 @@ class MarketingTemplate extends Singleton {
 						'required'          => true,
 						'type'              => 'integer',
 						'description'       => __( 'Post ID of marketing template to preview.', 'hamail' ),
-						'validate_callback' => function( $var ) {
+						'validate_callback' => function ( $var ) {
 							if ( ! is_numeric( $var ) ) {
 								return false;
 							}
@@ -262,7 +262,7 @@ class MarketingTemplate extends Singleton {
 					'body'    => [
 						'type'        => 'string',
 						'description' => __( 'Mail Body.', 'hamail' ),
-						'default'     => __( "Hi, {%first_name | Guest%}!\nYou are now member of our site. Please click the link below.\n{%url%}", 'hamail' ),
+						'default'     => __( "Hi, {%1\$first_name | Guest%}!\nYou are now member of our site. Please click the link below.\n{%2\$url%}", 'hamail' ),
 					],
 				],
 				'callback'            => [ $this, 'preview_callback' ],
@@ -278,7 +278,7 @@ class MarketingTemplate extends Singleton {
 						'required'          => true,
 						'type'              => 'integer',
 						'description'       => __( 'Post ID of marketing email.', 'hamail' ),
-						'validate_callback' => function( $var ) {
+						'validate_callback' => function ( $var ) {
 							if ( ! is_numeric( $var ) ) {
 								return false;
 							}

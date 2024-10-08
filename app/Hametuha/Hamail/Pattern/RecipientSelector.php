@@ -11,7 +11,7 @@ use Hametuha\Hamail\Model\SearchResultItem;
  * @since 2.2.0
  */
 abstract class RecipientSelector extends AbstractRest {
-	
+
 	/**
 	 * @var \WP_User_Query Query result;
 	 */
@@ -70,7 +70,7 @@ abstract class RecipientSelector extends AbstractRest {
 				'type'              => 'int',
 				'description'       => __( 'Page number', 'hamail' ),
 				'default'           => 1,
-				'sanitize_callback' => function( $var ) {
+				'sanitize_callback' => function ( $var ) {
 					return max( 1, (int) $var );
 				},
 			],
@@ -116,7 +116,7 @@ abstract class RecipientSelector extends AbstractRest {
 		if ( is_wp_error( $result ) ) {
 			return $result;
 		}
-		$response = new \WP_REST_Response( array_map( function( $search_result_item ) {
+		$response = new \WP_REST_Response( array_map( function ( $search_result_item ) {
 			return $search_result_item->convert();
 		}, $result ) );
 		$response->set_headers( [
@@ -134,7 +134,7 @@ abstract class RecipientSelector extends AbstractRest {
 	 */
 	protected function user_to_item( $user_query ) {
 		$this->query_result = new \WP_User_Query( $user_query );
-		return array_map( function( \WP_User $user ) {
+		return array_map( function ( \WP_User $user ) {
 			return new SearchResultItem( $user->ID, sprintf( '#%d %s', $user->ID, $user->display_name ) );
 		}, $this->query_result->get_results() );
 	}

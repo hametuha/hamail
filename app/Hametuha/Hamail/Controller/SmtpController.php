@@ -7,6 +7,8 @@ use Hametuha\Hamail\Pattern\Singleton;
 
 /**
  * Use SMTP for wp_mail.
+ *
+ * @phpcs:disable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
  */
 class SmtpController extends Singleton {
 

@@ -11,7 +11,7 @@ use Hametuha\Hamail\Service\TemplateSelector;
 add_action( 'admin_notices', function () {
 	if ( ! hamail_enabled() && current_user_can( 'manage_options' ) ) {
 		printf(
-			'<div class="error"><p>%s</p></div>',
+			'<div class="error"><p>[Hamail] %s</p></div>',
 			wp_kses_post( sprintf(
 				// translators: %s is link.
 				__( 'No API key is set. Please go to <a href="%s">Setting Page</a>.', 'hamail' ),
@@ -89,7 +89,8 @@ add_action( 'admin_menu', function () {
 					<?php esc_html_e( 'Try sending mail via SendGrid.', 'hamail' ); ?>
 				</p>
 
-				<form action="<?php echo esc_attr( admin_url( 'options-general.php' ) ); ?>?page=hamail-setting" method="post">
+				<form action="<?php echo esc_attr( admin_url( 'options-general.php' ) ); ?>?page=hamail-setting"
+						method="post">
 					<?php wp_nonce_field( 'hamail_test' ); ?>
 					<table class="form-table">
 						<tr>
@@ -97,7 +98,8 @@ add_action( 'admin_menu', function () {
 								<label for="hamail_subject"><?php esc_html_e( 'Subject', 'hamail' ); ?></label>
 							</th>
 							<td>
-								<input type="text" name="hamail_subject" id="hamail_subject" class="regular-text" value="" />
+								<input type="text" name="hamail_subject" id="hamail_subject" class="regular-text"
+										value=""/>
 							</td>
 						</tr>
 						<tr>
@@ -105,7 +107,7 @@ add_action( 'admin_menu', function () {
 								<label for="hamail_to"><?php esc_html_e( 'Mail to', 'hamail' ); ?></label>
 							</th>
 							<td>
-								<input type="email" name="hamail_to" id="hamail_to" class="regular-text" value="" />
+								<input type="email" name="hamail_to" id="hamail_to" class="regular-text" value=""/>
 							</td>
 						</tr>
 						<tr>
@@ -113,7 +115,8 @@ add_action( 'admin_menu', function () {
 								<label for="hamail_body"><?php esc_html_e( 'Mail Body', 'hamail' ); ?></label>
 							</th>
 							<td>
-                            <textarea rows="5" type="text" name="hamail_body" id="hamail_body" style="width: 90%"></textarea>
+								<textarea rows="5" type="text" name="hamail_body" id="hamail_body"
+											style="width: 90%"></textarea>
 							</td>
 						</tr>
 					</table>
@@ -142,7 +145,7 @@ add_action( 'admin_init', function () {
 		[
 			'hamail_api_key'             => [ __( 'SendGrid API key', 'hamail' ), '', '' ],
 			'hamail_default_from'        => [ __( 'Default Mail From', 'hamail' ), '', get_option( 'admin_email' ) ],
-			'hamail_keep_wp_mail'        => [ __( 'wp_mail function', 'hamail' ), __( 'Hamail overrides all mail sent with <code>wp_mail</code> function. If you want to keep email sender, check this option.', 'hamail' ), __( 'Keep default <code>wp_mail</code>.', 'hamail' ) ],
+			'hamail_keep_wp_mail'        => [ __( 'wp_mail function', 'hamail' ), __( 'Hamail overrides all mail sent with <code>wp_mail</code> function. If you want to keep email sender, check this option.', 'hamail' ), '' ],
 			TemplateSelector::OPTION_KEY => [
 				__( 'Template ID', 'hamail' ),
 				sprintf(
@@ -180,7 +183,7 @@ add_action( 'admin_init', function () {
 						if ( $styles ) {
 							// translators: %s is csv list of stylesheets path.
 							$message = sprintf(
-								// translators: %s is stylesheet.
+							// translators: %s is stylesheet.
 								__( 'Stylesheet %s will be applied to your mail body.', 'hamail' ),
 								implode( ', ', array_map( function ( $path ) {
 									return sprintf( '<code>%s</code>', esc_html( $path ) );
@@ -192,12 +195,24 @@ add_action( 'admin_init', function () {
 					}
 					break;
 				case 'hamail_keep_wp_mail':
-					$input = sprintf(
-						'<label><input type="checkbox" name="%s" value="1" %s /> %s</label>',
-						esc_attr( $key ),
-						checked( get_option( $key, '' ), 1, false ),
-						wp_kses_post( $placeholder )
+					$current = get_option( $key, '' );
+					$options = array_map(
+						function ( $option ) use ( $current ) {
+							list( $value, $label ) = $option;
+							return sprintf(
+								'<option value="%s"%s>%s</option>',
+								esc_attr( $value ),
+								selected( $value, $current, false ),
+								esc_html( $label )
+							);
+						},
+						[
+							[ '', __( 'Override with Template', 'hamail' ) ],
+							[ '2', __( 'Use SMTP API', 'hamail' ) ],
+							[ '1', __( 'Keep default <code>wp_mail</code>.', 'hamail' ) ],
+						]
 					);
+					$input   = sprintf( '<select name="%s">%s</select>', esc_attr( $key ), implode( ' ', $options ) );
 					break;
 			}
 			if ( ! $input ) {
@@ -232,7 +247,8 @@ add_action( 'admin_init', function () {
 			<p class="description"><?php esc_html_e( 'If you have no lists, please make it first on SendGrid.', 'hamail' ); ?></p>
 			<select name="hamail_list_to_sync" id="hamail_list_to_sync">
 				<?php foreach ( $lists as $value => $label ) : ?>
-					<option value="<?php echo esc_attr( $value ); ?>"<?php selected( $value, hamail_active_list() ); ?>><?php echo esc_html( $label ); ?></option>
+					<option
+						value="<?php echo esc_attr( $value ); ?>"<?php selected( $value, hamail_active_list() ); ?>><?php echo esc_html( $label ); ?></option>
 				<?php endforeach; ?>
 			</select>
 			<?php
@@ -242,13 +258,13 @@ add_action( 'admin_init', function () {
 		// Field to sync.
 		add_settings_field( 'hamail_fields_to_sync', __( 'Fields Mapping', 'hamail' ), function () {
 			if ( hamail_enabled() ) {
-				$fields = hamail_get_custom_fields();
+				$fields         = hamail_get_custom_fields();
 				$current_fields = hamail_fields_array();
 				?>
 				<textarea rows="2" id="hamail_fields_to_sync" name="hamail_fields_to_sync"
-						  placeholder="<?php esc_attr_e( 'Put CSV here in 2 lines.', 'hamail' ); ?>"
+							placeholder="<?php esc_attr_e( 'Put CSV here in 2 lines.', 'hamail' ); ?>"
 				><?php echo esc_textarea( get_option( 'hamail_fields_to_sync', '' ) ); ?></textarea>
-				<?php if ( is_wp_error( $current_fields ) && 200 !== $current_fields->get_error_data()[ 'status' ] ) : ?>
+				<?php if ( is_wp_error( $current_fields ) && 200 !== $current_fields->get_error_data()['status'] ) : ?>
 					<p class="hamail-format-error"><?php echo esc_html( $current_fields->get_error_message() ); ?></p>
 				<?php endif; ?>
 				<p class="description">

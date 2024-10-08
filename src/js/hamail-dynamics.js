@@ -1,12 +1,10 @@
-'use strict';
-
 /*!
  * Dynamic Email helper
  *
  * @deps wp-api-fetch, jquery
  */
 
-const $            = jQuery;
+const $ = jQuery;
 const { apiFetch } = wp;
 
 $( function() {
@@ -20,16 +18,19 @@ $( function() {
 		apiFetch( {
 			path: '/hamail/v1/dynamics/' + $( this ).attr( 'id' ),
 			method: checked ? 'post' : 'delete',
-		} ).then( ( response ) => {
-			$label.find( '.message' ).text( response.message );
-			setTimeout( () => {
-				$label.find( '.message' ).text( '' );
-			}, 2000 );
-		} ).catch( ( response ) => {
-			this.checked = ! checked;
-			alert( response.message );
-		} ).finally( () => {
-			$label.removeClass( 'loading' );
-		} );
+		} )
+			.then( ( response ) => {
+				$label.find( '.message' ).text( response.message );
+				setTimeout( () => {
+					$label.find( '.message' ).text( '' );
+				}, 2000 );
+			} )
+			.catch( ( response ) => {
+				this.checked = ! checked;
+				alert( response.message );
+			} )
+			.finally( () => {
+				$label.removeClass( 'loading' );
+			} );
 	} );
 } );

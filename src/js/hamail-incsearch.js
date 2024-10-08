@@ -1,6 +1,3 @@
-'use strict';
-
-
 /*!
  * Incremental search default.
  *
@@ -14,7 +11,6 @@ const $ = jQuery;
 const { __, sprintf } = wp.i18n;
 
 const Item = Backbone.Model.extend( {
-
 	defaults() {
 		return {
 			id: '',
@@ -24,22 +20,20 @@ const Item = Backbone.Model.extend( {
 		};
 	},
 
-	sync() {}
+	sync() {},
 } );
 
 const ItemList = Backbone.Collection.extend( {
-
 	model: Item,
 
 	url() {
 		return false;
 	},
 
-	sync() {}
+	sync() {},
 } );
 
 const ItemCard = Backbone.View.extend( {
-
 	tagName: 'li',
 
 	template: _.template( `
@@ -51,24 +45,22 @@ const ItemCard = Backbone.View.extend( {
 		'click .remove': 'removeUser',
 	},
 
-	initialize: function () {
+	initialize: function() {
 		this.listenTo( this.model, 'destroy', this.remove );
 	},
 
-	removeUser: function ( e ) {
+	removeUser: function( e ) {
 		e.preventDefault();
 		this.model.destroy();
 	},
 
-	render: function () {
+	render: function() {
 		this.$el.html( this.template( this.model.toJSON() ) );
 		return this;
-	}
-
+	},
 } );
 
 const ItemsController = Backbone.View.extend( {
-
 	collection: null,
 
 	$complete: null,
@@ -79,18 +71,27 @@ const ItemsController = Backbone.View.extend( {
 
 	curValue: '',
 
-	initialize: function ( options ) {
+	initialize: function( options ) {
 		const that = this;
-		this.options = $.extend( {
-			id: '',
-		}, options );
+		this.options = $.extend(
+			{
+				id: '',
+			},
+			options
+		);
 		// Initialize with given value.
-		this.$el      = $( '#' + this.options.id );
-		this.$input   = this.$el.find( '.hamail-search-value' );
-		this.$list    = this.$el.find( '.hamail-search-list' );
-		const itemIds = this.$input.val().split( ',' ).map( ( val ) => $.trim( val ) ).filter( ( val ) => val.length );
+		this.$el = $( '#' + this.options.id );
+		this.$input = this.$el.find( '.hamail-search-value' );
+		this.$list = this.$el.find( '.hamail-search-list' );
+		const itemIds = this.$input
+			.val()
+			.split( ',' )
+			.map( ( val ) => $.trim( val ) )
+			.filter( ( val ) => val.length );
 		// Set endpoint from radio button.
-		this.endpoint = this.$el.find( 'input[name="hamail_search_action"]:checked' ).val();
+		this.endpoint = this.$el
+			.find( 'input[name="hamail_search_action"]:checked' )
+			.val();
 		this.$el.find( 'input[name="hamail_search_action"]' ).click( ( e ) => {
 			if ( e.target.checked ) {
 				if ( this.endpoint !== e.target.value ) {
@@ -100,7 +101,7 @@ const ItemsController = Backbone.View.extend( {
 			}
 		} );
 		// Initialize model.
-		const collection = this.collection = new ItemList( null );
+		const collection = ( this.collection = new ItemList( null ) );
 		_.bindAll( this, 'findUsers', 'addUser', 'changeList' );
 		// Register auto complete.
 		this.$complete = this.$el.find( '.hamail-search-field' );
@@ -131,19 +132,32 @@ const ItemsController = Backbone.View.extend( {
 			delay: 500,
 			source: ( request, callback ) => {
 				wp.apiFetch( {
-					path: this.endpoint + '?term=' + request.term + '&paged=' + this.$complete.autocomplete( 'instance' ).options.curPage,
+					path:
+						this.endpoint +
+						'?term=' +
+						request.term +
+						'&paged=' +
+						this.$complete.autocomplete( 'instance' ).options
+							.curPage,
 					parse: false,
-				} ).then( ( response ) => {
-					this.$complete.autocomplete( 'option', {
-						hasNext: 'more' === response.headers.get( 'X-WP-Next' ),
-						total: parseInt( response.headers.get( 'X-WP-Total' ), 10 ),
+				} )
+					.then( ( response ) => {
+						this.$complete.autocomplete( 'option', {
+							hasNext:
+								'more' === response.headers.get( 'X-WP-Next' ),
+							total: parseInt(
+								response.headers.get( 'X-WP-Total' ),
+								10
+							),
+						} );
+						return response.json();
+					} )
+					.then( ( response ) => {
+						callback( response );
+					} )
+					.catch( ( response ) => {
+						callback( response );
 					} );
-					return response.json();
-				} ).then( ( response ) => {
-					callback( response );
-				} ).catch( ( response ) => {
-					callback( response );
-				} );
 			},
 			focus() {
 				return true;
@@ -179,14 +193,16 @@ const ItemsController = Backbone.View.extend( {
 						} else {
 							wp.apiFetch( {
 								path: that.endpoint + '?ids=' + ui.item.id,
-							} ).then( ( response ) => {
-								response.forEach( ( item ) => {
-									const model = new Item( item );
-									collection.add( model );
+							} )
+								.then( ( response ) => {
+									response.forEach( ( item ) => {
+										const model = new Item( item );
+										collection.add( model );
+									} );
 								} )
-							} ).catch( () => {
-								// Do nothing.
-							} );
+								.catch( () => {
+									// Do nothing.
+								} );
 						}
 						$( this ).val( '' );
 						return false;
@@ -194,18 +210,32 @@ const ItemsController = Backbone.View.extend( {
 			},
 		} );
 		// Render item.
-		this.$complete.autocomplete( 'instance' )._renderItem = function( ul, item ) {
+		this.$complete.autocomplete( 'instance' )._renderItem = function(
+			ul,
+			item
+		) {
 			switch ( item.id ) {
 				case '__total__':
 				case '__next__':
 				case '__prev__':
-					return $( sprintf( '<li class="hamail-search-nav %1$s"><div>%2$s</div></li>', item.id.replace( /_/g, '' ), item.label ) ).appendTo( ul );
+					return $(
+						sprintf(
+							'<li class="hamail-search-nav %1$s"><div>%2$s</div></li>',
+							item.id.replace( /_/g, '' ),
+							item.label
+						)
+					).appendTo( ul );
 				default:
-					return $( sprintf( '<li><div>%s</div></li>', item.label ) ).appendTo( ul );
+					return $(
+						sprintf( '<li><div>%s</div></li>', item.label )
+					).appendTo( ul );
 			}
 		};
 		// Render Menu.
-		this.$complete.autocomplete( 'instance' )._renderMenu = ( ul, items ) => {
+		this.$complete.autocomplete( 'instance' )._renderMenu = (
+			ul,
+			items
+		) => {
 			let hasNext = false;
 			let hasPrev = false;
 			const instance = this.$complete.autocomplete( 'instance' );
@@ -241,10 +271,16 @@ const ItemsController = Backbone.View.extend( {
 					},
 				];
 				if ( hasPrev ) {
-					parts[0].label = sprintf( '<span class="dashicons dashicons-arrow-left"></span> %s', __( 'Previous', 'hamail' ) );
+					parts[ 0 ].label = sprintf(
+						'<span class="dashicons dashicons-arrow-left"></span> %s',
+						__( 'Previous', 'hamail' )
+					);
 				}
 				if ( hasNext ) {
-					parts[2].label = sprintf( '%s <span class="dashicons dashicons-arrow-right"></span>', __( 'Next', 'hamail' ) );
+					parts[ 2 ].label = sprintf(
+						'%s <span class="dashicons dashicons-arrow-right"></span>',
+						__( 'Next', 'hamail' )
+					);
 				}
 				parts.forEach( ( item ) => {
 					instance._renderItemData( ul, item );
@@ -254,14 +290,14 @@ const ItemsController = Backbone.View.extend( {
 		};
 	},
 
-	addUser: function ( item ) {
+	addUser: function( item ) {
 		const view = new ItemCard( { model: item } );
 		this.$list.append( view.render().el );
 	},
 
-	changeList: function () {
+	changeList: function() {
 		const ids = [];
-		this.collection.forEach( function ( item ) {
+		this.collection.forEach( function( item ) {
 			const id = item.get( 'id' );
 			if ( 0 > ids.indexOf( id ) ) {
 				ids.push( id );
@@ -279,14 +315,21 @@ const ItemsController = Backbone.View.extend( {
 		this.$list.addClass( 'loading' );
 		wp.apiFetch( {
 			path: 'hamail/v1/search/users?ids=' + itemIds.join( ',' ),
-		} ).then( ( res ) => {
-			_.each( res, function ( item ) {
-				const model = new Item( item );
-				this.collection.add( model );
-			}, this );
-		} ).catch( () => {} ).finally( () => {
-			this.$list.removeClass( 'loading' );
-		} );
+		} )
+			.then( ( res ) => {
+				_.each(
+					res,
+					function( item ) {
+						const model = new Item( item );
+						this.collection.add( model );
+					},
+					this
+				);
+			} )
+			.catch( () => {} )
+			.finally( () => {
+				this.$list.removeClass( 'loading' );
+			} );
 	},
 
 	flush() {
@@ -295,7 +338,7 @@ const ItemsController = Backbone.View.extend( {
 			hasNext: false,
 			total: 0,
 		} );
-	}
+	},
 } );
 
 wp.hamail = wp.hamail || {};

@@ -5,7 +5,7 @@
  * @package hamail
  */
 
-use \Hametuha\Hamail\Service\TemplateSelector;
+use Hametuha\Hamail\Service\TemplateSelector;
 
 /**
  * Get SendGrid client.
@@ -26,7 +26,16 @@ function hamail_client() {
  * @return bool
  */
 function hamail_override_wp_mail() {
-	return ! get_option( 'hamail_keep_wp_mail', '' );
+	return '' === get_option( 'hamail_keep_wp_mail', '' );
+}
+
+/**
+ * Detect if wp_mail() works under SengGrid SMTP API.
+ *
+ * @return bool
+ */
+function hamail_use_smtp() {
+	return '2' === get_option( 'hamail_keep_wp_mail', '' );
 }
 
 if ( hamail_enabled() && ! function_exists( 'wp_mail' ) && hamail_override_wp_mail() ) {
@@ -63,10 +72,10 @@ if ( hamail_enabled() && ! function_exists( 'wp_mail' ) && hamail_override_wp_ma
 			$to = explode( ',', $to );
 		}
 		$to          = array_filter( array_map( 'trim', $to ) );
-		$subject     = $filtered[ 'subject' ];
-		$message     = $filtered[ 'message' ];
-		$headers     = $filtered[ 'headers' ];
-		$attachments = $filtered[ 'attachments' ];
+		$subject     = $filtered['subject'];
+		$message     = $filtered['message'];
+		$headers     = $filtered['headers'];
+		$attachments = $filtered['attachments'];
 		if ( empty( $to ) || ! $subject || ! $message ) {
 			return false;
 		}
@@ -80,9 +89,9 @@ if ( hamail_enabled() && ! function_exists( 'wp_mail' ) && hamail_override_wp_ma
 				switch ( $type ) {
 					case 'reply-to':
 						if ( preg_match( '#<(.*@.*)>#', $parts, $match ) ) {
-							$additional_header[ 'from' ] = $match[ 1 ];
+							$additional_header['from'] = $match[1];
 						} else {
-							$additional_header[ 'from' ] = $parts;
+							$additional_header['from'] = $parts;
 						}
 						break;
 					default:
@@ -101,7 +110,6 @@ if ( hamail_enabled() && ! function_exists( 'wp_mail' ) && hamail_override_wp_ma
 }
 
 function hamail_guest_information() {
-
 }
 
 
@@ -240,7 +248,7 @@ function hamail_guest_name( $email = '' ) {
 	 */
 	$guest = apply_filters( 'hamail_guest_name', __( 'Guest', 'hamail' ), $email );
 
-	return ( $email === get_option( 'admin_email' ) ) ? __( 'Site Owner', 'hamail' ) : $guest;
+	return ( get_option( 'admin_email' ) === $email ) ? __( 'Site Owner', 'hamail' ) : $guest;
 }
 
 /**
@@ -366,7 +374,7 @@ function hamail_simple_mail( $recipients, $subject, $body, $additional_headers =
 	// Check if WooCommerce is not activated.
 	$no_woocommerce = ! function_exists( 'WC' );
 	// Mail body.
-	if ( 'text/html' == $headers['format'] ) {
+	if ( 'text/html' === $headers['format'] ) {
 		/**
 		 * hamail_should_filter
 		 *
@@ -482,16 +490,16 @@ function hamail_simple_mail( $recipients, $subject, $body, $additional_headers =
 						$personalization->addCustomArg( $arg );
 					}
 					$mail->addPersonalization( $personalization );
-					$sent_total++;
+					++$sent_total;
 				} catch ( \Exception $e ) {
 					$errors->add( 'hamail_personlization_exception', sprintf( '[%s] %s', $e->getCode(), $e->getMessage() ) );
 				}
 			}
 			// Set send at.
 			$mail->setSendAt( current_time( 'timestamp', true ) + $index * 20 );
-			// If debug mode, not sent actually.
+			// If debug mode, never send.
 			if ( hamail_is_debug() ) {
-				$slots_total++;
+				++$slots_total;
 				error_log( '[HAMAIL]' . '' . var_export( $mail, true ) );
 				continue;
 			}
@@ -720,14 +728,14 @@ function hamail_html_body_to_plain( $string ) {
 	foreach ( [
 		'#<a[^>]*href="([^"]+)"[^>]*>(.*?)</a>#u' => '$2 ($1) ',
 		'#<hr[^>]*?>#u'                           => apply_filters( 'hamail_plain_mail_separator', '---------', $string ),
-		'#<h([1-6])[^>]*?>(.*?)</h[1-6]>#u'       => function( $matches ) {
+		'#<h([1-6])[^>]*?>(.*?)</h[1-6]>#u'       => function ( $matches ) {
 			list( $all, $level, $text ) = $matches;
 			$prefix = [ '#### ', '### ', '## ', '# ', '', '' ][ $level - 1 ];
 			$prefix = apply_filters( 'hamail_plain_mail_heading_prefix', $prefix, $level );
 			return $prefix . $text;
 		},
 		'#<blockquote[^>]*?>(.*)</blockquote>#u'  => apply_filters( 'hamail_prefix', '> ', 'blockquote' ) . '$1',
-		'#<(o|u|d)l>(.*?)</(o|u|d)l>#us'          => function( $matches ) {
+		'#<(o|u|d)l>(.*?)</(o|u|d)l>#us'          => function ( $matches ) {
 			list( $all, $tag, $content, $tag2 ) = $matches;
 			$prefix = '';
 			switch ( $tag ) {
@@ -745,7 +753,7 @@ function hamail_html_body_to_plain( $string ) {
 					break;
 			}
 			$counter = 0;
-			return preg_replace_callback( '#<li[^>]*?>(.*?)</li>#', function( $m ) use ( $prefix, &$counter ) {
+			return preg_replace_callback( '#<li[^>]*?>(.*?)</li>#', function ( $m ) use ( $prefix, &$counter ) {
 				$counter++;
 				if ( false !== strpos( $prefix, '%d' ) ) {
 					$prefix = sprintf( $prefix, $counter );

@@ -15,7 +15,7 @@ abstract class UserQueryGroup extends UserGroup {
 	 * @return int
 	 */
 	protected function get_count() {
-		$query = array_merge( [
+		$query      = array_merge( [
 			'count_total' => true,
 			'number'      => 1,
 		], $this->query() );

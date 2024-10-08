@@ -71,8 +71,8 @@ class TemplateSelector extends Singleton {
 				$templates = self::get_available_templates();
 				if ( ! is_wp_error( $templates ) ) {
 					foreach ( $templates as $template ) {
-						if ( $default === $template[ 'id' ] ) {
-							$label = $template[ 'label' ];
+						if ( $default === $template['id'] ) {
+							$label = $template['label'];
 							break 1;
 						}
 					}
@@ -131,23 +131,23 @@ class TemplateSelector extends Singleton {
 				if ( ! $json ) {
 					throw new \Exception( __( 'Failed to retrieve templates list.', 'hamail' ), 500 );
 				}
-				if ( empty( $json[ 'templates' ] ) ) {
+				if ( empty( $json['templates'] ) ) {
 					$templates = [];
 				} else {
 					$templates = array_map( function ( $template ) {
 						return [
-							'id'    => $template[ 'id' ],
-							'name'  => $template[ 'name' ],
-							'type'  => $template[ 'generation' ],
+							'id'    => $template['id'],
+							'name'  => $template['name'],
+							'type'  => $template['generation'],
 							// translators: %1$s is template name, %2$s is generation.
-							'label' => sprintf( _x( '%1$s(%2$s)', 'template-label', 'hamail' ), $template[ 'name' ], $template[ 'generation' ] ),
+							'label' => sprintf( _x( '%1$s(%2$s)', 'template-label', 'hamail' ), $template['name'], $template['generation'] ),
 						];
-					}, $json [ 'templates' ] );
+					}, $json ['templates'] );
 				}
 			} catch ( \Exception $e ) {
-				$code = $e->getCode();
+				$code      = $e->getCode();
 				$templates = new \WP_Error( 'hamail_template_error', $e->getMessage(), [
-					'status' => preg_match( '/^[0-9]{3}$/u', $code ) ? $code : 500,
+					'status'               => preg_match( '/^[0-9]{3}$/u', $code ) ? $code : 500,
 					'original_status_code' => $code,
 				] );
 			}
@@ -173,7 +173,7 @@ class TemplateSelector extends Singleton {
 		} elseif ( empty( $templates ) ) {
 			return new \WP_Error( 'hamail_template_error', __( 'No template found.', 'hamail' ) );
 		}
-		$select = sprintf( '<select id="%1$s" name="%1$s">', esc_attr( $name ) );
+		$select     = sprintf( '<select id="%1$s" name="%1$s">', esc_attr( $name ) );
 		$pull_downs = [
 			[
 				'id'    => '',
@@ -190,9 +190,9 @@ class TemplateSelector extends Singleton {
 		foreach ( $pull_downs as $template ) {
 			$select .= sprintf(
 				'<option value="%1$s"%3$s>%2$s</option>',
-				esc_attr( $template[ 'id' ] ),
-				esc_html( $template[ 'label' ] ),
-				selected( $template[ 'id' ], $current_value, false )
+				esc_attr( $template['id'] ),
+				esc_html( $template['label'] ),
+				selected( $template['id'], $current_value, false )
 			);
 		}
 		$select .= '</select>';

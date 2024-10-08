@@ -44,7 +44,7 @@ class UserSync extends Singleton {
 			return $data;
 		}
 		try {
-			$sg = hamail_client();
+			$sg       = hamail_client();
 			$existing = $this->get_recipient( $user->ID );
 			if ( is_wp_error( $existing ) ) {
 				return $existing;
@@ -95,19 +95,19 @@ class UserSync extends Singleton {
 		if ( ! hamail_active_list() ) {
 			return new \WP_Error( 'hamail_user_api_error', __( 'No account is set.', 'hamail' ) );
 		}
-		$params = array_merge( [
+		$params           = array_merge( [
 			'number' => 1000,
 		], $query_params );
 		$params['number'] = min( 1000, $params['number'] );
-		$offset = 0;
-		$errors = new \WP_Error();
-		$sg = hamail_client();
+		$offset           = 0;
+		$errors           = new \WP_Error();
+		$sg               = hamail_client();
 		do {
-			$has_next           = false;
-			$params[ 'offset' ] = $offset;
-			$user_query         = new \WP_User_Query( $params );
-			$offset            += $user_query->get_total();
-			$users_data         = [];
+			$has_next         = false;
+			$params['offset'] = $offset;
+			$user_query       = new \WP_User_Query( $params );
+			$offset          += $user_query->get_total();
+			$users_data       = [];
 			foreach ( $user_query->get_results() as $user ) {
 				$user_data = hamail_fields_to_save( $user );
 				if ( is_wp_error( $user_data ) ) {
@@ -188,7 +188,7 @@ class UserSync extends Singleton {
 		if ( is_a( $value, 'WP_User' ) ) {
 			// Do nothing.
 			return $value;
-		} else{
+		} else {
 			$error = new \WP_Error( 'hamail_user_value', sprintf( __( 'User does not exist: %d', 'hamail' ), $value ) );
 			if ( is_numeric( $value ) ) {
 				$data = get_userdata( $value );
@@ -224,7 +224,7 @@ class UserSync extends Singleton {
 				}
 			}
 			$response = $sg->client->contactdb()->lists()->_( hamail_active_list() )->recipients()->post( $ids );
-			$result    = $this->convert_response_to_error( $response );
+			$result   = $this->convert_response_to_error( $response );
 			if ( is_wp_error( $result ) ) {
 				$errors->add( $result->get_error_code(), $result->get_error_message() );
 			} else {
@@ -248,7 +248,8 @@ class UserSync extends Singleton {
 	 * @return array[]|\WP_Error List of users or WP_Error on failure.
 	 */
 	public function search( $conditions ) {
-		if ( ! ( $sg = hamail_client() ) ) {
+		$sg = hamail_client();
+		if ( ! $sg ) {
 			return new \WP_Error( 'hamail_user_api_error', __( 'Sendgrid client is not set.', 'hamail' ) );
 		}
 		$response = $sg->client->contactdb()->recipients()->search()->get( null, $conditions );

@@ -38,7 +38,6 @@ function hamail_plugins_loaded( $plugin ) {
 		'domain'      => 'Text Domain',
 	] );
 
-
 	define( 'HAMAIL_VERSION', $info['version'] );
 	load_plugin_textdomain( $info['domain'], false, basename( __DIR__ ) . '/languages' );
 
@@ -87,4 +86,3 @@ function hamail_plugins_loaded( $plugin ) {
 	}
 }
 add_action( 'plugin_loaded', 'hamail_plugins_loaded' );
-

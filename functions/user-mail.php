@@ -10,7 +10,7 @@
  *
  * @param string $subject
  * @param string $body
- * @param array  $to
+ * @param array<int, string|int>  $to
  * @param int    $parent
  * @param int    $author_id
  * @param string $status
@@ -25,13 +25,15 @@ function hamail_create_user_contact( $subject, $body, $to = [], $parent = 0, $au
 	$ids    = [];
 	$emails = [];
 	foreach ( $to as $id_or_mail ) {
-		$id = '';
 		if ( is_numeric( $id_or_mail ) ) {
 			$ids[] = $id_or_mail;
-		} elseif ( $exist = email_exists( $id_or_mail ) ) {
-			$ids[] = $exist;
-		} elseif ( is_email( $id_or_mail ) ) {
-			$emails[] = $id_or_mail;
+		} else {
+			$exist = email_exists( $id_or_mail );
+			if ( $exist ) {
+				$ids[] = $exist;
+			} elseif ( is_email( $id_or_mail ) ) {
+				$emails[] = $id_or_mail;
+			}
 		}
 	}
 	if ( ! $ids && ! $emails ) {
@@ -39,7 +41,7 @@ function hamail_create_user_contact( $subject, $body, $to = [], $parent = 0, $au
 			'status' => 400,
 		] );
 	}
-	$args = [
+	$args    = [
 		'post_type'    => 'hamail',
 		'post_title'   => $subject,
 		'post_content' => $body,
@@ -55,7 +57,7 @@ function hamail_create_user_contact( $subject, $body, $to = [], $parent = 0, $au
 		update_post_meta( $post_id, '_hamail_recipients_id', implode( ',', $ids ) );
 	}
 	if ( $emails ) {
-		update_post_meta( $post_id,'_hamail_raw_address', implode( ',', $emails ) );
+		update_post_meta( $post_id, '_hamail_raw_address', implode( ',', $emails ) );
 	}
 	return get_post( $post_id );
 }

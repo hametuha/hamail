@@ -8,7 +8,7 @@
 /**
  * Register taxonomy.
  */
-add_action( 'init', function() {
+add_action( 'init', function () {
 	$post_types = apply_filters( 'hamail_post_types_in_marketing', [ \Hametuha\Hamail\API\MarketingEmail::POST_TYPE ] );
 	register_taxonomy( hamail_marketing_category_taxonomy(), $post_types, [
 		'label'             => __( 'Marketing Category', 'hamail' ),

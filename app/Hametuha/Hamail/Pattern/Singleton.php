@@ -13,7 +13,7 @@ abstract class Singleton {
 	/**
 	 * Constructor.
 	 */
-	private final function __construct() {
+	final private function __construct() {
 		$this->init();
 	}
 
