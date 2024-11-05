@@ -2,8 +2,8 @@
 
 set -e
 
-if [ $# -lt 2 ]; then
-  echo "usage: $0 <version> <light or pro>"
+if [ $# -lt 1 ]; then
+  echo "usage: $0 <version>"
   exit 1
 fi
 
