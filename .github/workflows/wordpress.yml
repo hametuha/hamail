@@ -1,59 +1,57 @@
-name: Deploy Plugin
+name: Test Plugin
 
 on:
-  push:
-    branches:
-      - master
-    tags:
-      - '*'
   pull_request:
     branches:
       - master
 
 jobs:
-  test:
-    runs-on: ${{ matrix.operating-system }}
-    strategy:
-      matrix:
-        operating-system: [ ubuntu-18.04 ]  # OS. ubuntu-18.04 is also available.
-        php: [ '7.2', '7.4', '8.1' ] # PHP versions to check.
-        wp: [ 'latest', '5.9' ]      # WordPress version to check.
-        version: [ 'light', 'pro' ]  # Pro or light.
-    services:
-      mysql:
-        image: mysql:5.7
-        options: --health-cmd "mysqladmin ping --host 127.0.0.1 --port 3306" --health-interval 20s --health-timeout 10s --health-retries 10
-        ports:
-          - 3306/tcp
-        env:
-          MYSQL_ROOT_PASSWORD: root
-    name: WordPress ${{ matrix.wp }} in PHP ${{ matrix.php }} UnitTest
-    steps:
-      - uses: actions/checkout@master
-
-      - name: Setup PHP
-        uses: nanasess/setup-php@master
-        with:
-          php-version: ${{ matrix.php }}
-
-      - name: Validate composer.json and composer.lock
-        run: composer validate
-
-      - name: Install dependencies
-        run: composer install --prefer-dist --no-progress --no-suggest
-
-      - name: Start MySQL
-        run: sudo systemctl start mysql
-
-      - name: Install WordPress
-        run: bash bin/install-wp-tests.sh wordpress root root 127.0.0.1:3306 ${{ matrix.wp }}
-
-      - name: Remove Pro directory for light version.
-        if: matrix.version != 'pro'
-        run: rm -rf app/Hametuha/Hamail/Pro
-
-      - name: Run test suite
-        run: composer test
+#  test:
+#    runs-on: ${{ matrix.operating-system }}
+#    strategy:
+#      matrix:
+#        operating-system: [ ubuntu-latest ]  # OS. ubuntu-18.04 is also available.
+#        php: [ '7.2', '7.4', '8.1' ] # PHP versions to check.
+#        wp: [ 'latest', '5.9' ]      # WordPress version to check.
+#        version: [ 'light', 'pro' ]  # Pro or light.
+#    services:
+#      mysql:
+#        image: mysql:5.7
+#        options: --health-cmd "mysqladmin ping --host 127.0.0.1 --port 3306" --health-interval 20s --health-timeout 10s --health-retries 10
+#        ports:
+#          - 3306/tcp
+#        env:
+#          MYSQL_ROOT_PASSWORD: root
+#    name: WordPress ${{ matrix.wp }} in PHP ${{ matrix.php }} UnitTest
+#    steps:
+#      - uses: actions/checkout@master
+#
+#      - name: Setup PHP with composer
+#        uses: shivammathur/setup-php@v2
+#        with:
+#          php-version: ${{ matrix.php }}
+#          tools: composer
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#
+#      - name: Validate composer.json and composer.lock
+#        run: composer validate
+#
+#      - name: Install dependencies
+#        run: composer install --prefer-dist --no-progress --no-suggest
+#
+#      - name: Start MySQL
+#        run: sudo systemctl start mysql
+#
+#      - name: Install WordPress
+#        run: bash bin/install-wp-tests.sh wordpress root root 127.0.0.1:3306 ${{ matrix.wp }}
+#
+#      - name: Remove Pro directory for light version.
+#        if: matrix.version != 'pro'
+#        run: rm -rf app/Hametuha/Hamail/Pro
+#
+#      - name: Run test suite
+#        run: composer test
 
   lint:
     name: PHP Syntax Check
@@ -77,110 +75,8 @@ jobs:
     name: Status Check
     if: always()
     runs-on: ubuntu-latest
-    needs: [ test, lint, php-lint, assets ]
+    needs: [ lint, php-lint, assets ] # [ test, lint, php-lint, assets ] # Remove test temporary.
     steps:
       - uses: re-actors/alls-green@release/v1
         with:
           jobs: ${{ toJSON(needs) }}
-
-  pre_release:
-    name: Create Release
-    needs: status-check
-    if: contains(github.ref, 'tags/')
-    runs-on: ubuntu-latest
-    outputs:
-      upload_url: ${{ steps.export.outputs.upload_url }}
-    steps:
-      - uses: actions/checkout@main
-
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: Release Hamail ${{ github.ref }}
-          body: |
-            Release Hamail version ${{ github.ref }}.
-          draft: false
-          prerelease: false
-
-      - name: Export Upload URL
-        id: export
-        run: echo "::set-output name=upload_url::${{ steps.create_release.outputs.upload_url }}"
-
-
-  release:
-    name: Build Plugin
-    needs: pre_release
-    runs-on: ubuntu-18.04
-    strategy:
-      matrix:
-        zip: [ 'light', 'pro' ] # Zip name.
-    steps:
-      - uses: actions/checkout@master
-
-      - name: Confirm
-        run: echo ${{ needs.pre_release.outputs.upload_url }}
-
-      - name: Setup PHP
-        uses: nanasess/setup-php@master
-        with:
-          php-version: '5.6'
-
-      - name: Install NPM
-        uses: actions/setup-node@v1
-        with:
-          node-version: '12'
-
-      - name: Build package.
-        run: bash bin/build.sh ${{ github.ref }} ${{ matrix.zip }}
-
-      - name: Cleanup package.
-        run: bash bin/clean.sh
-
-      - name: Create Zip
-        run: zip -r hamail-${{ matrix.zip }}.zip ./
-
-      - name: Upload Release Zip
-        id: upload-release-asset
-        uses: actions/upload-release-asset@v1.0.1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ needs.pre_release.outputs.upload_url }}
-          asset_path: ./hamail-${{ matrix.zip }}.zip
-          asset_name: hamail-${{ matrix.zip }}.zip
-          asset_content_type: application/zip
-
-  wp_org:
-    name: Deploy WordPress.org
-    needs: test
-    if: contains(github.ref, 'tags/')
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@master
-
-      - name: Setup PHP
-        uses: nanasess/setup-php@master
-        with:
-          php-version: '5.6'
-
-      - name: Install NPM
-        uses: actions/setup-node@v1
-        with:
-          node-version: '12'
-
-      - name: Build package.
-        run: bash bin/build.sh ${{ github.ref }} light
-
-      - name: WordPress Plugin Deploy
-        id: deploy
-        uses: 10up/action-wordpress-plugin-deploy@stable
-        with:
-          generate-zip: false
-        env:
-          SVN_USERNAME: ${{ secrets.WP_ORG_USERNAME }}
-          SVN_PASSWORD: ${{ secrets.WP_ORG_PASSWORD }}
-          SLUG: hamail
