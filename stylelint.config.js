@@ -1,13 +1,9 @@
 module.exports = {
-	extends: [
-		'stylelint-config-wordpress/scss',
-	],
+	"extends": [ "@wordpress/stylelint-config/scss" ],
 	rules: {
 		'value-keyword-case': [ 'lower', {
 			ignoreProperties: [ 'font-family' ],
 		} ],
-		'number-leading-zero': null,
-		'rule-empty-line-before': null,
-		'declaration-property-unit-whitelist': null,
+		'rule-empty-line-before': null
 	},
 };

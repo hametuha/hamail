@@ -98,7 +98,7 @@ trait ApiUtility {
 	 */
 	protected function convert_response_to_error( $response ) {
 		$status = $response->statusCode();
-		$body = json_decode( $response->body(), true );
+		$body   = json_decode( $response->body(), true );
 		if ( 200 <= $status && 300 > $status ) {
 			// Success.
 			return $body;
@@ -109,9 +109,9 @@ trait ApiUtility {
 				foreach ( $body['errors'] as $error ) {
 					$messages[] = $error['message'];
 				}
-				$message = implode( " / ", $messages );
+				$message = implode( ' / ', $messages );
 			}
-			return new \WP_Error( 'hamail_sendgrid_api_error', $message,  [
+			return new \WP_Error( 'hamail_sendgrid_api_error', $message, [
 				'status' => $status,
 			] );
 		}

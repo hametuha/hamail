@@ -5,6 +5,7 @@ namespace Hametuha\Hamail\API;
 
 use Hametuha\Hamail\Pattern\DynamicEmailTemplate;
 use Hametuha\Hamail\Pattern\Singleton;
+use Hametuha\Hamail\Ui\SettingsScreen;
 
 /**
  * Dynamic email bootstrap.
@@ -55,7 +56,7 @@ class DynamicEmails extends Singleton {
 	 * Add menu page for dynamic emails.
 	 */
 	public function add_menu_page() {
-		add_submenu_page( 'edit.php?post_type=hamail', __( 'Dynamic Emails', 'hamail' ), __( 'Dynamic Emails', 'hamail' ), 'edit_others_posts', 'hamai-dynamic', function() {
+		add_submenu_page( SettingsScreen::get_instance()->slug, __( 'Dynamic Emails', 'hamail' ), __( 'Dynamic Emails', 'hamail' ), 'edit_others_posts', 'hamai-dynamic', function () {
 			wp_enqueue_style( 'hamail-dynamics' );
 			wp_enqueue_script( 'hamail-dynamics' );
 			?>
@@ -106,7 +107,7 @@ class DynamicEmails extends Singleton {
 				</table>
 			</div>
 			<?php
-		} );
+		}, 20 );
 	}
 
 	/**
@@ -127,7 +128,7 @@ class DynamicEmails extends Singleton {
 				'type'              => 'string',
 				'required'          => true,
 				'description'       => __( 'Dynamic email key', 'hamail' ),
-				'validate_callback' => function( $var ) {
+				'validate_callback' => function ( $var ) {
 					return ! empty( $var ) && array_key_exists( $var, $this->emails );
 				},
 			],

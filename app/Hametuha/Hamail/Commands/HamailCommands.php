@@ -150,17 +150,17 @@ class HamailCommands extends \WP_CLI_Command {
 				\WP_CLI::error( sprintf( __( 'Parent directory %s is not writable.', 'hamail' ), $destination ) );
 			}
 			$csv        = new \SplFileObject( $destination, 'w' );
-			$set_header = function( $headers ) use ( &$csv ) {
+			$set_header = function ( $headers ) use ( &$csv ) {
 				$csv->fputcsv( $headers );
 			};
-			$set_row    = function( $fields ) use ( &$csv ) {
+			$set_row    = function ( $fields ) use ( &$csv ) {
 				$csv->fputcsv( $fields );
 			};
 		} else {
-			$set_header = function( $headers ) use ( &$table ) {
+			$set_header = function ( $headers ) use ( &$table ) {
 				$table->setHeaders( $headers );
 			};
-			$set_row    = function( $fields ) use ( &$table ) {
+			$set_row    = function ( $fields ) use ( &$table ) {
 				$table->addRow( $fields );
 			};
 		}
@@ -176,7 +176,7 @@ class HamailCommands extends \WP_CLI_Command {
 			] );
 			$users      = $user_query->get_results();
 			if ( count( $users ) ) {
-				$paged++;
+				++$paged;
 				foreach ( $users as $user ) {
 					$fields = hamail_fields_to_save( $user );
 					if ( is_wp_error( $fields ) ) {
@@ -187,7 +187,7 @@ class HamailCommands extends \WP_CLI_Command {
 						$set_header( array_keys( $fields ) );
 					}
 					$set_row( array_values( $fields ) );
-					$count++;
+					++$count;
 				}
 				echo '.';
 			} else {
@@ -224,7 +224,7 @@ class HamailCommands extends \WP_CLI_Command {
 	public function test_data( $args ) {
 		list( $id_or_emails ) = $args;
 		$id_or_emails         = explode( ',', $id_or_emails );
-		add_filter( 'hamail_placeholders', function( $data, $user ) {
+		add_filter( 'hamail_placeholders', function ( $data, $user ) {
 			$data['-extra-'] = is_a( $user, 'WP_User' ) ? 'WP_User' : 'Email';
 			return $data;
 		}, 10, 2 );
@@ -408,7 +408,7 @@ If this is html mail, <a href="https://example.com">link</a> should work properl
 		if ( isset( $args[0] ) ) {
 			$file = $args[0];
 			if ( file_exists( $file ) ) {
-				add_filter( 'hamail_css_path', function( $path ) use ( $file ) {
+				add_filter( 'hamail_css_path', function ( $path ) use ( $file ) {
 					$path[] = $file;
 					return $path;
 				} );

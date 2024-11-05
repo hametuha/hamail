@@ -5,7 +5,6 @@ Plugin URI: https://wordpress.org/plugins/hamail/
 Description: A WordPress plugin for sending e-mail via SendGrid.
 Author: Hametuha INC.
 Version: nightly
-PHP Version: 5.6
 Author URI: https://hametuha.co.jp/
 License: GPL3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -38,7 +37,6 @@ function hamail_plugins_loaded( $plugin ) {
 		'domain'      => 'Text Domain',
 	] );
 
-
 	define( 'HAMAIL_VERSION', $info['version'] );
 	load_plugin_textdomain( $info['domain'], false, basename( __DIR__ ) . '/languages' );
 
@@ -51,7 +49,7 @@ function hamail_plugins_loaded( $plugin ) {
 		$auto_loader = __DIR__ . '/vendor/autoload.php';
 		if ( ! file_exists( $auto_loader ) ) {
 			// translators: %s is composer path.
-			throw new Exception( sprintf( __( '[Hamail] PHP auto loader %s is missing. Did you run <code>composer install</code>?', 'hamail' ), $auto_loader ) );
+			throw new Exception( sprintf( __( '[Hamail] PHP autoloader %s is missing. Did you run <code>composer install</code>?', 'hamail' ), $auto_loader ) );
 		}
 		require $auto_loader;
 		// Load functions.
@@ -63,8 +61,14 @@ function hamail_plugins_loaded( $plugin ) {
 				}
 			}
 		}
+		// Transaction mail Sender
+		\Hametuha\Hamail\API\TransactionMails::get_instance();
+		// Setting Screen
+		Hametuha\Hamail\Ui\SettingsScreen::get_instance();
 		// Dynamic emails.
 		Hametuha\Hamail\API\DynamicEmails::get_instance();
+		// SMTP Handlers
+		Hametuha\Hamail\Controller\SmtpController::get_instance();
 		// Screens.
 		Hametuha\Hamail\Ui\ListTable\RecipientsColumn::get_instance();
 		// Enable user sync.
@@ -72,10 +76,6 @@ function hamail_plugins_loaded( $plugin ) {
 		// Register command for CLI.
 		if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			WP_CLI::add_command( 'hamail', Hametuha\Hamail\Commands\HamailCommands::class );
-		}
-		// Load Pro features if exists.
-		if ( class_exists( 'Hametuha\\Hamail\\Pro\\Bootstrap' ) ) {
-			Hametuha\Hamail\Pro\Bootstrap::get_instance();
 		}
 		// Load test file if exists.
 		if ( class_exists( 'Hametuha\\HamailDev\\Bootstrap' ) && ! defined( 'HAMAIL_NO_TEST_MODULES' ) ) {
@@ -89,4 +89,3 @@ function hamail_plugins_loaded( $plugin ) {
 	}
 }
 add_action( 'plugin_loaded', 'hamail_plugins_loaded' );
-

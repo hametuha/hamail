@@ -18,5 +18,4 @@ function hamail_admin_send() {
  * Show template for admin group
  */
 function hamail_admin_group() {
-
 }

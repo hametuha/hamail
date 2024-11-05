@@ -133,6 +133,4 @@ class RecipientsColumn extends ListTablePattern {
 				break;
 		}
 	}
-
-
 }

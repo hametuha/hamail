@@ -1,5 +1,6 @@
 @import "variables";
 
+// stylelint-disable-next-line selector-id-pattern
 #hamail_fields_to_sync{
   width: 100%;
   display: block;
@@ -10,7 +11,7 @@
 .hamail-description{
   font-size: 0.9em;
   dt{
-    font-weight: bold;
+    font-weight: 700;
     color: $sg-gray;
     margin: 0 0 5px;
   }
@@ -20,7 +21,7 @@
   code{
     display: inline-block;
     font-family: monospace;
-    font-weight: normal;
+    font-weight: 400;
     background: #f9f9f9;
     border: 1px solid #ddd;
     color: $sg-red;
@@ -36,7 +37,7 @@
   caption{
     text-align: left;
     color: $sg-gray;
-    font-weight: bold;
+    font-weight: 700;
     font-size: 0.85em;
   }
   th, td{
@@ -51,7 +52,7 @@
     }
   }
   th{
-    font-weight: bold;
+    font-weight: 700;
   }
   td{
     font-family: monospace;
@@ -60,6 +61,6 @@
 
 .hamail-format-error{
   margin: 0.25em 0 0.5em;
-  font-weight: bold;
+  font-weight: 700;
   color: $sg-red;
 }

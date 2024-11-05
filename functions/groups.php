@@ -14,7 +14,7 @@
  */
 function hamail_user_groups() {
 	$user_groups = apply_filters( 'hamail_user_groups', [] );
-	return array_filter( $user_groups, function( $group ) {
+	return array_filter( $user_groups, function ( $group ) {
 		return is_subclass_of( $group, \Hametuha\Hamail\Pattern\UserGroup::class );
 	} );
 }
@@ -26,7 +26,6 @@ function hamail_user_groups() {
  * @return \Hametuha\Hamail\Pattern\UserGroup[]
  */
 function hamail_get_groups( $post = null ) {
-
 }
 
 /**

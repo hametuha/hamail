@@ -6,7 +6,7 @@
 /**
  * Load all API's
  */
-add_action( 'plugins_loaded', function() {
+add_action( 'plugins_loaded', function () {
 	$dir = [ 'API' ];
 	foreach ( $dir as $d ) {
 		$path = dirname( __DIR__ ) . '/app/Hametuha/Hamail/' . $d;
@@ -41,7 +41,7 @@ add_action( 'init', function () {
 	$dir_base = trailingslashit( $root_dir );
 	$url_base = plugin_dir_url( __DIR__ );
 	foreach ( $settings as $setting ) {
-		if ( ! $setting ) {
+		if ( empty( $setting['path'] ) ) {
 			continue;
 		}
 		$path   = $dir_base . $setting['path'];
@@ -52,6 +52,10 @@ add_action( 'init', function () {
 			case 'js':
 				// Register JavaScript.
 				wp_register_script( $handle, $url, $deps, $setting['hash'], $setting['footer'] );
+				// Register localization.
+				if ( in_array( 'wp-i18n', $setting['deps'], true ) ) {
+					wp_set_script_translations( $handle, 'hamail' );
+				}
 				break;
 			case 'css':
 				// This is CSS.

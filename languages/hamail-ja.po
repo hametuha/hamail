@@ -1,57 +1,419 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2019-09-23 01:15+0900\n"
-"PO-Revision-Date: 2019-09-23 01:47+0900\n"
+"POT-Creation-Date: 2024-11-01 00:22+0900\n"
+"PO-Revision-Date: 2024-11-01 00:26+0900\n"
 "Last-Translator: Takahashi Fumiki <takahashi.fumiki@hametuha.co.jp>\n"
 "Language-Team: \n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.2\n"
-"X-Poedit-Basepath: .\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 3.5\n"
+"X-Poedit-Basepath: .\n"
 
-#: app/Hametuha/Hamail/API/Reply.php:59
+#: app/Hametuha/Hamail/API/DynamicEmails.php:58
+#: app/Hametuha/Hamail/API/DynamicEmails.php:63
+msgid "Dynamic Emails"
+msgstr ""
+
+#: app/Hametuha/Hamail/API/DynamicEmails.php:65
+msgid "Dynamic Emails are the email sent programmatically."
+msgstr ""
+
+#: app/Hametuha/Hamail/API/DynamicEmails.php:70
+#, fuzzy
+msgid "Name"
+msgstr "名前"
+
+#: app/Hametuha/Hamail/API/DynamicEmails.php:71
+#, fuzzy
+msgid "Condition"
+msgstr "条件"
+
+#: app/Hametuha/Hamail/API/DynamicEmails.php:72
+#: app/Hametuha/Hamail/API/DynamicEmails.php:94
+#, fuzzy
+msgid "Active"
+msgstr "有効"
+
+#: app/Hametuha/Hamail/API/DynamicEmails.php:97
+msgid "Inactive"
+msgstr ""
+
+#: app/Hametuha/Hamail/API/DynamicEmails.php:129
+msgid "Dynamic email key"
+msgstr ""
+
+#: app/Hametuha/Hamail/API/DynamicEmails.php:165
+#, php-format
+msgid "%s is activated."
+msgstr ""
+
+#: app/Hametuha/Hamail/API/DynamicEmails.php:168
+#: app/Hametuha/Hamail/API/DynamicEmails.php:189
+#, fuzzy
+msgid "Undefined error occurred."
+msgstr "原因不明のエラーが起きました。"
+
+#: app/Hametuha/Hamail/API/DynamicEmails.php:186
+#, php-format
+msgid "%s is deactivated."
+msgstr ""
+
+#: app/Hametuha/Hamail/API/MarketingEmail.php:101
+msgid "Either Unsubscribe group or custom URL is required."
+msgstr ""
+
+#: app/Hametuha/Hamail/API/MarketingEmail.php:103
+msgid "Unsubscribe group should be numerice."
+msgstr ""
+
+#: app/Hametuha/Hamail/API/MarketingEmail.php:107
+#, fuzzy
+#| msgid "At least one recipient is required."
+msgid "Sender is required."
+msgstr "少なくとも1名の受信者が必要です。"
+
+#: app/Hametuha/Hamail/API/MarketingEmail.php:111
+msgid "Post content is empty. This will be mail body."
+msgstr ""
+
+#: app/Hametuha/Hamail/API/MarketingEmail.php:115
+msgid "Post title is empty. This will be mail subject."
+msgstr ""
+
+#: app/Hametuha/Hamail/API/MarketingEmail.php:120
+#, fuzzy
+#| msgid "At least one recipient is required."
+msgid "Target is required."
+msgstr "少なくとも1名の受信者が必要です。"
+
+#: app/Hametuha/Hamail/API/MarketingEmail.php:338
+#, fuzzy
+#| msgid "Hamail Setting"
+msgid "Marketing Setting"
+msgstr "Hamail設定"
+
+#: app/Hametuha/Hamail/API/MarketingEmail.php:339
+#, fuzzy
+#| msgid "Available Fields: "
+msgid "Available Fields"
+msgstr "利用できるフィールド: "
+
+#: app/Hametuha/Hamail/API/MarketingEmail.php:358
+msgid "Valid email marketing will be sent after you publish or schedule."
+msgstr ""
+
+#: app/Hametuha/Hamail/API/MarketingEmail.php:364
+msgid "Sender ID"
+msgstr ""
+
+#: app/Hametuha/Hamail/API/MarketingEmail.php:373
+msgid "Target Group"
+msgstr ""
+
+#: app/Hametuha/Hamail/API/MarketingEmail.php:382
+#, fuzzy, php-format
+#| msgid "List to sync"
+msgctxt "list gorup"
+msgid "List: %s"
+msgstr "同期するリスト"
+
+#: app/Hametuha/Hamail/API/MarketingEmail.php:385
+#, fuzzy
+#| msgid "Recipients"
+msgid "All Recipients"
+msgstr "受信者"
+
+#: app/Hametuha/Hamail/API/MarketingEmail.php:398
+#, fuzzy
+#| msgid "You have no permission"
+msgid "You have no list available."
+msgstr "権限がありません。"
+
+#: app/Hametuha/Hamail/API/MarketingEmail.php:419
+msgid "Unsubscribe"
+msgstr ""
+
+#: app/Hametuha/Hamail/API/MarketingEmail.php:421
+msgid "Specify unsubscribe group for this marketing email. Custom URL priors."
+msgstr ""
+
+#: app/Hametuha/Hamail/API/MarketingEmail.php:425
+msgid "Unsubscribe Group"
+msgstr ""
+
+#: app/Hametuha/Hamail/API/MarketingEmail.php:429
+msgid "Failed to get unsubscribe groups."
+msgstr ""
+
+#: app/Hametuha/Hamail/API/MarketingEmail.php:434
+#, fuzzy
+msgid "Please Select"
+msgstr "選択してください"
+
+#: app/Hametuha/Hamail/API/MarketingEmail.php:441
+#, fuzzy
+msgid "(Default)"
+msgstr "（デフォルト）"
+
+#: app/Hametuha/Hamail/API/MarketingEmail.php:451
+msgid "Custom Unsubscribe URL"
+msgstr ""
+
+#: app/Hametuha/Hamail/API/MarketingEmail.php:457
+#, fuzzy
+#| msgid "Template ID"
+msgid "Template"
+msgstr "テンプレートID"
+
+#: app/Hametuha/Hamail/API/MarketingEmail.php:461
+#: app/Hametuha/Hamail/Ui/MarketingTemplate.php:201
+msgid "Plain Text"
+msgstr ""
+
+#: app/Hametuha/Hamail/API/MarketingEmail.php:471
+#: app/Hametuha/Hamail/API/MarketingEmail.php:477
+#, fuzzy
+msgid "Default"
+msgstr "デフォルト"
+
+#: app/Hametuha/Hamail/API/MarketingEmail.php:486
+#, fuzzy, php-format
+#| msgid "CSV Preview"
+msgctxt "Preview link"
+msgid "Preview %s"
+msgstr "CSV プレビュー"
+
+#: app/Hametuha/Hamail/API/MarketingEmail.php:506
+msgid "Failed to get custom fields. Please check API key is valid."
+msgstr ""
+
+#: app/Hametuha/Hamail/API/MarketingEmail.php:512
+#, fuzzy
+#| msgid "Placeholder"
+msgid "Place Holder"
+msgstr "プレースホルダー"
+
+#: app/Hametuha/Hamail/API/MarketingEmail.php:513
+#, fuzzy
+msgid "Type"
+msgstr "型"
+
+#: app/Hametuha/Hamail/API/MarketingEmail.php:514
+msgid "Reserved"
+msgstr ""
+
+#: app/Hametuha/Hamail/API/MarketingEmail.php:525
+msgid "Please copy this as place holder."
+msgstr ""
+
+#: app/Hametuha/Hamail/API/MarketingEmail.php:526
+#, fuzzy
+#| msgid "Default Mail From"
+msgid "Default Value"
+msgstr "デフォルトのメール送信者"
+
+#: app/Hametuha/Hamail/API/MarketingEmail.php:527
+#, fuzzy
+msgid "Copy"
+msgstr "コピー"
+
+#: app/Hametuha/Hamail/API/MarketingEmail.php:580
+msgid "Marketing Email"
+msgstr ""
+
+#: app/Hametuha/Hamail/API/MarketingEmail.php:606
+msgid "Marketing post ID."
+msgstr ""
+
+#: app/Hametuha/Hamail/API/MarketingEmail.php:639
+#, fuzzy
+#| msgid "Class %s does not exist."
+msgid "Campaign dose not exist."
+msgstr "クラス %s は存在しません。"
+
+#: app/Hametuha/Hamail/API/MarketingEmail.php:663
+msgid "Campaign is deleted from SendGrid."
+msgstr ""
+
+#: app/Hametuha/Hamail/API/MarketingEmail.php:667
+msgid "Method not allowd."
+msgstr ""
+
+#: app/Hametuha/Hamail/API/Reply.php:70
 #, php-format
 msgid "Dear %s,"
 msgstr "%s様"
 
-#: app/Hametuha/Hamail/API/Reply.php:79
+#: app/Hametuha/Hamail/API/Reply.php:90
 #, php-format
 msgid ""
 "A new reply for #%d is created and saved as draft. Will you edit it now?"
 msgstr "#%d への新しい返信が下書きとして作成されました。いますぐ編集しますか？"
 
-#: app/Hametuha/Hamail/API/Reply.php:114
+#: app/Hametuha/Hamail/API/Reply.php:125
 msgid "Reply"
 msgstr "返信"
 
-#: app/Hametuha/Hamail/Commands/HamailCommands.php:83
+#: app/Hametuha/Hamail/API/UserSync.php:96
+#, fuzzy
+#| msgid "No recipient set."
+msgid "No account is set."
+msgstr "受信者がセットされていません。"
+
+#: app/Hametuha/Hamail/API/UserSync.php:152
+#, fuzzy
+#| msgid "No data found."
+msgid "No user found."
+msgstr "ユーザーが見つかりません。"
+
+#: app/Hametuha/Hamail/API/UserSync.php:192
+#, fuzzy, php-format
+#| msgid "Post does not exist."
+msgid "User does not exist: %d"
+msgstr "投稿が存在しません。"
+
+#: app/Hametuha/Hamail/API/UserSync.php:253
+#, fuzzy
+#| msgid "SendGrid is not connected."
+msgid "Sendgrid client is not set."
+msgstr "SendGrid と接続されていません。"
+
+#: app/Hametuha/Hamail/API/UserSync.php:319
+#, fuzzy
+#| msgid "The user dose not exist."
+msgid "User is not registered."
+msgstr "ユーザーは存在しません。"
+
+#: app/Hametuha/Hamail/Commands/HamailCommands.php:39
+#, fuzzy, php-format
+#| msgid "Post does not exist."
+msgid "User ID does not exist: %s"
+msgstr "投稿が存在しません。"
+
+#: app/Hametuha/Hamail/Commands/HamailCommands.php:49
+#, php-format
+msgid "User %1$d is not found in the contact list %2$d. Will be added."
+msgstr ""
+
+#: app/Hametuha/Hamail/Commands/HamailCommands.php:56
+#, php-format
+msgid "User %1$d will be updated in the contact list %2$d."
+msgstr ""
+
+#: app/Hametuha/Hamail/Commands/HamailCommands.php:65
+#, php-format
+msgid "User %1$d is registered as %2$s"
+msgstr ""
+
+#: app/Hametuha/Hamail/Commands/HamailCommands.php:86
+#, fuzzy, php-format
+#| msgid "Class %s does not exist."
+msgid "User %s does not exist."
+msgstr "クラス %s は存在しません。"
+
+#: app/Hametuha/Hamail/Commands/HamailCommands.php:97
+#, php-format
+msgid "%s is deleted from contact list."
+msgstr ""
+
+#: app/Hametuha/Hamail/Commands/HamailCommands.php:107
+msgid "Start syncing all users to sendgrid list."
+msgstr ""
+
+#: app/Hametuha/Hamail/Commands/HamailCommands.php:111
+#, php-format
+msgid ""
+"You have %1$d users. This will take %2$d seconds approximately. Are you "
+"ready?"
+msgstr ""
+
+#: app/Hametuha/Hamail/Commands/HamailCommands.php:112
+msgid "Syncing..."
+msgstr ""
+
+#: app/Hametuha/Hamail/Commands/HamailCommands.php:120
+msgid "Syncing failed."
+msgstr ""
+
+#: app/Hametuha/Hamail/Commands/HamailCommands.php:122
+#, php-format
+msgid "%d users synced."
+msgstr ""
+
+#: app/Hametuha/Hamail/Commands/HamailCommands.php:145
+#, php-format
+msgid "File %s already exists."
+msgstr ""
+
+#: app/Hametuha/Hamail/Commands/HamailCommands.php:150
+#, php-format
+msgid "Parent directory %s is not writable."
+msgstr ""
+
+#: app/Hametuha/Hamail/Commands/HamailCommands.php:167
+msgid "Exporting 1000 users per dot. Please be patient."
+msgstr ""
+
+#: app/Hametuha/Hamail/Commands/HamailCommands.php:199
+msgid "No user found. Please check your setting."
+msgstr ""
+
+#: app/Hametuha/Hamail/Commands/HamailCommands.php:202
+#, fuzzy, php-format
+#| msgid "Term not found."
+msgid "%d users found."
+msgstr "タームが見つかりませんでした。"
+
+#: app/Hametuha/Hamail/Commands/HamailCommands.php:207
+#, php-format
+msgid "CSV is output: %s"
+msgstr ""
+
+#: app/Hametuha/Hamail/Commands/HamailCommands.php:233
 msgid "No data found."
 msgstr "データが見つかりませんでした。"
 
-#: app/Hametuha/Hamail/Commands/HamailCommands.php:87
+#: app/Hametuha/Hamail/Commands/HamailCommands.php:238
 #, php-format
 msgid "%d data converted."
 msgstr "%d 件のデータを変換しました。"
 
-#: app/Hametuha/Hamail/Commands/HamailCommands.php:104
+#: app/Hametuha/Hamail/Commands/HamailCommands.php:252
+#, fuzzy, php-format
+#| msgid "Term not found."
+msgid "User %d not found."
+msgstr "ユーザー #%d は見つかりませんでした。"
+
+#: app/Hametuha/Hamail/Commands/HamailCommands.php:281
 #, php-format
 msgid "Class %s does not exist."
 msgstr "クラス %s は存在しません。"
 
-#: app/Hametuha/Hamail/Commands/HamailCommands.php:110
+#: app/Hametuha/Hamail/Commands/HamailCommands.php:288
 #, php-format
 msgid "Above is the data of %s."
 msgstr "上記が %s のデータです。"
 
-#: app/Hametuha/Hamail/Commands/HamailCommands.php:153
+#: app/Hametuha/Hamail/Commands/HamailCommands.php:328
+#, fuzzy
+#| msgid "No data found."
+msgid "No message found."
+msgstr "データが見つかりませんでした。"
+
+#: app/Hametuha/Hamail/Commands/HamailCommands.php:331
+#, php-format
+msgid "Get the recipients of #%2$d %1$s..."
+msgstr ""
+
+#: app/Hametuha/Hamail/Commands/HamailCommands.php:376
 msgid "This is a test mail from WP-CLI"
 msgstr "これは WP-CLI によるテストメールです。"
 
-#: app/Hametuha/Hamail/Commands/HamailCommands.php:154
+#: app/Hametuha/Hamail/Commands/HamailCommands.php:377
 msgid ""
 "Dear -email-,\n"
 "we sent you a test mail.\n"
@@ -81,6 +443,48 @@ msgstr ""
 "これがHTMLメールの場合、<a href=\"https://example.com\">リンク</a>も適切に動"
 "作すべきです。"
 
+#: app/Hametuha/Hamail/Commands/HamailCommands.php:476
+#, fuzzy
+#| msgid "Failed to extract email."
+msgid "Failed to send messages."
+msgstr "メールの抽出に失敗しました。"
+
+#: app/Hametuha/Hamail/Commands/HamailCommands.php:478
+msgid "Post is successfully sent."
+msgstr ""
+
+#: app/Hametuha/Hamail/Commands/HamailCommands.php:480
+msgid ""
+"Failed to send message. Because of no post, no recipients, nor already sent."
+msgstr ""
+
+#: app/Hametuha/Hamail/Pattern/DynamicEmailTemplate.php:55
+#, php-format
+msgid "%s is already active."
+msgstr ""
+
+#: app/Hametuha/Hamail/Pattern/DynamicEmailTemplate.php:80
+#, php-format
+msgid "%s is not active."
+msgstr ""
+
+#: app/Hametuha/Hamail/Pattern/RecipientSelector.php:71
+msgid "Page number"
+msgstr ""
+
+#: app/Hametuha/Hamail/Pattern/RecipientSelector.php:79
+msgid "Uniq IDs of user group."
+msgstr ""
+
+#: app/Hametuha/Hamail/Pattern/RecipientSelector.php:84
+#, fuzzy
+msgid "Search keywords"
+msgstr "検索キーワードを入力…"
+
+#: app/Hametuha/Hamail/Pattern/RecipientSelector.php:112
+msgid "Invalid request. Please specify serch keywords or IDs."
+msgstr ""
+
 #: app/Hametuha/Hamail/Pattern/TransactionalEmail.php:81
 #, php-format
 msgid "No recipients set: %s"
@@ -99,7 +503,7 @@ msgstr "投稿が存在しません。"
 msgid "Failed to extract email."
 msgstr "メールの抽出に失敗しました。"
 
-#: app/Hametuha/Hamail/Service/Extractor.php:35 functions/mail.php:215
+#: app/Hametuha/Hamail/Service/Extractor.php:35 functions/mail.php:249
 msgid "Guest"
 msgstr "ゲスト"
 
@@ -111,74 +515,265 @@ msgstr "コンタクト"
 msgid "This post type is not supported."
 msgstr "この投稿タイプはサポートされていません。"
 
-#: functions/mail.php:103
+#: app/Hametuha/Hamail/Service/TemplateSelector.php:30
+#: app/Hametuha/Hamail/Ui/MarketingTemplate.php:111
+#, fuzzy
+#| msgid "Template ID"
+msgid "Mail Template"
+msgstr "テンプレートID"
+
+#: app/Hametuha/Hamail/Service/TemplateSelector.php:67
+#, fuzzy
+#| msgid "Search query is not set."
+msgid "Default template is not set."
+msgstr "検索クエリがセットされていません。"
+
+#: app/Hametuha/Hamail/Service/TemplateSelector.php:81
+msgid ""
+"Default template is set, but failed to retrieve the data. It might be "
+"deleted on SendGrid."
+msgstr ""
+
+#: app/Hametuha/Hamail/Service/TemplateSelector.php:84
+#, php-format
+msgid "Default template is %s"
+msgstr ""
+
+#: app/Hametuha/Hamail/Service/TemplateSelector.php:132
+#, fuzzy
+#| msgid "Failed to extract email."
+msgid "Failed to retrieve templates list."
+msgstr "メールの抽出に失敗しました。"
+
+#: app/Hametuha/Hamail/Service/TemplateSelector.php:143
+#, fuzzy, php-format
+msgctxt "template-label"
+msgid "%1$s(%2$s)"
+msgstr "%1$s（%2$s）"
+
+#: app/Hametuha/Hamail/Service/TemplateSelector.php:174
+#, fuzzy
+#| msgid "No data found."
+msgid "No template found."
+msgstr "データが見つかりませんでした。"
+
+#: app/Hametuha/Hamail/Service/TemplateSelector.php:180
+#, fuzzy
+msgctxt "hamail"
+msgid "Default"
+msgstr "デフォルト"
+
+#: app/Hametuha/Hamail/Service/TemplateSelector.php:180
+#, fuzzy
+msgid "Not Set"
+msgstr "未設定"
+
+#: app/Hametuha/Hamail/Service/TemplateSelector.php:186
+#, fuzzy
+#| msgid "Template ID"
+msgid "No Template"
+msgstr "テンプレートID"
+
+#: app/Hametuha/Hamail/Ui/ListTable/RecipientsColumn.php:36
+#: hooks/sender.php:140
+msgid "Recipients"
+msgstr "受信者"
+
+#: app/Hametuha/Hamail/Ui/ListTable/RecipientsColumn.php:39
+msgid "Status"
+msgstr "ステータス"
+
+#: app/Hametuha/Hamail/Ui/ListTable/RecipientsColumn.php:40
+msgid "Reply To"
+msgstr "返信先"
+
+#: app/Hametuha/Hamail/Ui/ListTable/RecipientsColumn.php:120
+#, php-format
+msgid " and %s others"
+msgstr "その他%s名"
+
+#: app/Hametuha/Hamail/Ui/MarketingTemplate.php:55
+msgid "Marketing Template"
+msgstr ""
+
+#: app/Hametuha/Hamail/Ui/MarketingTemplate.php:112
+#, fuzzy
+#| msgid "Template ID"
+msgid "Template Type"
+msgstr "テンプレートID"
+
+#: app/Hametuha/Hamail/Ui/MarketingTemplate.php:161
+#, php-format
+msgid "%s will be replaced with mail subject."
+msgstr ""
+
+#: app/Hametuha/Hamail/Ui/MarketingTemplate.php:167
+#, fuzzy, php-format
+#| msgid "Stylesheet %s will be applied to your mail body."
+msgid "%s will be replaced with mail body."
+msgstr "スタイルシート %s がメール本文に適用されます。"
+
+#: app/Hametuha/Hamail/Ui/MarketingTemplate.php:169
+#: app/Hametuha/Hamail/Ui/MarketingTemplate.php:176
+#, fuzzy
+msgctxt "Required input element"
+msgid "Required"
+msgstr "必須"
+
+#: app/Hametuha/Hamail/Ui/MarketingTemplate.php:174
+#, php-format
+msgid "%s will be replaced with unsubscribing link."
+msgstr ""
+
+#: app/Hametuha/Hamail/Ui/MarketingTemplate.php:181
+#, fuzzy
+msgid "Tips:"
+msgstr "ティップス"
+
+#: app/Hametuha/Hamail/Ui/MarketingTemplate.php:182
+msgid ""
+"Creating HTML mail template is difficult. You can create a designed HTML "
+"campaign with WYSIWYG in Sendgrid and copy its HTML."
+msgstr ""
+
+#: app/Hametuha/Hamail/Ui/MarketingTemplate.php:195
+msgid "Marketing Email requires either HTML or Text."
+msgstr ""
+
+#: app/Hametuha/Hamail/Ui/MarketingTemplate.php:215
+msgid "Use as default"
+msgstr ""
+
+#: app/Hametuha/Hamail/Ui/MarketingTemplate.php:230
+#, fuzzy
+#| msgid "CSV Preview"
+msgid "Preview"
+msgstr "プレビュー"
+
+#: app/Hametuha/Hamail/Ui/MarketingTemplate.php:248
+msgid "Post ID of marketing template to preview."
+msgstr ""
+
+#: app/Hametuha/Hamail/Ui/MarketingTemplate.php:259
+#, fuzzy
+#| msgid "Subject"
+msgid "Mail subject."
+msgstr "メール件名"
+
+#: app/Hametuha/Hamail/Ui/MarketingTemplate.php:260
+msgid "Re: Hello from {%first_name | Guest%}"
+msgstr ""
+
+#: app/Hametuha/Hamail/Ui/MarketingTemplate.php:264
+#, fuzzy
+#| msgid "Mail Body"
+msgid "Mail Body."
+msgstr "メール本文"
+
+#: app/Hametuha/Hamail/Ui/MarketingTemplate.php:265
+msgid ""
+"Hi, {%1$first_name | Guest%}!\n"
+"You are now member of our site. Please click the link below.\n"
+"{%2$url%}"
+msgstr ""
+
+#: app/Hametuha/Hamail/Ui/MarketingTemplate.php:280
+msgid "Post ID of marketing email."
+msgstr ""
+
+#: app/Hametuha/Hamail/Ui/MarketingTemplate.php:293
+msgid "Preview format. \"text\" or \"html\""
+msgstr ""
+
+#: app/Hametuha/Hamail/Utility/ApiUtility.php:106
+msgid "Sendgrid API returns error. Please try again."
+msgstr ""
+
+#: functions/groups.php:54
+msgid "Users"
+msgstr "ユーザー"
+
+#: functions/mail.php:135
 msgid "The user dose not exist."
 msgstr "ユーザーは存在しません。"
 
-#: functions/mail.php:318
+#: functions/mail.php:251
+#, fuzzy
+#| msgid "Site Admin"
+msgid "Site Owner"
+msgstr "サイト管理者"
+
+#: functions/mail.php:356
 msgid "No recipient set."
 msgstr "受信者がセットされていません。"
 
-#: functions/marketing.php:15
+#: functions/mail.php:743
+msgctxt "prefix-dt"
+msgid "# "
+msgstr ""
+
+#: functions/mail.php:749
+#, fuzzy, php-format
+msgctxt "prefix-ol"
+msgid "%d. "
+msgstr "(%d)"
+
+#: functions/mail.php:752
+msgctxt "prefix-ul"
+msgid "- "
+msgstr ""
+
+#: functions/marketing.php:18
 msgid "No sync"
 msgstr "同期しない"
 
-#: functions/marketing.php:76
+#: functions/marketing.php:97
+msgid "No Sender ID"
+msgstr ""
+
+#: functions/marketing.php:166
 msgid "Fields mapping is empty."
 msgstr "フィールドマッピングは空です。"
 
-#: functions/marketing.php:82
+#: functions/marketing.php:172
 msgid "Fields mapping is mal format."
 msgstr "フィールドマッピングの形式が不正です。"
 
-#: functions/marketing.php:86
+#: functions/marketing.php:176
 msgid "No field mapping record exists."
 msgstr "フィールドマッピングのレコードが存在しません。"
 
-#: functions/marketing.php:89
+#: functions/marketing.php:179
 msgid "Each field mapping row should be same length."
 msgstr "フィールドマッピングの各行は同じ長さである必要があります。"
 
-#: functions/marketing.php:172
+#: functions/marketing.php:262
 msgid "Fields data to sync is empty."
 msgstr "同期すべきフィールドデータが空です。"
 
-#: functions/marketing.php:225
+#: functions/marketing.php:279
 msgid "List or site key is not set."
 msgstr "リストもしくは site キーが設定されていません。"
-
-#: functions/search.php:76
-#, php-format
-msgid "Author of \"%s\""
-msgstr "\"%s\"の作者"
-
-#: functions/search.php:83
-#, php-format
-msgid "Authors of posts in \"%s\""
-msgstr "\"%s\"の投稿の作者"
-
-#: functions/search.php:88
-#, php-format
-msgid "%s (User)"
-msgstr "%s (ユーザー)"
 
 #: functions/user-mail.php:21
 msgid "Mail subject and mail body are required."
 msgstr "メールの件名と本文は必須です。"
 
-#: functions/user-mail.php:38
+#: functions/user-mail.php:40
 msgid "At least one recipient is required."
 msgstr "少なくとも1名の受信者が必要です。"
 
-#: hamail.php:39
-#, php-format
+#: hamail.php:46
+#, fuzzy, php-format
+#| msgid ""
+#| "[Hamail] Sorry, this plugin requires PHP %s and over, but your PHP is %s."
 msgid ""
-"[Hamail] Sorry, this plugin requires PHP %s and over, but your PHP is %s."
+"[Hamail] Sorry, this plugin requires PHP %1$s and over, but your PHP is %2$s."
 msgstr ""
 "[Hamail] 申し訳ございません、このプラグインはPHP%s以上が必須です。あなたのPHP"
 "は%sです。"
 
-#: hamail.php:44
+#: hamail.php:52
 #, php-format
 msgid ""
 "[Hamail] PHP auto loader %s is missing. Did you run <code>composer install</"
@@ -187,112 +782,115 @@ msgstr ""
 "[Hamail] PHPのオートローダー %s がありません。 <code>composer install</code> "
 "を実行しましたか？"
 
-#: hooks/list.php:15 hooks/sender.php:170
-msgid "Recipients"
-msgstr "受信者"
+#: hooks/marketing.php:14
+msgid "Marketing Category"
+msgstr ""
 
-#: hooks/list.php:18
-msgid "Status"
-msgstr "ステータス"
+#: hooks/marketing.php:20
+msgid "Used as marketing category."
+msgstr ""
 
-#: hooks/list.php:19
-msgid "Reply To"
-msgstr "返信先"
+#: hooks/sender.php:24
+#, fuzzy
+msgid "Submit"
+msgstr "サブミット"
 
-#: hooks/list.php:79
-#, php-format
-msgid " and %s others"
-msgstr "その他%s名"
+#: hooks/sender.php:26
+#, fuzzy
+msgctxt "submit-label"
+msgid "Schedule"
+msgstr "スケジュール"
 
-#: hooks/sender.php:14
-msgid "User Contact"
-msgstr "ユーザー連絡"
+#: hooks/sender.php:41
+msgid "Transaction Mail"
+msgstr "トランザクションメール"
 
-#: hooks/sender.php:81
-msgid "You can use placeholders below."
-msgstr "以下のプレースホルダーが利用できます。"
+#: hooks/sender.php:122
+msgid "Available Placeholders"
+msgstr "利用できるプレースホルダー "
 
-#: hooks/sender.php:84
-msgid "Placeholder"
-msgstr "プレースホルダー"
-
-#: hooks/sender.php:85
-msgid "Result Value(Example)"
-msgstr "結果（例）"
-
-#: hooks/sender.php:108 hooks/sender.php:128
-msgid "You have no permission"
-msgstr "権限がありません。"
-
-#: hooks/sender.php:111
-msgid "Search query is not set."
-msgstr "検索クエリがセットされていません。"
-
-#: hooks/sender.php:131
-msgid "Term ID is not set."
-msgstr "タームIDがセットされていません。"
-
-#: hooks/sender.php:148
-msgid "Term not found."
-msgstr "タームが見つかりませんでした。"
-
-#: hooks/sender.php:195
-msgid "This mail has been sent already. Any change won't be saved."
-msgstr "このメールはすでに送信済みです。いかなる変更も反映されません。"
-
-#: hooks/sender.php:199
-msgid "Roles"
-msgstr "役割"
-
-#: hooks/sender.php:210
-msgid "Users"
-msgstr "ユーザー"
-
-#: hooks/sender.php:214
-msgid "Type and search user..."
-msgstr "入力してユーザーを検索…"
-
-#: hooks/sender.php:226
-msgid "Specified Address"
-msgstr "特定のアドレス"
-
-#: hooks/sender.php:228
-msgid "Enter comma separated mail address"
-msgstr "カンマ区切りでメールアドレスを入力してください"
-
-#: hooks/sender.php:239
+#: hooks/sender.php:142
 msgid "Sending Status"
 msgstr "送信ステータス"
 
-#: hooks/sender.php:245
+#: hooks/sender.php:157
+msgid "You can use placeholders below in mail body and subject."
+msgstr "以下のプレースホルダーがメール本文と件名に利用できます。"
+
+#: hooks/sender.php:163
+msgid "Placeholder"
+msgstr "プレースホルダー"
+
+#: hooks/sender.php:164
+msgid "Result Value(Example)"
+msgstr "結果（例）"
+
+#: hooks/sender.php:205
+msgid "This mail has been sent already. Any change won't be saved."
+msgstr "このメールはすでに送信済みです。いかなる変更も反映されません。"
+
+#: hooks/sender.php:209
+msgid "Roles"
+msgstr "役割"
+
+#: hooks/sender.php:223
+msgid "User Group"
+msgstr "ユーザーグループ"
+
+#: hooks/sender.php:239
+msgid "User group is not available."
+msgstr ""
+
+#: hooks/sender.php:247
+msgid "User"
+msgstr "ユーザー"
+
+#: hooks/sender.php:250
+msgctxt "hamail-user-search"
+msgid "Search Target:"
+msgstr ""
+
+#: hooks/sender.php:265
+msgid "Type and search users..."
+msgstr "入力してユーザーを検索…"
+
+#: hooks/sender.php:274
+msgid "Specified Address"
+msgstr "特定のアドレス"
+
+#: hooks/sender.php:276
+msgid "Enter comma separated mail address"
+msgstr "カンマ区切りでメールアドレスを入力してください"
+
+#: hooks/sender.php:298
 #, php-format
 msgid "This message was sent at %1$s as %2$s."
 msgstr "このメッセージは%2$sとして %1$s に送られました。"
 
-#: hooks/sender.php:247
+#: hooks/sender.php:300
 msgid "Site Admin"
 msgstr "サイト管理者"
 
-#: hooks/sender.php:253
+#: hooks/sender.php:307
 msgid "This message is not sent yet."
 msgstr "このメッセージはまだ送信されていません。"
 
-#: hooks/sender.php:258
+#: hooks/sender.php:312
 msgid "Send as Site Admin"
 msgstr "サイト管理者として送信する"
 
-#: hooks/sender.php:262
+#: hooks/sender.php:319
 msgid "Error Logs"
 msgstr "エラーログ"
 
-#: hooks/settings.php:14
+#: hooks/settings.php:17
 #, php-format
 msgid "No API key is set. Please go to <a href=\"%s\">Setting Page</a>."
 msgstr ""
 "APIキーがセットされていません。<a href=\"%s\">設定ページ</a>へ行ってくださ"
 "い。"
 
-#: hooks/settings.php:28
+#: hooks/settings.php:31
 msgid ""
 "Hamail is now <strong>debug mode</strong>. SendGrid API will never used. To "
 "disabled debug mode, change <code>define( 'HAMAIL_DEBUG', false )</code> in "
@@ -302,7 +900,7 @@ msgstr ""
 "ん。デバッグモードを解除するには、wp-config.php の記載を "
 "<code>define( 'HAMAIL_DEBUG', false )</code> に変更してください。"
 
-#: hooks/settings.php:32
+#: hooks/settings.php:36
 msgid ""
 "WordPress debug mode <code>WP_DEBUG</code> detected. If this is development "
 "production, please consider <code>define( 'HAMAIL_DEBUG', true )</code> in "
@@ -314,50 +912,50 @@ msgstr ""
 "を記載するようにしてください。Hamail はローカルのメールサーバーを設定しなくて"
 "も、Web API 経由でユーザーに本物のメールを送信してしまうからです！"
 
-#: hooks/settings.php:51 hooks/settings.php:56
+#: hooks/settings.php:56 hooks/settings.php:61
 msgid "Hamail Setting"
 msgstr "Hamail設定"
 
-#: hooks/settings.php:69
+#: hooks/settings.php:74
 msgid "Test Mail"
 msgstr "テストメール"
 
-#: hooks/settings.php:73
+#: hooks/settings.php:78
 msgid "You can test email after setting up SendGrid API key."
 msgstr "SendGrid API キーを設定することでメールをテストできます。"
 
-#: hooks/settings.php:79
+#: hooks/settings.php:84
 msgid ""
 "Mail sent successfully. Please check how it looks like on your mail client."
 msgstr ""
 "メールが送信されました。メールクライアントでどのように表示されるか確認してく"
 "ださい。"
 
-#: hooks/settings.php:84
+#: hooks/settings.php:89
 msgid "Try sending mail via SendGrid."
 msgstr "SendGrid でメールを送信してみましょう。"
 
-#: hooks/settings.php:92
+#: hooks/settings.php:98
 msgid "Subject"
 msgstr "メール件名"
 
-#: hooks/settings.php:101
+#: hooks/settings.php:107
 msgid "Mail to"
 msgstr "メール宛先"
 
-#: hooks/settings.php:110
+#: hooks/settings.php:115
 msgid "Mail Body"
 msgstr "メール本文"
 
-#: hooks/settings.php:118
+#: hooks/settings.php:123
 msgid "Send mail"
 msgstr "メールを送信"
 
-#: hooks/settings.php:136
+#: hooks/settings.php:141
 msgid "SendGrid API Setting"
 msgstr "SendGrid API 設定"
 
-#: hooks/settings.php:137
+#: hooks/settings.php:142
 msgid ""
 "Setting value for Hamail. Please enter SendGrid API key. Mail Send "
 "permission is minimal requirement."
@@ -365,33 +963,47 @@ msgstr ""
 "Hamailの設定値です。SendGrid APIキーを入力してください。Mail Sendパーミッショ"
 "ンが最低限必要です。"
 
-#: hooks/settings.php:140
+#: hooks/settings.php:146
 msgid "SendGrid API key"
 msgstr "SendGrid API キー"
 
-#: hooks/settings.php:141
+#: hooks/settings.php:147
 msgid "Default Mail From"
 msgstr "デフォルトのメール送信者"
 
-#: hooks/settings.php:142
+#: hooks/settings.php:148
+msgid "wp_mail function"
+msgstr ""
+
+#: hooks/settings.php:148
+msgid ""
+"Hamail can override all mail sent with <code>wp_mail</code> function. SMTP "
+"works fine with other plugins."
+msgstr ""
+
+#: hooks/settings.php:150
 msgid "Template ID"
 msgstr "テンプレートID"
 
-#: hooks/settings.php:143
+#: hooks/settings.php:153
 #, php-format
 msgid ""
-"If you set template ID, all your default mail will be HTML. For more detail, "
+"If Template ID is set, all your default mail will be HTML. For more detail, "
 "see <a href=\"%s\" target=\"_blank\">SendGrid API doc</a>."
 msgstr ""
-"テンプレートIDを設定すると、すべてのメールがHTMLになります。詳細は<a href="
-"\"%s\" target=\"_blank\">SendGrid API doc</a>をごらんください。"
+"テンプレートIDを設定すると、すべてのメールがHTMLになります。詳細は<a "
+"href=\"%s\" target=\"_blank\">SendGrid API doc</a>をごらんください。"
 
-#: hooks/settings.php:163
+#: hooks/settings.php:172
+msgid "If SendGrid API key is valid, you can set template."
+msgstr ""
+
+#: hooks/settings.php:187
 #, php-format
 msgid "Stylesheet %s will be applied to your mail body."
 msgstr "スタイルシート %s がメール本文に適用されます。"
 
-#: hooks/settings.php:169
+#: hooks/settings.php:193
 msgid ""
 "If you put <code>hamail.css</code> in your theme's directory, they will be "
 "applied to mail body as inline css."
@@ -399,32 +1011,44 @@ msgstr ""
 "テーマディレクトリに <code>hamail.css</code> を配置すると、メール本文にインラ"
 "イン CSS が適用されます。"
 
-#: hooks/settings.php:180
+#: hooks/settings.php:210
+msgid "Override with Template"
+msgstr ""
+
+#: hooks/settings.php:211
+msgid "Use SMTP API for wp_mail()"
+msgstr ""
+
+#: hooks/settings.php:212
+msgid "Keep defaut"
+msgstr ""
+
+#: hooks/settings.php:240
 msgid "List Sync"
 msgstr "リスト同期"
 
-#: hooks/settings.php:181
+#: hooks/settings.php:241
 msgid "To sync your user list to SendGrid, choose list and conditions."
 msgstr ""
 "SendGrid にユーザーリストを同期する場合はリストと条件を選択してください。"
 
-#: hooks/settings.php:184
+#: hooks/settings.php:244
 msgid "List to sync"
 msgstr "同期するリスト"
 
-#: hooks/settings.php:187
+#: hooks/settings.php:247
 msgid "If you have no lists, please make it first on SendGrid."
 msgstr "リストがない場合はまず SendGrid で作成してください。"
 
-#: hooks/settings.php:198
+#: hooks/settings.php:259
 msgid "Fields Mapping"
 msgstr "フィールドマッピング"
 
-#: hooks/settings.php:204
+#: hooks/settings.php:265
 msgid "Put CSV here in 2 lines."
 msgstr "2行で CSV を入力してください。"
 
-#: hooks/settings.php:210
+#: hooks/settings.php:271
 msgid ""
 "Write in CSV format. Line 1 is SendGrid, Line 2 is your WordPress. Absent "
 "fields are ignored."
@@ -432,7 +1056,7 @@ msgstr ""
 "CSV フォーマットで入力してください。1行目は SendGrid、2行目が WordPress で"
 "す。存在しないフィールドは無視されます。"
 
-#: hooks/settings.php:211
+#: hooks/settings.php:272
 msgid ""
 "WordPress <code>site</code> field is required for multiple site. You can add "
 "or edit custom fields on SendGrid."
@@ -440,19 +1064,19 @@ msgstr ""
 "WordPress の<code>site</code> フィールドは複数のサイトを運用している場合に必"
 "須です。SendGrid でカスタムフィールドの追加・編集ができます。"
 
-#: hooks/settings.php:214
+#: hooks/settings.php:275
 msgid "CSV Preview"
 msgstr "CSV プレビュー"
 
-#: hooks/settings.php:225
+#: hooks/settings.php:287
 msgid "Available Fields(* is default): "
 msgstr "利用できるフィールド（*はデフォルトです）: "
 
-#: hooks/settings.php:232
+#: hooks/settings.php:296
 msgid "Available Fields: "
 msgstr "利用できるフィールド: "
 
-#: hooks/settings.php:233
+#: hooks/settings.php:297
 msgid ""
 "User object property(ex. <code>user_email</code>, <code>ID</code>) and "
 "user_meta key. <code>role</code> is also available."
@@ -460,21 +1084,81 @@ msgstr ""
 "ユーザーオブジェクトのプロパティ（例・ <code>user_email</code>, <code>ID</"
 "code>）とユーザの meta_key が利用できます。<code>role</code> も利用できます。"
 
-#: hooks/settings.php:238
+#: hooks/settings.php:303
 msgid "SendGrid is not connected."
 msgstr "SendGrid と接続されていません。"
 
-#: hooks/settings.php:243
+#: hooks/settings.php:308
 msgid "Site Specific Field"
 msgstr "サイト固有のフィールド"
 
-#: hooks/settings.php:247
+#: hooks/settings.php:312
 msgid "This field will determine which user to put into list."
 msgstr "このフィールドはどのユーザーをリストに入れるかを決定します。"
 
-#: hooks/user-group.php:14 hooks/user-group.php:15
-msgid "Group"
-msgstr "グループ"
+#: assets/js/hamail-incsearch.js:1 src/js/hamail-incsearch.js:276
+msgid "Previous"
+msgstr "前へ"
+
+#: assets/js/hamail-incsearch.js:1 src/js/hamail-incsearch.js:282
+msgid "Next"
+msgstr "次へ"
+
+#: assets/js/hamail-marketing-email.js:1 src/js/hamail-marketing-email.js:106
+msgid ""
+"This action removes syncing campaign draft from SendGrid. This is helpful "
+"for changing mail type(e.g. plain text to html). Are you sure?"
+msgstr ""
+
+#: assets/js/hamail-marketing-email.js:1 src/js/hamail-marketing-email.js:147
+msgid "API Status"
+msgstr "APIステータス"
+
+#: assets/js/hamail-marketing-email.js:1 src/js/hamail-marketing-email.js:153
+msgid "Syncing"
+msgstr ""
+
+#: assets/js/hamail-marketing-email.js:1 src/js/hamail-marketing-email.js:155
+msgid "ID:"
+msgstr "ID:"
+
+#: assets/js/hamail-marketing-email.js:1 src/js/hamail-marketing-email.js:158
+msgid "Status:"
+msgstr "ステータス:"
+
+#: assets/js/hamail-marketing-email.js:1 src/js/hamail-marketing-email.js:169
+msgid "See in SendGrid"
+msgstr ""
+
+#: assets/js/hamail-marketing-email.js:1 src/js/hamail-marketing-email.js:177
+msgid "Unsync"
+msgstr "同期解除"
+
+#: assets/js/hamail-marketing-email.js:1 src/js/hamail-marketing-email.js:183
+msgid "This marketing is not syncing."
+msgstr "このマーケティング・メールはまだ同期されていません。"
+
+#: assets/js/hamail-marketing-email.js:1 src/js/hamail-marketing-email.js:189
+msgid "Sync"
+msgstr "同期"
+
+#, php-format
+#~ msgid "Author of \"%s\""
+#~ msgstr "\"%s\"の作者"
+
+#, php-format
+#~ msgid "Authors of posts in \"%s\""
+#~ msgstr "\"%s\"の投稿の作者"
+
+#, php-format
+#~ msgid "%s (User)"
+#~ msgstr "%s (ユーザー)"
+
+#~ msgid "User Contact"
+#~ msgstr "ユーザー連絡"
+
+#~ msgid "Term ID is not set."
+#~ msgstr "タームIDがセットされていません。"
 
 #~ msgid "Update Setting"
 #~ msgstr "設定を更新"

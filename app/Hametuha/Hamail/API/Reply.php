@@ -12,18 +12,27 @@ use Hametuha\Hamail\Service\Extractor;
  * @package hamail
  */
 class Reply extends AbstractRest {
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
 	protected function route() {
 		return 'reply/(?P<post_id>\d+)/?';
 	}
-	
+
+	/**
+	 * @var string[] Post types which can be replied.
+	 */
 	public static $repliable = [ 'feedback' ];
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
 	protected function init() {
 		parent::init();
 		add_filter( 'post_row_actions', [ $this, 'add_row_action' ], 10, 2 );
 	}
-	
+
 	/**
 	 * Get arguments.
 	 *
@@ -34,17 +43,17 @@ class Reply extends AbstractRest {
 	protected function get_args( $http_method ) {
 		return [
 			'post_id' => [
-				'required' => true,
-				'type'     => 'integer',
-				'description' => 'Post ID to reply.',
-				'validate_callback' => function( $var ) {
+				'required'          => true,
+				'type'              => 'integer',
+				'description'       => 'Post ID to reply.',
+				'validate_callback' => function ( $var ) {
 					$post = get_post( $var );
 					return $post && self::can_reply( $post->post_type );
 				},
 			],
 		];
 	}
-	
+
 	/**
 	 * Handle POST request
 	 *
@@ -62,7 +71,7 @@ class Reply extends AbstractRest {
 		if ( get_option( 'hamail_template_id' ) ) {
 			$message = "<blockquote>\n{$result['body']}\n</blockquote>";
 		} else {
-			$message = implode( "\n", array_map( function( $row ) {
+			$message = implode( "\n", array_map( function ( $row ) {
 				return '> ' . $row;
 			}, explode( "\n", $result['body'] ) ) );
 		}
@@ -81,7 +90,7 @@ TXT;
 			'message' => sprintf( __( 'A new reply for #%d is created and saved as draft. Will you edit it now?', 'hamail' ), $post->ID ),
 		];
 	}
-	
+
 	/**
 	 * Permission.
 	 *
@@ -91,7 +100,7 @@ TXT;
 	public function permission_callback( $request ) {
 		return current_user_can( 'edit_pages' );
 	}
-	
+
 	/**
 	 * Detect if post can be reply.
 	 *
@@ -99,9 +108,9 @@ TXT;
 	 * @return bool
 	 */
 	public static function can_reply( $post_type ) {
-		return in_array( $post_type, self::$repliable );
+		return in_array( $post_type, self::$repliable, true );
 	}
-	
+
 	/**
 	 * Add actions to mail list.
 	 *
@@ -113,7 +122,7 @@ TXT;
 	public function add_row_action( $actions, $post ) {
 		if ( self::can_reply( $post->post_type ) ) {
 			wp_enqueue_script( 'hamail-reply' );
-			$actions[ 'reply' ] = sprintf( '<a class="hamail-reply-link" href="#" data-post-id="%1$d">%2$s</a>', $post->ID, esc_html__( 'Reply', 'hamail' ) );
+			$actions['reply'] = sprintf( '<a class="hamail-reply-link" href="#" data-post-id="%1$d">%2$s</a>', $post->ID, esc_html__( 'Reply', 'hamail' ) );
 		}
 		return $actions;
 	}

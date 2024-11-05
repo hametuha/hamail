@@ -10,7 +10,6 @@ const { Button, Spinner } = wp.components;
 const { __ } = wp.i18n;
 
 class MarketingStatus extends Component {
-
 	constructor( props ) {
 		super( props );
 		this.state = {
@@ -34,77 +33,106 @@ class MarketingStatus extends Component {
 	}
 
 	notice( message, type = 'success' ) {
-		data.dispatch( 'core/notices' ).createNotice( type, message, {
-			type: 'snackbar'
-		} ).then( ( res ) => {
-			setTimeout( () => {
-				data.dispatch( 'core/notices' ).removeNotice( res.notice.id );
-			}, 3000 );
-		} );
+		data.dispatch( 'core/notices' )
+			.createNotice( type, message, {
+				type: 'snackbar',
+			} )
+			.then( ( res ) => {
+				setTimeout( () => {
+					data.dispatch( 'core/notices' ).removeNotice(
+						res.notice.id
+					);
+				}, 3000 );
+			} );
 	}
 
 	fetch() {
-		this.setState( {
-			loading: true,
-		}, () => {
-			apiFetch( {
-				path: 'hamail/v1/marketing/' + this.props.post_id,
-			} ).then( ( res ) => {
-				this.setState( {
-					marketing: res
-				} );
-			} ).catch( ( res ) => {
-				this.notice( res.message, 'error' )
-			} ).finally( () => {
-				this.setState( {
-					loading: false,
-				} );
-			} );
-		} );
+		this.setState(
+			{
+				loading: true,
+			},
+			() => {
+				apiFetch( {
+					path: 'hamail/v1/marketing/' + this.props.post_id,
+				} )
+					.then( ( res ) => {
+						this.setState( {
+							marketing: res,
+						} );
+					} )
+					.catch( ( res ) => {
+						this.notice( res.message, 'error' );
+					} )
+					.finally( () => {
+						this.setState( {
+							loading: false,
+						} );
+					} );
+			}
+		);
 	}
 
 	sync() {
-		this.setState( {
-			loading: true,
-		}, () => {
-			apiFetch( {
-				path: 'hamail/v1/marketing/' + this.props.post_id,
-				method: 'post',
-			} ).then( ( res ) => {
-				this.setState( {
-					marketing: res
-				} );
-			} ).catch( ( res ) => {
-				this.notice( res.message, 'error' )
-			} ).finally( () => {
-				this.setState( {
-					loading: false,
-				} );
-			} );
-		} );
+		this.setState(
+			{
+				loading: true,
+			},
+			() => {
+				apiFetch( {
+					path: 'hamail/v1/marketing/' + this.props.post_id,
+					method: 'post',
+				} )
+					.then( ( res ) => {
+						this.setState( {
+							marketing: res,
+						} );
+					} )
+					.catch( ( res ) => {
+						this.notice( res.message, 'error' );
+					} )
+					.finally( () => {
+						this.setState( {
+							loading: false,
+						} );
+					} );
+			}
+		);
 	}
 
 	unSync() {
-		if ( window.confirm( __( 'This action removes syncing campaign draft from SendGrid. This is helpful for changing mail type(e.g. plain text to html). Are you sure?', 'hamail' ) ) ) {
-			this.setState( {
-				loading: true,
-			}, () => {
-				apiFetch( {
-					path: 'hamail/v1/marketing/' + this.props.post_id,
-					method: 'delete'
-				} ).then( ( res ) => {
-					this.setState( {
-						marketing: null,
-					} );
-					this.notice( res.message );
-				} ).catch( ( res ) => {
-					this.notice( res.message, 'error' );
-				} ).finally( () => {
-					this.setState( {
-						loading: false,
-					} );
-				} );
-			} );
+		if (
+			window.confirm(
+				__(
+					'This action removes syncing campaign draft from SendGrid. This is helpful for changing mail type(e.g. plain text to html). Are you sure?',
+					'hamail'
+				)
+			)
+		) {
+			this.setState(
+				{
+					loading: true,
+				},
+				() => {
+					apiFetch( {
+						path: 'hamail/v1/marketing/' + this.props.post_id,
+						method: 'delete',
+					} )
+						.then( ( res ) => {
+							this.setState( {
+								marketing: null,
+							} );
+							this.notice( res.message );
+						} )
+						.catch( ( res ) => {
+							this.notice( res.message, 'error' );
+						} )
+						.finally( () => {
+							this.setState( {
+								loading: false,
+							} );
+						} );
+				}
+			);
 		}
 	}
 
@@ -120,16 +148,32 @@ class MarketingStatus extends Component {
 				{ marketing ? (
 					<>
 						<p>
-							<span className="hamail-marketing-status text-sg-green"><span className="dashicons dashicons-yes"></span> { __( 'Syncing', 'hamail' ) }</span>
-							{ __( 'ID: ', 'hamail' ) }
+							<span className="hamail-marketing-status text-sg-green">
+								<span className="dashicons dashicons-yes"></span>{ ' ' }
+								{ __( 'Syncing', 'hamail' ) }
+							</span>
+							{ __( 'ID:', 'hamail' ) }
 							<code>{ marketing.id }</code>
-							<span className="hamail-marketing-status">{ __( 'Status:', 'hamail' ) } <strong>{ marketing.status }</strong></span>
+							<span className="hamail-marketing-status">
+								{ __( 'Status:', 'hamail' ) }{ ' ' }
+								<strong>{ marketing.status }</strong>
+							</span>
 						</p>
 						<p>
-							<a className="button" href={`https://sendgrid.com/marketing_campaigns/ui/campaigns/${ marketing.id }/edit`} target="_blank" rel="noreferrer noopener">
+							<a
+								className="button"
+								href={ `https://sendgrid.com/marketing_campaigns/ui/campaigns/${ marketing.id }/edit` }
+								target="_blank"
+								rel="noreferrer noopener"
+							>
 								{ __( 'See in SendGrid', 'hamail' ) }
 							</a>
-							<Button isTeritary={ true } onClick={ () => this.unSync() } className="text-sg-grid" isBusy={ loading }>
+							<Button
+								isTeritary={ true }
+								onClick={ () => this.unSync() }
+								className="text-sg-grid"
+								isBusy={ loading }
+							>
 								{ __( 'Unsync', 'hamail' ) }
 							</Button>
 						</p>
@@ -137,12 +181,15 @@ class MarketingStatus extends Component {
 				) : (
 					<p className="description text-sg-red">
 						{ __( 'This marketing is not syncing.', 'hamail' ) }
-						<Button isTeritary={ true } onClick={ () => this.sync() }
-								isBusy={ loading }>
+						<Button
+							isTeritary={ true }
+							onClick={ () => this.sync() }
+							isBusy={ loading }
+						>
 							{ __( 'Sync', 'hamail' ) }
 						</Button>
 					</p>
-					) }
+				) }
 				{ loading && <Spinner></Spinner> }
 			</div>
 		);
@@ -150,4 +197,7 @@ class MarketingStatus extends Component {
 }
 
 const wrapper = document.getElementById( 'hamail-marketing-info' );
-render( <MarketingStatus post_id={ wrapper.dataset.id }></MarketingStatus>, wrapper );
+render(
+	<MarketingStatus post_id={ wrapper.dataset.id }></MarketingStatus>,
+	wrapper
+);

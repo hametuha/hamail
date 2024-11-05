@@ -3,6 +3,7 @@
  * Style related functions.
  *
  * @package hamail
+ * @phpcs:disable WordPress.NamingConventions.ValidVariableName.VariableNotSnakeCase
  */
 
 use TijsVerkoyen\CssToInlineStyles\CssToInlineStyles;

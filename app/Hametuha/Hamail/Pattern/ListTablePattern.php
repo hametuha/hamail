@@ -50,7 +50,7 @@ abstract class ListTablePattern extends Singleton {
 	 * @return string[]
 	 */
 	protected function filtered_post_types() {
-		return array_filter( (array) $this->post_types(), function( $post_type ) {
+		return array_filter( (array) $this->post_types(), function ( $post_type ) {
 			return is_string( $post_type ) && post_type_exists( $post_type );
 		} );
 	}

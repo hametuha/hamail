@@ -23,10 +23,37 @@ trait Logger {
 			'comment_author'  => $post->post_author,
 			'comment_content' => sprintf(
 				"[%s] %s\n\n<pre>%s</pre>",
-				$wp_error->get_error_code(),
-				implode( "\n", $wp_error->get_error_messages() ),
-				var_export( $wp_error->get_error_data(), true )
+				esc_html( $wp_error->get_error_code() ),
+				esc_html( implode( "\n", $wp_error->get_error_messages() ) ),
+				esc_html( var_export( $wp_error->get_error_data(), true ) )
 			),
 		] );
+	}
+
+	/**
+	 * Display error logs.
+	 *
+	 * @param \WP_Post $post
+	 * @param int      $per_page
+	 * @param int      $paged
+	 * @return array<array{id:int, author:int, content:string, date:string}>
+	 */
+	public function get_logs( $post, $per_page = 20, $paged = 1 ) {
+		$comment_query = new \WP_Comment_Query( [
+			'post_id' => $post->ID,
+			'type'    => 'hamail-log',
+			'orderby' => 'comment_date',
+			'order'   => 'DESC',
+			'number'  => $per_page,
+			'paged'   => $paged,
+		] );
+		return array_map( function ( \WP_Comment $comment ) {
+			return [
+				'id'      => $comment->comment_ID,
+				'author'  => $comment->comment_author,
+				'content' => $comment->comment_content,
+				'date'    => $comment->comment_date,
+			];
+		}, $comment_query->get_comments() );
 	}
 }

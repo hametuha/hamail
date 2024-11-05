@@ -127,6 +127,4 @@ abstract class TransactionalEmail extends Singleton {
 			'attachments' => $instance->get_attachments(),
 		];
 	}
-
-
 }

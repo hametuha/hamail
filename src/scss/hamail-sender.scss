@@ -66,9 +66,9 @@
 	&-row {
 
 		select,
-		input[type=text],
-		input[type=url],
-		input[type=password]
+		input[type="text"],
+		input[type="url"],
+		input[type="password"]
 		{
 			box-sizing: border-box;
 			width: 100%;
@@ -150,7 +150,7 @@
 				height: 100%;
 				content: "";
 				text-align: center;
-				line-height: 100%;
+				line-height: 1;
 				z-index: 20;
 				background: rgba(255, 255, 255, .8);
 			}
