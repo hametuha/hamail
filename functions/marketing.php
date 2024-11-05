@@ -339,3 +339,12 @@ function hamail_get_recipient_id( $user_id ) {
 		return $recipient->id;
 	}
 }
+
+/**
+ * Marketing taxonomy.
+ *
+ * @return string
+ */
+function hamail_marketing_category_taxonomy() {
+	return 'marketing-category';
+}

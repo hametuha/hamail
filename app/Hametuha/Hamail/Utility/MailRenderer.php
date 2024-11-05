@@ -55,4 +55,18 @@ trait MailRenderer {
 	public function replace( $template, $subject, $body ) {
 		return $this->replace_subject( $this->replace_body( $template, $body ), $subject );
 	}
+
+	/**
+	 * Get preheader text from post excerpt.
+	 *
+	 * @param \WP_Post $post Post object.
+	 * @return string
+	 */
+	public function get_preheader( $post ) {
+		$excerpt = get_the_excerpt( $post );
+		$excerpt = strip_tags( $excerpt );
+		return apply_filters( 'hamail_marketing_preheader', $excerpt, $post );
+	}
+
+
 }

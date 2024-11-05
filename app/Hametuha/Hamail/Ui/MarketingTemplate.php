@@ -57,7 +57,8 @@ class MarketingTemplate extends Singleton {
 			'show_ui'           => true,
 			'hierarchical'      => false,
 			'show_in_rest'      => false,
-			'show_in_menu'      => 'edit.php?post_type=' . MarketingEmail::POST_TYPE,
+			'show_in_menu'      => SettingsScreen::get_instance()->slug,
+			'menu_position'     => 60,
 			'show_in_admin_bar' => false,
 			'supports'          => [ 'title', 'excerpt' ],
 			'capability_type'   => 'page',
@@ -174,6 +175,12 @@ class MarketingTemplate extends Singleton {
 				echo wp_kses_post( sprintf( __( '%s will be replaced with unsubscribing link.', 'hamail' ), '<code>[unsubscribe]</code>' ) );
 				?>
 				<span class="required"><?php echo esc_html_x( 'Required', 'Required input element', 'hamail' ); ?></span>
+			</li>
+			<li>
+				<?php
+				// translators: %s is {%excerpt%}.
+				echo wp_kses_post( sprintf( __( '%s will be replaced with excerpt. Use one for pre-header text..', 'hamail' ), '<code>{%excerpt%}</code>' ) );
+				?>
 			</li>
 		</ol>
 		<textarea id="hamail-template-body" name="template_body" class="code-input"><?php echo esc_textarea( get_post_meta( $post->ID, self::META_KEY_BODY, true ) ); ?></textarea>
@@ -371,6 +378,10 @@ class MarketingTemplate extends Singleton {
 				$string = '{%body%}';
 			}
 		}
+		// Building pre-header text.
+		$preheader = $this->get_preheader( $post );
+		// Replace preheader text.
+		$string = str_replace( '{%excerpt%}', $preheader, $string );
 		// Building subject.
 		$subject = apply_filters( 'hamail_marketing_title', get_the_title( $post ), $post, $format );
 		// Building body.

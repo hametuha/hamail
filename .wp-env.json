@@ -1,10 +1,13 @@
 {
 	"core": null,
+	"phpVersion": "7.4",
 	"plugins": [
 		".",
 		"./vendor/wp-plugins/contact-form-7/",
 		"./vendor/wp-plugins/flamingo/",
-		"./vendor/wp-plugins/jetpack/"
+		"./vendor/wp-plugins/jetpack/",
+		"https://downloads.wordpress.org/plugin/plugin-check.latest-stable.zip",
+		"https://downloads.wordpress.org/plugin/query-monitor.latest-stable.zip"
 	],
 	"themes": [
 		"https://downloads.wordpress.org/theme/twentytwenty.latest-stable.zip"

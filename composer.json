@@ -24,14 +24,10 @@
 				"wpackagist-plugin/*",
 				"wpackagist-theme/*"
 			]
-		},
-		{
-			"type": "vcs",
-			"url": "git@github.com:WordPress/WordPress.git"
 		}
 	],
 	"require": {
-        "php": ">=7.2",
+        "php": ">=7.2.34",
         "sendgrid/sendgrid": "^7.9",
         "tijsverkoyen/css-to-inline-styles": "^2.2"
     },
@@ -63,6 +59,9 @@
         "allow-plugins": {
             "dealerdirect/phpcodesniffer-composer-installer": true,
             "composer/installers": true
-        }
+        },
+		"platform": {
+			"php": "7.2.34"
+		}
     }
 }

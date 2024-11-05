@@ -109,10 +109,6 @@ if ( hamail_enabled() && ! function_exists( 'wp_mail' ) && hamail_override_wp_ma
 	}
 }
 
-function hamail_guest_information() {
-}
-
-
 /**
  * Get placeholders
  *
@@ -500,7 +496,7 @@ function hamail_simple_mail( $recipients, $subject, $body, $additional_headers =
 			// If debug mode, never send.
 			if ( hamail_is_debug() ) {
 				++$slots_total;
-				error_log( '[HAMAIL]' . '' . var_export( $mail, true ) );
+				error_log( '[HAMAIL] ' . var_export( $mail, true ) );
 				continue;
 			}
 			// Execute Web API.

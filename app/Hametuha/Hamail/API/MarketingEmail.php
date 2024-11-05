@@ -5,6 +5,7 @@ namespace Hametuha\Hamail\API;
 
 use Hametuha\Hamail\Pattern\Singleton;
 use Hametuha\Hamail\Ui\MarketingTemplate;
+use Hametuha\Hamail\Ui\SettingsScreen;
 use Hametuha\Hamail\Utility\ApiUtility;
 use Hametuha\Hamail\Utility\Logger;
 use Hametuha\Hamail\Utility\RestApiPermission;
@@ -337,6 +338,7 @@ class MarketingEmail extends Singleton {
 		if ( self::POST_TYPE === $post_type ) {
 			add_meta_box( 'hamail-marketing-target', __( 'Marketing Setting', 'hamail' ), [ $this, 'meta_box_marketing_list' ], $post_type, 'side', 'high' );
 			add_meta_box( 'hamail-marketing-fields', __( 'Available Fields', 'hamail' ), [ $this, 'meta_box_marketing_fields' ], $post_type, 'advanced', 'high' );
+			add_meta_box( 'hamail-marketing-logs', __( 'Marketing Logs', 'hamail' ), [ $this, 'meta_box_marketing_logs' ], $post_type, 'advanced', 'low' );
 		}
 	}
 
@@ -501,6 +503,14 @@ class MarketingEmail extends Singleton {
 		wp_enqueue_style( 'hamail-sender' );
 		?>
 		<div class="hamail-instruction">
+			<p>
+				<?php
+				printf(
+					esc_html__( 'You can put custom fields in brace format like %s. Default value is fallback if the recipient has no field.', 'hamail' ),
+					'<code>{%field_name | Default Value%}</code>'
+				);
+				?>
+			</p>
 			<?php if ( empty( $custom_fields ) ) : ?>
 				<p class="wp-ui-text-notification">
 					<?php esc_html_e( 'Failed to get custom fields. Please check API key is valid.', 'hamail' ); ?>
@@ -534,6 +544,35 @@ class MarketingEmail extends Singleton {
 			<?php endif; ?>
 		</div>
 		<?php
+	}
+
+	/**
+	 * Display marketing logs.
+	 *
+	 * @param \WP_Post $post
+	 * @return void
+	 */
+	public function meta_box_marketing_logs( $post ) {
+		$logs = $this->get_logs( $post );
+		if ( empty( $logs ) ) {
+			printf( '<p class="description">%s</p>', esc_html__( 'No logs found.', 'hamail' ) );
+			return;
+		}
+		printf( '<p class="description">%s</p>', esc_html__( 'Displaying recent 20 error logs.', 'hamail' ) );
+		foreach ( $logs as $log ) {
+			?>
+			<details>
+				<summary>
+					<?php
+					$format = get_option( 'date_format' ) . ' ' . get_option( 'time_format' );
+					$name   = get_the_author_meta( 'display_name', $log['author'] );
+					printf( '%s (%s)', mysql2date( $format, $log['date'] ), esc_html( $name ) );
+					?>
+				</summary>
+				<?php echo wp_kses_post( $log['content'] ); ?>
+			</details>
+			<?php
+		}
 	}
 
 	/**
@@ -575,6 +614,7 @@ class MarketingEmail extends Singleton {
 	 * Register post type for marketing automation.
 	 */
 	public function register_post_type() {
+		// Post type.
 		$hamail_post_type = get_post_type_object( 'hamail' );
 		$args             = apply_filters( 'hamail_marketing_post_type_arg', [
 			'label'             => __( 'Marketing Email', 'hamail' ),
@@ -582,14 +622,32 @@ class MarketingEmail extends Singleton {
 			'show_ui'           => true,
 			'show_in_rest'      => true,
 			'show_in_admin_bar' => false,
-			'show_in_menu'      => true,
-			'menu_position'     => 51,
-			'menu_icon'         => 'dashicons-email-alt2',
-			'supports'          => [ 'title', 'editor', 'author' ],
+			'show_in_menu'      => SettingsScreen::get_instance()->slug,
+			'menu_position'     => 21,
+			'supports'          => [ 'title', 'editor', 'author', 'excerpt' ],
 			'capability_type'   => 'page',
 			'taxonomies'        => [ hamail_marketing_category_taxonomy() ],
 		] );
 		register_post_type( self::POST_TYPE, $args );
+		// Taxonomy.
+		$post_types = apply_filters( 'hamail_post_types_in_marketing', [ self::POST_TYPE ] );
+		register_taxonomy( hamail_marketing_category_taxonomy(), $post_types, [
+			'label'             => __( 'Marketing Category', 'hamail' ),
+			'hierarchical'      => false,
+			'public'            => false,
+			'show_ui'           => true,
+			'show_in_nav_menus' => false,
+			'description'       => __( 'Used as marketing category.', 'hamail' ),
+			'show_in_rest'      => true,
+			'show_tagcloud'     => false,
+			'show_admin_column' => true,
+			'capabilities' => [
+				'manage_terms' => 'manage_categories',
+				'edit_terms'   => 'manage_categories',
+				'delete_terms' => 'manage_categories',
+				'assign_terms' => 'edit_posts',
+			],
+		] );
 	}
 
 	/**
