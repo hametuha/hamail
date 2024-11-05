@@ -41,13 +41,13 @@ trait Logger {
 	public function get_logs( $post, $per_page = 20, $paged = 1 ) {
 		$comment_query = new \WP_Comment_Query( [
 			'post_id' => $post->ID,
-			'type' => 'hamail-log',
+			'type'    => 'hamail-log',
 			'orderby' => 'comment_date',
-			'order' => 'DESC',
-			'number' => $per_page,
-			'paged' => $paged,
+			'order'   => 'DESC',
+			'number'  => $per_page,
+			'paged'   => $paged,
 		] );
-		return array_map( function( \WP_Comment $comment ) {
+		return array_map( function ( \WP_Comment $comment ) {
 			return [
 				'id'      => $comment->comment_ID,
 				'author'  => $comment->comment_author,

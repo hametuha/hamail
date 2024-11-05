@@ -67,6 +67,4 @@ trait MailRenderer {
 		$excerpt = strip_tags( $excerpt );
 		return apply_filters( 'hamail_marketing_preheader', $excerpt, $post );
 	}
-
-
 }

@@ -27,7 +27,6 @@ class SettingsScreen extends Singleton {
 		add_action( 'admin_enqueue_scripts', [ $this, 'admin_scripts' ] );
 		add_action( 'admin_init', [ $this, 'settings_fields' ] );
 		add_action( 'admin_init', [ $this, 'test_mail' ], 11 );
-
 	}
 
 	/**
@@ -37,7 +36,7 @@ class SettingsScreen extends Singleton {
 	 */
 	public function admin_menu() {
 		// Register menu page.
-		add_menu_page(  __( 'Mail Marketing', 'hamail' ), __( 'Mail Marketing', 'hamail' ), 'edit_posts', $this->slug, [ $this, 'render' ], 'dashicons-buddicons-pm', 40 );
+		add_menu_page( __( 'Mail Marketing', 'hamail' ), __( 'Mail Marketing', 'hamail' ), 'edit_posts', $this->slug, [ $this, 'render' ], 'dashicons-buddicons-pm', 40 );
 	}
 
 	/**
@@ -47,7 +46,7 @@ class SettingsScreen extends Singleton {
 	 */
 	public function admin_sub_menu() {
 		// Marketing category.
-		$slug = sprintf( 'edit-tags.php?taxonomy=%s&post_type=%s', hamail_marketing_category_taxonomy(), MarketingEmail::POST_TYPE );
+		$slug     = sprintf( 'edit-tags.php?taxonomy=%s&post_type=%s', hamail_marketing_category_taxonomy(), MarketingEmail::POST_TYPE );
 		$taxonomy = get_taxonomy( hamail_marketing_category_taxonomy() );
 		add_submenu_page( $this->slug, $taxonomy->label, $taxonomy->label, 'manage_categories', $slug, null, 20 );
 		// Register menu page.
@@ -141,7 +140,7 @@ class SettingsScreen extends Singleton {
 			printf(
 				'<div class="error"><p>[Hamail] %s</p></div>',
 				wp_kses_post( sprintf(
-				// translators: %s is link.
+					// translators: %s is link.
 					__( 'No API key is set. Please go to <a href="%s">Setting Page</a>.', 'hamail' ),
 					admin_url( 'admin.php?page=' . $this->slug )
 				) )
@@ -195,17 +194,17 @@ class SettingsScreen extends Singleton {
 				'hamail_api_key'             => [
 					__( 'SendGrid API key', 'hamail' ),
 					'',
-					''
+					'',
 				],
 				'hamail_default_from'        => [
 					__( 'Default Mail From', 'hamail' ),
 					'',
-					get_option( 'admin_email' )
+					get_option( 'admin_email' ),
 				],
 				'hamail_keep_wp_mail'        => [
 					__( 'wp_mail function', 'hamail' ),
 					__( 'Hamail can override all mail sent with <code>wp_mail</code> function. SMTP API works fine with other plugins that send emails(e.g. WooCommerce or Contact Form 7).', 'hamail' ),
-					''
+					'',
 				],
 				TemplateSelector::OPTION_KEY => [
 					__( 'Template ID', 'hamail' ),
@@ -323,7 +322,7 @@ class SettingsScreen extends Singleton {
 					$current_fields = hamail_fields_array();
 					?>
 					<textarea rows="2" id="hamail_fields_to_sync" name="hamail_fields_to_sync"
-							  placeholder="<?php esc_attr_e( 'Put CSV here in 2 lines.', 'hamail' ); ?>"
+								placeholder="<?php esc_attr_e( 'Put CSV here in 2 lines.', 'hamail' ); ?>"
 					><?php echo esc_textarea( get_option( 'hamail_fields_to_sync', '' ) ); ?></textarea>
 					<?php if ( is_wp_error( $current_fields ) && 200 !== $current_fields->get_error_data()['status'] ) : ?>
 						<p class="hamail-format-error"><?php echo esc_html( $current_fields->get_error_message() ); ?></p>

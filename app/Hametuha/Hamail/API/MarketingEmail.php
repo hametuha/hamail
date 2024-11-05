@@ -641,7 +641,7 @@ class MarketingEmail extends Singleton {
 			'show_in_rest'      => true,
 			'show_tagcloud'     => false,
 			'show_admin_column' => true,
-			'capabilities' => [
+			'capabilities'      => [
 				'manage_terms' => 'manage_categories',
 				'edit_terms'   => 'manage_categories',
 				'delete_terms' => 'manage_categories',

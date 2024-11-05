@@ -36,15 +36,15 @@ class TransactionMails extends Singleton {
 			return;
 		}
 		$args = [
-			'label' => __( 'Transaction Mail', 'hamail' ),
-			'public' => false,
-			'show_ui' => true,
-			'menu_icon' => 'dashicons-buddicons-pm',
-			'supports' => [ 'title', 'editor', 'author', 'excerpt' ],
+			'label'           => __( 'Transaction Mail', 'hamail' ),
+			'public'          => false,
+			'show_ui'         => true,
+			'menu_icon'       => 'dashicons-buddicons-pm',
+			'supports'        => [ 'title', 'editor', 'author', 'excerpt' ],
 			'capability_type' => 'page',
-			'show_in_rest' => true,
-			'show_in_menu' => SettingsScreen::get_instance()->slug,
-			'menu_position' => 20,
+			'show_in_rest'    => true,
+			'show_in_menu'    => SettingsScreen::get_instance()->slug,
+			'menu_position'   => 20,
 		];
 		/**
 		 * Arguments for hamail custom post type.
@@ -213,7 +213,7 @@ class TransactionMails extends Singleton {
 				<?php foreach ( get_editable_roles() as $key => $role ) : ?>
 					<label class="inline-block">
 						<input type="checkbox" name="hamail_roles[]"
-							   value="<?php echo esc_attr( $key ); ?>" <?php checked( hamail_has_role( $key, $post ) ); ?> />
+								value="<?php echo esc_attr( $key ); ?>" <?php checked( hamail_has_role( $key, $post ) ); ?> />
 						<?php echo translate_user_role( $role['name'] ); ?>
 						<small>(<?php echo hamail_get_role_count( $role['name'] ); ?>)</small>
 					</label>
@@ -254,7 +254,7 @@ class TransactionMails extends Singleton {
 						<?php $checked = true; foreach ( hamail_recipients_group() as $search ) : ?>
 							<label class="inline-block">
 								<input type="radio" name="hamail_search_action" id="<?php echo esc_attr( $search['id'] ); ?>"
-									   value="<?php echo esc_attr( $search['endpoint'] ); ?>" <?php checked( $checked ); ?> />
+										value="<?php echo esc_attr( $search['endpoint'] ); ?>" <?php checked( $checked ); ?> />
 								<?php echo esc_html( $search['label'] ); ?>
 							</label>
 							<?php
@@ -263,9 +263,9 @@ class TransactionMails extends Singleton {
 						?>
 					</div>
 					<input class="hamail-search-value" type="hidden" name="hamail_recipients_id"
-						   value="<?php echo esc_attr( get_post_meta( $post->ID, '_hamail_recipients_id', true ) ); ?>" />
+							value="<?php echo esc_attr( get_post_meta( $post->ID, '_hamail_recipients_id', true ) ); ?>" />
 					<input type="text" class="regular-text hamail-search-field" value=""
-						   placeholder="<?php esc_attr_e( 'Type and search users...', 'hamail' ); ?>" />
+							placeholder="<?php esc_attr_e( 'Type and search users...', 'hamail' ); ?>" />
 					<ul class="hamail-search-list"></ul>
 				</div>
 			</div>
@@ -279,8 +279,8 @@ class TransactionMails extends Singleton {
 					<?php _e( 'Enter comma separated mail address', 'hamail' ); ?>
 				</label>
 				<textarea class="hamail-address-textarea" name="hamail_raw_address"
-						  placeholder="foo@example.com,var@example.com" rows="3"
-						  id="hamail_raw_address"><?php echo esc_textarea( get_post_meta( $post->ID, '_hamail_raw_address', true ) ); ?></textarea>
+							placeholder="foo@example.com,var@example.com" rows="3"
+							id="hamail_raw_address"><?php echo esc_textarea( get_post_meta( $post->ID, '_hamail_raw_address', true ) ); ?></textarea>
 			</div>
 		</div><!-- //.hamail-address -->
 		<?php
@@ -323,7 +323,7 @@ class TransactionMails extends Singleton {
 			<?php foreach ( $logs as $log ) : ?>
 			<pre class="hamail-success-log"><?php echo nl2br( esc_html( $log ) ); ?></pre>
 		<?php endforeach; ?>
-		<?php
+			<?php
 		endif;
 	}
 }
