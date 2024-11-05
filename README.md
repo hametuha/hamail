@@ -63,7 +63,10 @@ To get supported, please go to [Support Forum](https://wordpress.org/support/plu
 
 ### 2.4.0
 
-* Support SMTP API
+* Support SMTP API.
+* Add marketing email logs.
+* Marketing emails use excerpt as pre-header text.
+* Arrange admin screen menu.
 
 ### 2.3.0
 
