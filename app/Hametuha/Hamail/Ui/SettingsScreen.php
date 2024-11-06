@@ -210,7 +210,7 @@ class SettingsScreen extends Singleton {
 					__( 'Template ID', 'hamail' ),
 					sprintf(
 					// translators: %s document URL.
-						__( 'If Template ID is set, all your default mail will be HTML. For more detail, see <a href="%s" target="_blank">SendGrid API doc</a>. This feature work with legacy templates. If you have none, create one via <a href="%s" target="_blank" rel="noopener noreferrer">SendGrind Legacy Templates</a>.', 'hamail' ),
+						__( 'If Template ID is set, all your default mail will be HTML. For more detail, see <a href="%1$s" target="_blank">SendGrid API doc</a>. This feature work with legacy templates. If you have none, create one via <a href="%2$s" target="_blank" rel="noopener noreferrer">SendGrind Legacy Templates</a>.', 'hamail' ),
 						'https://sendgrid.com/docs/Glossary/transactional_email_templates.html',
 						'https://sendgrid.com/templates'
 					),

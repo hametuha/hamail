@@ -30,6 +30,15 @@ class TemplateSelector extends Singleton {
 				add_meta_box( 'hamail-template-box', __( 'Mail Template', 'hamail' ), [ $this, 'do_meta_box' ], $post_type, 'side', 'low' );
 			}
 		} );
+		// Add preview link structure
+		add_filter( 'query_vars', function ( $vars ) {
+			$vars[] = 'hamail-preview';
+			return $vars;
+		} );
+		add_action( 'init', function () {
+			add_rewrite_rule( '^hamail/preview/([0-9]+)$', 'index.php?hamail-preview=$matches[1]', 'top' );
+		} );
+		add_action( 'pre_get_posts', [ $this, 'transaction_preview' ] );
 	}
 
 	/**
@@ -87,7 +96,69 @@ class TemplateSelector extends Singleton {
 		}
 		printf( '<p class="description">%s</p>', esc_html( $message ) );
 		// Display preview link
+		if ( get_option( 'rewrite_rules' ) ) {
+			$preview_url = sprintf( home_url( '/hamail/preview/%d' ), $post->ID );
+		} else {
+			$preview_url = add_query_arg( [
+				'hamail-preview' => $post->ID,
+			], home_url() );
+		}
+		printf(
+			'<p><a class="components-button is-secondary is-compact" href="%s" target="hamail-transaction-preview">%s</a></p>',
+			esc_url( $preview_url ),
+			esc_html__( 'Preview' )
+		);
+	}
 
+	/**
+	 * Display preview link
+	 *
+	 * @param \WP_Query $wp_query
+	 * @return void
+	 */
+	public function transaction_preview( $wp_query ) {
+		if ( is_admin() || ! $wp_query->is_main_query() || ! $wp_query->get( 'hamail-preview' ) ) {
+			return;
+		}
+		$post = get_post( $wp_query->get( 'hamail-preview' ) );
+		if ( ! $post || 'hamail' !== $post->post_type || ! current_user_can( 'edit_post', $post->ID ) ) {
+			$wp_query->set_404();
+			return;
+		}
+		// Try preview.
+		$template_id = self::get_post_template( $post->ID );
+		if ( ! $template_id ) {
+			wp_die( __( 'No template is set.', 'hamail' ), get_status_header_desc( 404 ) );
+		}
+		// Get template and replace it.
+		try {
+			$template        = hamail_client()->client->templates()->_( $template_id )->get();
+			$active_template = null;
+			if ( 200 === $template->statusCode() ) {
+				$template = json_decode( $template->body(), true );
+				if ( $template ) {
+					foreach ( $template['versions'] as $version ) {
+						if ( $version['active'] ) {
+							$active_template = $version['html_content'];
+							break;
+						}
+					}
+				}
+			}
+			if ( ! $active_template ) {
+				throw new \Exception( __( 'Failed to retrieve template.', 'hamail' ), $template->statusCode() );
+			}
+			foreach ( [
+				'subject' => get_the_title( $post ),
+				'body'    => get_the_content( '', false, $post ),
+			] as $rel => $content ) {
+				$active_template = str_replace( '<%' . $rel . '%>', $content, $active_template );
+			}
+			echo $active_template;
+			exit;
+		} catch ( \Exception $e ) {
+			wp_die( $e->getMessage(), get_status_header_desc( $e->getCode() ) );
+		}
 	}
 
 	/**
@@ -124,7 +195,7 @@ class TemplateSelector extends Singleton {
 	 * @return array|\WP_Error
 	 */
 	public static function get_available_templates( string $generation = 'legacy,dynamic' ) {
-		$generation = in_array( $generation, [ 'legacy', 'dynamic' ], true ) ? $generation : 'legacy,dynamic';
+		$generation       = in_array( $generation, [ 'legacy', 'dynamic' ], true ) ? $generation : 'legacy,dynamic';
 		static $templates = null;
 		if ( is_null( $templates ) ) {
 			try {

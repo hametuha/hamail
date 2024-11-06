@@ -61,6 +61,10 @@ To get supported, please go to [Support Forum](https://wordpress.org/support/plu
 
 ## Changelog
 
+### 2.5.0
+
+* Add preview feature for transaction mail.
+
 ### 2.4.2
 
 * Bugfix: Fix error on the meta box data saving.

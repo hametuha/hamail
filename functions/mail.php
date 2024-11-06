@@ -132,23 +132,23 @@ function hamail_placeholders( $user = null, $extra_args = [] ) {
 	}
 	if ( $email ) {
 		$place_holders = [
-			'-id-'       => 0,
-			'-name-'     => hamail_guest_name( $email ),
-			'-nicename-' => 'V/A',
-			'-email-'    => $email,
-			'-login-'    => 'V/A',
+			'-id-'         => 0,
+			'-name-'       => hamail_guest_name( $email ),
+			'-nicename-'   => 'V/A',
+			'-email-'      => $email,
+			'-login-'      => 'V/A',
 			'-first_name-' => __( 'First Name' ),
 			'-last_name-'  => __( 'Last Name' ),
 		];
 	} else {
 		$place_holders = [
-			'-id-'       => $user->ID,
-			'-name-'     => $user->display_name,
-			'-nicename-' => $user->user_nicename,
-			'-email-'    => $user->user_email,
-			'-login-'    => $user->user_login,
-			'-first_name-'    => $user->first_name,
-			'-last_name-'    => $user->last_name,
+			'-id-'         => $user->ID,
+			'-name-'       => $user->display_name,
+			'-nicename-'   => $user->user_nicename,
+			'-email-'      => $user->user_email,
+			'-login-'      => $user->user_login,
+			'-first_name-' => $user->first_name,
+			'-last_name-'  => $user->last_name,
 		];
 	}
 	if ( $extra_args ) {
