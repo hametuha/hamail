@@ -186,9 +186,9 @@ class TransactionMails extends Singleton {
 	 * @param \WP_Post $post
 	 */
 	public function recipients_meta_box( $post ) {
-		$users      = [];
+		$users = [];
 		// Get Saved user ids.
-		$user_ids   = array_values( array_filter( explode( ',', get_post_meta( $post->ID, '_hamail_recipients_id', true ) ), function( $id ) {
+		$user_ids = array_values( array_filter( explode( ',', get_post_meta( $post->ID, '_hamail_recipients_id', true ) ), function ( $id ) {
 			return ! empty( $id ) && is_numeric( $id );
 		} ) );
 		if ( $user_ids ) {
