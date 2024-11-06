@@ -94,7 +94,7 @@ class SettingsScreen extends Singleton {
 					<?php esc_html_e( 'Try sending mail via SendGrid.', 'hamail' ); ?>
 				</p>
 
-				<form action="<?php echo esc_attr( admin_url( 'options-general.php' ) ); ?>?page=hamail-setting"
+				<form action="<?php echo esc_attr( admin_url( 'admin.php?page=' . $this->slug ) ); ?>"
 						method="post">
 					<?php wp_nonce_field( 'hamail_test' ); ?>
 					<table class="form-table">
@@ -210,8 +210,9 @@ class SettingsScreen extends Singleton {
 					__( 'Template ID', 'hamail' ),
 					sprintf(
 					// translators: %s document URL.
-						__( 'If Template ID is set, all your default mail will be HTML. For more detail, see <a href="%s" target="_blank">SendGrid API doc</a>.', 'hamail' ),
-						'https://sendgrid.com/docs/Glossary/transactional_email_templates.html'
+						__( 'If Template ID is set, all your default mail will be HTML. For more detail, see <a href="%1$s" target="_blank">SendGrid API doc</a>. This feature work with legacy templates. If you have none, create one via <a href="%2$s" target="_blank" rel="noopener noreferrer">SendGrind Legacy Templates</a>.', 'hamail' ),
+						'https://sendgrid.com/docs/Glossary/transactional_email_templates.html',
+						'https://sendgrid.com/templates'
 					),
 					'',
 				],
@@ -232,10 +233,9 @@ class SettingsScreen extends Singleton {
 							$message = __( 'If SendGrid API key is valid, you can set template.', 'hamail' );
 						} else {
 							$value     = TemplateSelector::get_default_template();
-							$templates = TemplateSelector::get_template_pull_down();
+							$templates = TemplateSelector::get_template_pull_down( 0, '', 'legacy' );
 							if ( is_wp_error( $templates ) ) {
 								$message = $templates->get_error_message();
-								$type    = 'text';
 							} else {
 								$input = $templates;
 							}
@@ -404,7 +404,7 @@ class SettingsScreen extends Singleton {
 				'status'    => $code,
 			] );
 		} else {
-			wp_redirect( admin_url( 'options-general.php?page=hamail-setting&mail_sent=true' ) );
+			wp_redirect( admin_url( 'admin.php?page=' . $this->slug . '&mail_sent=true' ) );
 			exit;
 		}
 	}

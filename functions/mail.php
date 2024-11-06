@@ -132,19 +132,23 @@ function hamail_placeholders( $user = null, $extra_args = [] ) {
 	}
 	if ( $email ) {
 		$place_holders = [
-			'-id-'       => 0,
-			'-name-'     => hamail_guest_name( $email ),
-			'-nicename-' => 'V/A',
-			'-email-'    => $email,
-			'-login-'    => 'V/A',
+			'-id-'         => 0,
+			'-name-'       => hamail_guest_name( $email ),
+			'-nicename-'   => 'V/A',
+			'-email-'      => $email,
+			'-login-'      => 'V/A',
+			'-first_name-' => __( 'First Name' ),
+			'-last_name-'  => __( 'Last Name' ),
 		];
 	} else {
 		$place_holders = [
-			'-id-'       => $user->ID,
-			'-name-'     => $user->display_name,
-			'-nicename-' => $user->user_nicename,
-			'-email-'    => $user->user_email,
-			'-login-'    => $user->user_login,
+			'-id-'         => $user->ID,
+			'-name-'       => $user->display_name,
+			'-nicename-'   => $user->user_nicename,
+			'-email-'      => $user->user_email,
+			'-login-'      => $user->user_login,
+			'-first_name-' => $user->first_name,
+			'-last_name-'  => $user->last_name,
 		];
 	}
 	if ( $extra_args ) {
@@ -367,8 +371,8 @@ function hamail_simple_mail( $recipients, $subject, $body, $additional_headers =
 	// Reply To.
 	$reply_to = new SendGrid\Mail\ReplyTo( $headers['from'] );
 	// Subject.
-	// Check if WooCommerce is not activated.
-	$no_woocommerce = ! function_exists( 'WC' );
+	// template apply args.
+	$should_apply = true;
 	// Mail body.
 	if ( 'text/html' === $headers['format'] ) {
 		/**
@@ -376,7 +380,7 @@ function hamail_simple_mail( $recipients, $subject, $body, $additional_headers =
 		 *
 		 * Filter if we should apply templates
 		 *
-		 * @param bool   $no_woocommerce If WooCommerce exists, no filter.
+		 * @param bool   $should_apply If WooCommerce exists, no filter.
 		 * @param array  $headers
 		 * @param string $subject
 		 * @param string $body
@@ -384,7 +388,7 @@ function hamail_simple_mail( $recipients, $subject, $body, $additional_headers =
 		 *
 		 * @package hamail
 		 */
-		$should_filter = apply_filters( 'hamail_should_filter', $no_woocommerce, $headers, $subject, $body, $recipients );
+		$should_filter = apply_filters( 'hamail_should_filter', $should_apply, $headers, $subject, $body, $recipients );
 		if ( $should_filter ) {
 			hamail_is_sending( true );
 			$body = apply_filters( 'the_content', $body );
@@ -425,7 +429,7 @@ function hamail_simple_mail( $recipients, $subject, $body, $additional_headers =
 	 *
 	 * Filter if we should apply templates
 	 *
-	 * @param bool $no_woocommerce If WooCommerce exists, no template default.
+	 * @param bool $shold_apply This affects force apply template or not.
 	 * @param array $headers
 	 * @param string $subject
 	 * @param string $body
@@ -433,7 +437,7 @@ function hamail_simple_mail( $recipients, $subject, $body, $additional_headers =
 	 *
 	 * @package hamail
 	 */
-	$should_apply_template = apply_filters( 'hamail_apply_template', $no_woocommerce, $headers, $subject, $body, $recipients );
+	$should_apply_template = apply_filters( 'hamail_apply_template', $should_apply, $headers, $subject, $body, $recipients );
 	// Category.
 	if ( 1 < count( $recipient_data ) ) {
 		$category = 'group';
@@ -594,7 +598,7 @@ function hamail_get_message_recipients( $post = null ) {
 /**
  * Send message
  *
- * @param null|int|WP_Error $post
+ * @param null|int|WP_Post $post
  * @param bool              $force If true, send email if it's already sent or not-published.
  *
  * @return bool|WP_Error

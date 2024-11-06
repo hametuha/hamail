@@ -36,7 +36,7 @@ Click install and activate it.
 
 Composer and NPM are required.
 
-```
+<pre>
 # Go to your wp-content/plugins and run git
 cd wp-content/plugins
 git clone https://github.com/hametuha/hamail.git hamail
@@ -45,7 +45,7 @@ cd hamail
 # Install dependencies
 composer install
 npm run package
-```
+</pre>
 
 ### Enter API Key
 
@@ -60,6 +60,10 @@ For more details, go to hamail setting screen.
 To get supported, please go to [Support Forum](https://wordpress.org/support/plugin/hamail/).
 
 ## Changelog
+
+### 2.5.0
+
+* Add preview feature for transaction mail.
 
 ### 2.4.2
 
