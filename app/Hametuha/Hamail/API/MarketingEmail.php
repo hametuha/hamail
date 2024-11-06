@@ -76,7 +76,7 @@ class MarketingEmail extends Singleton {
 		if ( empty( $_POST['hamail_marketing_targets'] ) ) {
 			delete_post_meta( $post_id, static::META_KEY_SEGMENT );
 		} else {
-			update_post_meta( $post_id, static::META_KEY_SEGMENT, implode( ',', array_map( 'trim', filter_input( INPUT_POST, 'hamail_marketing_targets', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY ) ) ) );
+			update_post_meta( $post_id, static::META_KEY_SEGMENT, implode( ',', array_map( 'trim', filter_input( INPUT_POST, 'hamail_marketing_targets', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY ) ?? [] ) ) );
 		}
 		// Unsubscribe group.
 		update_post_meta( $post_id, static::META_KEY_UNSUBSCRIBE, filter_input( INPUT_POST, 'hamail_unsubscribe' ) );
