@@ -21,9 +21,9 @@ class TransactionMails extends Singleton {
 		add_action( 'add_meta_boxes', [ $this, 'add_meta_boxes' ] );
 		add_action( 'init', [ $this, 'register_mail_post_type' ] );
 		// Save post meta.
-		add_action( 'save_post_hamail', [ $this, 'save_post_id' ], 9, 2 );
+		add_action( 'save_post_hamail', [ $this, 'save_post_id' ], 10, 2 );
 		// Save post and send mail.
-		add_action( 'save_post_hamail', [ $this, 'save_post_and_send_mail' ], 10, 2 );
+		add_action( 'save_post_hamail', [ $this, 'save_post_and_send_mail' ], 11, 2 );
 	}
 
 	/**
@@ -77,19 +77,19 @@ class TransactionMails extends Singleton {
 		// Save meta data.
 		if ( wp_verify_nonce( filter_input( INPUT_POST, '_hamail_recipients' ), 'hamail_recipients' ) ) {
 			// Save roles.
-			$roles = implode( ',', array_filter( filter_input( INPUT_POST, 'hamail_roles', FILTER_DEFAULT, FILTER_FORCE_ARRAY ) ) );
+			$roles = implode( ',', array_filter( filter_input( INPUT_POST, 'hamail_roles', FILTER_DEFAULT, FILTER_FORCE_ARRAY ) ?? [] ) );
 			update_post_meta( $post->ID, '_hamail_roles', $roles );
 			// Save groups.
-			$groups = implode( ',', array_filter( filter_input( INPUT_POST, 'hamail_user_groups', FILTER_DEFAULT, FILTER_FORCE_ARRAY ) ) );
+			$groups = implode( ',', array_filter( filter_input( INPUT_POST, 'hamail_user_groups', FILTER_DEFAULT, FILTER_FORCE_ARRAY ) ?? [] ) );
 			update_post_meta( $post->ID, '_hamail_user_groups', $groups );
 			// Save users.
 			$users_ids = implode( ',', array_filter( array_map( function ( $id ) {
 				$id = trim( $id );
 				return is_numeric( $id ) ? $id : false;
-			}, explode( ',', filter_input( INPUT_POST, 'hamail_recipients_id' ) ) ) ) );
-			update_post_meta( $post_id, '_hamail_recipients_id', $users_ids );
+			}, explode( ',', filter_input( INPUT_POST, 'hamail_recipients_id' ) ?? '' ) ) ) );
+			update_post_meta( $post->ID, '_hamail_recipients_id', $users_ids );
 			// Save each address.
-			update_post_meta( $post->ID, '_hamail_raw_address', filter_input( INPUT_POST, 'hamail_raw_address' ) );
+			update_post_meta( $post->ID, '_hamail_raw_address', filter_input( INPUT_POST, 'hamail_raw_address' ) ?? '' );
 		}
 	}
 
@@ -186,18 +186,23 @@ class TransactionMails extends Singleton {
 	 * @param \WP_Post $post
 	 */
 	public function recipients_meta_box( $post ) {
-		$users      = [];
-		$user_ids   = get_post_meta( $post->ID, '_hamail_recipients_id', true );
-		$user_query = new \WP_User_Query( [
-			'include' => explode( ',', $user_ids ),
-		] );
-		$users      = array_map( function ( $user ) {
-			return [
-				'user_id'      => $user->ID,
-				'display_name' => $user->display_name,
-				'user_email'   => $user->user_email,
-			];
-		}, $user_query->get_results() );
+		$users = [];
+		// Get Saved user ids.
+		$user_ids = array_values( array_filter( explode( ',', get_post_meta( $post->ID, '_hamail_recipients_id', true ) ), function ( $id ) {
+			return ! empty( $id ) && is_numeric( $id );
+		} ) );
+		if ( $user_ids ) {
+			$user_query = new \WP_User_Query( [
+				'include' => $user_ids,
+			] );
+			$users      = array_map( function ( $user ) {
+				return [
+					'user_id'      => $user->ID,
+					'display_name' => $user->display_name,
+					'user_email'   => $user->user_email,
+				];
+			}, $user_query->get_results() );
+		}
 		if ( ! hamail_is_sent( $post ) ) {
 			wp_nonce_field( 'hamail_recipients', '_hamail_recipients', false );
 		}
@@ -208,6 +213,7 @@ class TransactionMails extends Singleton {
 					<?php esc_html_e( 'This mail has been sent already. Any change won\'t be saved.', 'hamail' ); ?>
 				</p>
 			<?php endif; ?>
+
 			<div class="hamail-address-roles">
 				<h4 class="hamail-address-title"><?php esc_html_e( 'Roles', 'hamail' ); ?></h4>
 				<?php foreach ( get_editable_roles() as $key => $role ) : ?>
@@ -215,7 +221,7 @@ class TransactionMails extends Singleton {
 						<input type="checkbox" name="hamail_roles[]"
 								value="<?php echo esc_attr( $key ); ?>" <?php checked( hamail_has_role( $key, $post ) ); ?> />
 						<?php echo translate_user_role( $role['name'] ); ?>
-						<small>(<?php echo hamail_get_role_count( $role['name'] ); ?>)</small>
+						<small>(<?php echo hamail_get_role_count( $key ); ?>)</small>
 					</label>
 				<?php endforeach; ?>
 			</div>
