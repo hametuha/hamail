@@ -55,7 +55,7 @@ class TemplateSelector extends Singleton {
 	 */
 	public function do_meta_box( $post ) {
 		wp_nonce_field( 'hamail_template', '_hamailtemplatenonce', false );
-		$input = self::get_template_pull_down( $post->ID, self::POST_META_KEY );
+		$input = self::get_template_pull_down( $post->ID, self::POST_META_KEY, 'legacy' );
 		if ( is_wp_error( $input ) ) {
 			printf( '<div class="notice notice-error">%s</div>', esc_html( $input->get_error_message() ) );
 		} else {
@@ -68,7 +68,7 @@ class TemplateSelector extends Singleton {
 				break;
 			default:
 				$label     = '';
-				$templates = self::get_available_templates();
+				$templates = self::get_available_templates( 'legacy' );
 				if ( ! is_wp_error( $templates ) ) {
 					foreach ( $templates as $template ) {
 						if ( $default === $template['id'] ) {
@@ -86,6 +86,8 @@ class TemplateSelector extends Singleton {
 				break;
 		}
 		printf( '<p class="description">%s</p>', esc_html( $message ) );
+		// Display preview link
+
 	}
 
 	/**
@@ -118,14 +120,16 @@ class TemplateSelector extends Singleton {
 	/**
 	 * Get available templates.
 	 *
+	 * @param string $generation 'legacy', 'dynamic', or 'leagcy,dynamic'
 	 * @return array|\WP_Error
 	 */
-	public static function get_available_templates() {
+	public static function get_available_templates( string $generation = 'legacy,dynamic' ) {
+		$generation = in_array( $generation, [ 'legacy', 'dynamic' ], true ) ? $generation : 'legacy,dynamic';
 		static $templates = null;
 		if ( is_null( $templates ) ) {
 			try {
 				$sg           = hamail_client();
-				$query_params = [ 'generations' => 'legacy,dynamic' ];
+				$query_params = [ 'generations' => $generation ];
 				$response     = $sg->client->templates()->get( null, $query_params );
 				$json         = json_decode( $response->body(), true );
 				if ( ! $json ) {
@@ -160,14 +164,15 @@ class TemplateSelector extends Singleton {
 	 *
 	 * @param int $post_id If post id is set, get post meta value.
 	 * @param string $name Template pull down.
+	 * @param string $generation 'legacy', 'dynamic', or 'legacy,dynamic'
 	 * @return string
 	 */
-	public static function get_template_pull_down( $post_id = 0, $name = '' ) {
+	public static function get_template_pull_down( $post_id = 0, $name = '', $generation = 'legacy,dynamic' ) {
 		if ( ! $name ) {
 			$name = self::OPTION_KEY;
 		}
 		$current_value = $post_id ? get_post_meta( $post_id, self::POST_META_KEY, true ) : self::get_default_template();
-		$templates     = self::get_available_templates();
+		$templates     = self::get_available_templates( $generation );
 		if ( is_wp_error( $templates ) ) {
 			return $templates;
 		} elseif ( empty( $templates ) ) {

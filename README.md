@@ -36,7 +36,7 @@ Click install and activate it.
 
 Composer and NPM are required.
 
-```
+<pre>
 # Go to your wp-content/plugins and run git
 cd wp-content/plugins
 git clone https://github.com/hametuha/hamail.git hamail
@@ -45,7 +45,7 @@ cd hamail
 # Install dependencies
 composer install
 npm run package
-```
+</pre>
 
 ### Enter API Key
 
