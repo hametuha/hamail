@@ -30,6 +30,7 @@ function hamail_apply_css_to_body( $body, $context ) {
 			continue;
 		}
 		$css  = file_get_contents( $style );
+		$css  = apply_filters( 'hamail_css_content', $css, $style );
 		$body = $cssToInlineStyles->convert( $body, $css );
 	}
 	// Remove body tag.
@@ -39,3 +40,36 @@ function hamail_apply_css_to_body( $body, $context ) {
 	return $body;
 }
 add_filter( 'hamail_body_before_send', 'hamail_apply_css_to_body', 10, 2 );
+
+/**
+ * Limit block types.
+ *
+ * @param string[]                $allowed_blocks Allowed blocks.
+ * @param WP_Block_Editor_Context $editor_context Editor context.
+ * @return string[]
+ */
+function hamail_allowed_block_types( $allowed_blocks, $editor_context ) {
+	if ( empty( $editor_context->post ) ) {
+		return $allowed_blocks;
+	}
+	switch ( $editor_context->post->post_type ) {
+		case 'hamail':
+		case 'marketing-mail':
+			// For HTML mail, these blocks are allowed.
+			return [
+				'core/paragraph',
+				'core/list',
+				'core/heading',
+				'core/image',
+				'core/spacer',
+				'core/separator',
+				'core/shortcode',
+				'core/html',
+				'core/buttons',
+				'core/button',
+			];
+		default:
+			return $allowed_blocks;
+	}
+}
+add_filter( 'allowed_block_types_all', 'hamail_allowed_block_types', 10, 2 );
