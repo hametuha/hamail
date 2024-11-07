@@ -613,7 +613,7 @@ function hamail_send_message( $post = null, $force = false ) {
 	}
 	// O.K. Let's try sending.
 	$subject = get_the_title( $post );
-	$body    = apply_filters( 'the_content', $post->post_content );
+	$body    = apply_filters( 'hamail_transaction_content', apply_filters( 'the_content', $post->post_content ), $post );
 	$headers = [
 		'post_id'  => $post->ID,
 		'template' => TemplateSelector::get_post_template( $post->ID ),

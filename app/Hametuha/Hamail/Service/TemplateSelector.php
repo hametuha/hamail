@@ -148,12 +148,18 @@ class TemplateSelector extends Singleton {
 			if ( ! $active_template ) {
 				throw new \Exception( __( 'Failed to retrieve template.', 'hamail' ), $template->statusCode() );
 			}
+			setup_postdata( $post );
+			// Create body.
+			$body = apply_filters( 'the_content', get_the_content( '', false, $post ) );
+			$body = apply_filters( 'hamail_transaction_content', $body, $post );
+			$body = apply_filters( 'hamail_body_before_send', $body, 'html' );
 			foreach ( [
 				'subject' => get_the_title( $post ),
-				'body'    => get_the_content( '', false, $post ),
+				'body'    => $body,
 			] as $rel => $content ) {
 				$active_template = str_replace( '<%' . $rel . '%>', $content, $active_template );
 			}
+			wp_reset_postdata();
 			echo $active_template;
 			exit;
 		} catch ( \Exception $e ) {
