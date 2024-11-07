@@ -37,12 +37,12 @@ Click install and activate it.
 Composer and NPM are required.
 
 <pre>
-# Go to your wp-content/plugins and run git
+// Go to your wp-content/plugins and run git
 cd wp-content/plugins
 git clone https://github.com/hametuha/hamail.git hamail
-# Then move into
+// Then move into
 cd hamail
-# Install dependencies
+// Install dependencies
 composer install
 npm run package
 </pre>
@@ -61,9 +61,15 @@ To get supported, please go to [Support Forum](https://wordpress.org/support/plu
 
 ## Changelog
 
+### 2.5.1
+
+* Add filter hook `hamail_transaction_content` to override transactional mail body.
+* Restrict block for email editor. Override this by `allowed_block_types_all` filter.
+
 ### 2.5.0
 
 * Add preview feature for transaction mail.
+* Restrict legacy template for transaction mail.
 
 ### 2.4.2
 
