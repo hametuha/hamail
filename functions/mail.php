@@ -345,10 +345,11 @@ function hamail_get_recipients_data( $recipients, $subject = '', $body = '' ) {
  * @param string          $body
  * @param array           $additional_headers
  * @param array           $attachments
+ * @param int             $asm_id If set, unsubscribe group will be this.
  *
  * @return bool|WP_Error
  */
-function hamail_simple_mail( $recipients, $subject, $body, $additional_headers = [], $attachments = [] ) {
+function hamail_simple_mail( $recipients, $subject, $body, $additional_headers = [], $attachments = [], $asm_id = 0 ) {
 	// Parse recipients.
 	$recipients     = (array) $recipients;
 	$recipient_data = hamail_get_recipients_data( $recipients, $subject, $body );
@@ -457,6 +458,15 @@ function hamail_simple_mail( $recipients, $subject, $body, $additional_headers =
 			$mail->setSubject( $subject );
 			$mail->setReplyTo( $reply_to );
 			$mail->addContent( $content );
+			// Set unsubscribe group.
+			$asm_id = $asm_id ?: get_option( 'hamail_default_unsubscribe_group', 0 );
+			if ( $asm_id ) {
+				$groups = array_map( 'intval', (array) get_option( 'hamail_unsubscribe_group', [] ) );
+				if ( empty( $groups ) ) {
+					$groups = null;
+				}
+				$mail->setAsm( (int) $asm_id, $groups );
+			}
 			// Add attachments.
 			if ( ! empty( $mail_attachments ) ) {
 				$mail->addAttachments( $mail_attachments );
@@ -628,8 +638,12 @@ function hamail_send_message( $post = null, $force = false ) {
 	if ( empty( $to ) ) {
 		return false;
 	}
+	// Get unsubscribe group.
+	$unsubscribe = get_post_meta( $post->ID, '_unsubscribe_group', true ) ?: 0;
+	// Attachments.
+	$attachments = apply_filters( 'hamail_transaction_attachments', [], $post );
 	// Send.
-	$result = hamail_simple_mail( $to, $subject, $body, $headers );
+	$result = hamail_simple_mail( $to, $subject, $body, $headers, $attachments, (int) $unsubscribe );
 	if ( is_wp_error( $result ) ) {
 		$message = sprintf( '[Error] %s: %s', $result->get_error_code(), current_time( 'mysql' ) ) . "\n";
 		foreach ( $result->get_error_messages() as $err_message ) {
@@ -684,6 +698,9 @@ function hamail_is_sending( $flag = null ) {
  */
 function hamail_get_mail_css() {
 	$css_path = [];
+	// Default style of plugin.
+	$css_path[] = plugin_dir_path( __DIR__ ) . 'assets/css/hamail-mail-layout.css';
+	// Theme css.
 	foreach ( [ get_template_directory(), get_stylesheet_directory() ] as $dir ) {
 		$css = $dir . '/hamail.css';
 		if ( file_exists( $css ) ) {

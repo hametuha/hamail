@@ -6,11 +6,14 @@ namespace Hametuha\Hamail\Ui;
 use Hametuha\Hamail\API\MarketingEmail;
 use Hametuha\Hamail\Pattern\Singleton;
 use Hametuha\Hamail\Service\TemplateSelector;
+use Hametuha\Hamail\Utility\ApiUtility;
 
 /**
  * Settings screen.
  */
 class SettingsScreen extends Singleton {
+
+	use ApiUtility;
 
 	/**
 	 * @var string Slug of this screen.
@@ -191,28 +194,45 @@ class SettingsScreen extends Singleton {
 		}, 'hamail-setting' );
 		foreach (
 			[
-				'hamail_api_key'             => [
+				'hamail_api_key'                   => [
 					__( 'SendGrid API key', 'hamail' ),
 					'',
 					'',
 				],
-				'hamail_default_from'        => [
+				'hamail_default_from'              => [
 					__( 'Default Mail From', 'hamail' ),
 					'',
 					get_option( 'admin_email' ),
 				],
-				'hamail_keep_wp_mail'        => [
+				'hamail_keep_wp_mail'              => [
 					__( 'wp_mail function', 'hamail' ),
 					__( 'Hamail can override all mail sent with <code>wp_mail</code> function. SMTP API works fine with other plugins that send emails(e.g. WooCommerce or Contact Form 7).', 'hamail' ),
 					'',
 				],
-				TemplateSelector::OPTION_KEY => [
+				TemplateSelector::OPTION_KEY       => [
 					__( 'Template ID', 'hamail' ),
 					sprintf(
 					// translators: %s document URL.
-						__( 'If Template ID is set, all your default mail will be HTML. For more detail, see <a href="%1$s" target="_blank">SendGrid API doc</a>. This feature work with legacy templates. If you have none, create one via <a href="%2$s" target="_blank" rel="noopener noreferrer">SendGrind Legacy Templates</a>.', 'hamail' ),
+						__( 'Default template is used when you choose "%3$s". For more detail, see <a href="%1$s" target="_blank">SendGrid API doc</a>. This feature work only with legacy templates. If you have none, create one via <a href="%2$s" target="_blank" rel="noopener noreferrer">SendGrind Legacy Templates</a>.', 'hamail' ),
 						'https://sendgrid.com/docs/Glossary/transactional_email_templates.html',
-						'https://sendgrid.com/templates'
+						'https://sendgrid.com/templates',
+						esc_html__( 'Override with Template', 'hamail' )
+					),
+					'',
+				],
+				'hamail_default_unsubscribe_group' => [
+					__( 'Default Unsubscribe Group', 'hamail' ),
+					sprintf(
+						__( 'You can choose default unsubscribe group. This affects <code>%s</code>.', 'hamail' ),
+						esc_html( '<%asm_group_unsubscribe_url%>' )
+					),
+					'',
+				],
+				'hamail_unsubscribe_group'         => [
+					__( 'Unsubscribe Group', 'hamail' ),
+					sprintf(
+						__( 'You can choose unsubscribe group to display if you set <code>%s</code> in your email. This helps in case you have multiple list in your SendGrid account.', 'hamail' ),
+						esc_html( '<%asm_preferences_url%>' )
 					),
 					'',
 				],
@@ -273,6 +293,50 @@ class SettingsScreen extends Singleton {
 							]
 						);
 						$input   = sprintf( '<select name="%s">%s</select>', esc_attr( $key ), implode( ' ', $options ) );
+						break;
+					case 'hamail_default_unsubscribe_group':
+					case 'hamail_unsubscribe_group':
+						if ( ! hamail_enabled() ) {
+							// No API key, display just message.
+							$type     = 'hidden';
+							$message .= __( 'No API key is set.', 'hamail' );
+						} else {
+							$groups = $this->get_unsubscribe_group( true );
+							if ( is_wp_error( $groups ) ) {
+								$message = $groups->get_error_message();
+								$type    = 'hidden';
+							} else {
+								switch ( $key ) {
+									case 'hamail_default_unsubscribe_group':
+										$input .= sprintf( '<select name="%s"><option value="">%s</option>', esc_html( $key ), esc_html__( 'Not Set', 'hamail' ) );
+										foreach ( $groups as $group ) {
+											$input .= sprintf(
+												'<option value="%s" %s>%s</option>',
+												esc_attr( $group['id'] ),
+												selected( (string) $group['id'], get_option( 'hamail_default_unsubscribe_group' ), false ),
+												esc_html( $group['name'] ),
+											);
+										}
+										$input .= '</select>';
+										break;
+									case 'hamail_unsubscribe_group':
+										foreach ( $groups as $group ) {
+											$name = $group['name'];
+											if ( $group['is_default'] ) {
+												$name .= __( '(Default)', 'hamail' );
+											}
+											$input .= sprintf(
+												'<label style="display: block; margin: 1em 0;"><input type="checkbox" name="hamail_unsubscribe_group[]" value="%s" %s/> %s<br /><span class="description">%s</span></label>',
+												esc_attr( $group['id'] ),
+												checked( in_array( (string) $group['id'], get_option( 'hamail_unsubscribe_group', [] ), true ), true, false ),
+												esc_html( $name ),
+												esc_html( $group['description'] )
+											);
+										}
+										break;
+								}
+							}
+						}
 						break;
 				}
 				if ( ! $input ) {

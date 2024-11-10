@@ -1,0 +1,30 @@
+/**
+ * Table  CSS in editor.
+ *
+ * @handle hamail-block-table
+ */
+
+div[data-type="hamail/tabel"] {
+	// This is the parent container for the table rows.
+	> .wp-block > .block-editor-inner-blocks > .block-editor-block-list__layout {
+		display: flex;
+		flex-flow: column;
+		align-items: center;
+	}
+}
+
+div[data-type="hamail/row"] {
+	// This is the parent container for the table rows.
+	> .wp-block > .block-editor-inner-blocks > .block-editor-block-list__layout {
+		display: flex;
+		flex-wrap: nowrap;
+		align-items: flex-start;
+	}
+}
+
+div[data-type="hamail/col"] {
+	// This is the parent container for the table rows.
+	> .wp-block > .block-editor-inner-blocks > .block-editor-block-list__layout {
+		flex: 1;
+	}
+}

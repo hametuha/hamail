@@ -172,7 +172,7 @@ class MarketingTemplate extends Singleton {
 			<li>
 				<?php
 				// translators: %s is {%subject%}.
-				echo wp_kses_post( sprintf( __( '%s will be replaced with unsubscribing link.', 'hamail' ), '<code>[unsubscribe]</code>' ) );
+				echo wp_kses_post( sprintf( __( '%s will be replaced with unsubscribing URL. Alternatively, you can use <code>&lt;%%asm_group_unsubscribe_raw_url%%&gt;</code>.', 'hamail' ), '<code>[unsubscribe]</code>' ) );
 				?>
 				<span class="required"><?php echo esc_html_x( 'Required', 'Required input element', 'hamail' ); ?></span>
 			</li>
@@ -182,6 +182,14 @@ class MarketingTemplate extends Singleton {
 				echo wp_kses_post( sprintf( __( '%s will be replaced with excerpt. Use one for pre-header text..', 'hamail' ), '<code>{%excerpt%}</code>' ) );
 				?>
 			</li>
+			<?php
+			foreach ( [
+				'<%asm_preferences_raw_url%>'        => __( 'Replaced with the users of subscribing list page.', 'hamail' ),
+				'<%asm_global_unsubscribe_raw_url%>' => __( 'Replaced with global unsubscribe URL. This is optional and not recommended. Use unsubscribe groups.', 'hamail' ),
+			] as $tag => $desc ) {
+				printf( '<li><code>%s</code>: %s</li>', esc_html( $tag ), wp_kses_post( $desc ) );
+			}
+			?>
 		</ol>
 		<textarea id="hamail-template-body" name="template_body" class="code-input"><?php echo esc_textarea( get_post_meta( $post->ID, self::META_KEY_BODY, true ) ); ?></textarea>
 		<p class="description">
@@ -397,8 +405,12 @@ class MarketingTemplate extends Singleton {
 		] );
 		wp_reset_postdata();
 		$body = apply_filters( 'hamail_marketing_body', $body, $post, $format );
+		$body = hamail_apply_css_to_body( $body, $format );
 		// Replace body and subject.
-		return $this->replace( $string, $subject, $body );
+		$replaced_body = $this->replace( $string, $subject, $body );
+
+		// Replace [unsubscribe] to <%asm_group_unsubscribe_url%>
+		return str_replace( '[unsubscribe]', '<%asm_group_unsubscribe_raw_url%>', $replaced_body );
 	}
 
 	/**
