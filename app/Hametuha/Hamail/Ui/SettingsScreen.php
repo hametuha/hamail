@@ -194,22 +194,22 @@ class SettingsScreen extends Singleton {
 		}, 'hamail-setting' );
 		foreach (
 			[
-				'hamail_api_key'             => [
+				'hamail_api_key'                   => [
 					__( 'SendGrid API key', 'hamail' ),
 					'',
 					'',
 				],
-				'hamail_default_from'        => [
+				'hamail_default_from'              => [
 					__( 'Default Mail From', 'hamail' ),
 					'',
 					get_option( 'admin_email' ),
 				],
-				'hamail_keep_wp_mail'        => [
+				'hamail_keep_wp_mail'              => [
 					__( 'wp_mail function', 'hamail' ),
 					__( 'Hamail can override all mail sent with <code>wp_mail</code> function. SMTP API works fine with other plugins that send emails(e.g. WooCommerce or Contact Form 7).', 'hamail' ),
 					'',
 				],
-				TemplateSelector::OPTION_KEY => [
+				TemplateSelector::OPTION_KEY       => [
 					__( 'Template ID', 'hamail' ),
 					sprintf(
 					// translators: %s document URL.
@@ -228,7 +228,7 @@ class SettingsScreen extends Singleton {
 					),
 					'',
 				],
-				'hamail_unsubscribe_group' => [
+				'hamail_unsubscribe_group'         => [
 					__( 'Unsubscribe Group', 'hamail' ),
 					sprintf(
 						__( 'You can choose unsubscribe group to display if you set <code>%s</code> in your email. This helps in case you have multiple list in your SendGrid account.', 'hamail' ),
@@ -298,13 +298,13 @@ class SettingsScreen extends Singleton {
 					case 'hamail_unsubscribe_group':
 						if ( ! hamail_enabled() ) {
 							// No API key, display just message.
-							$type = 'hidden';
+							$type     = 'hidden';
 							$message .= __( 'No API key is set.', 'hamail' );
 						} else {
 							$groups = $this->get_unsubscribe_group( true );
 							if ( is_wp_error( $groups ) ) {
 								$message = $groups->get_error_message();
-								$type = 'hidden';
+								$type    = 'hidden';
 							} else {
 								switch ( $key ) {
 									case 'hamail_default_unsubscribe_group':

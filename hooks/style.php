@@ -87,9 +87,9 @@ add_filter( 'allowed_block_types_all', 'hamail_allowed_block_types', 10, 2 );
  */
 function hamail_register_block() {
 	register_block_type( 'hamail/table', [
-		'editor_script_handles' => ['hamail-block-table'],
-		'editor_style_handles'  => ['hamail-block-table'],
-		'style_handles'         => ['hamail-block-table-view'],
+		'editor_script_handles' => [ 'hamail-block-table' ],
+		'editor_style_handles'  => [ 'hamail-block-table' ],
+		'style_handles'         => [ 'hamail-block-table-view' ],
 	] );
 }
 add_action( 'init', 'hamail_register_block' );

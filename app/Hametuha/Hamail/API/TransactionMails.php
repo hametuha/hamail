@@ -344,7 +344,7 @@ class TransactionMails extends Singleton {
 			}
 			?>
 		</select>
-		<p class="description"><?php esc_html_e( 'このメールを受け取り拒否するグループを指定できます。',  'hamail' ); ?></p>
+		<p class="description"><?php esc_html_e( 'このメールを受け取り拒否するグループを指定できます。', 'hamail' ); ?></p>
 		<?php
 		$logs = get_post_meta( $post->ID, '_hamail_log' );
 		if ( $logs ) :

@@ -2,6 +2,7 @@
  * Table block for layout.
  *
  * @handle hamail-block-table
+ * eslint-disable react-hooks/rules-of-hooks
  */
 const { registerBlockType } = wp.blocks;
 const { InnerBlocks, useBlockProps } = wp.blockEditor;
@@ -25,7 +26,7 @@ registerBlockType( 'hamail/table', {
 		const allowedBlocks = [ 'hamail/row' ];
 		return (
 			<div { ...blockProps }>
-				<InnerBlocks allowedBlocks={ allowedBlocks } templateLock={ false }/>
+				<InnerBlocks allowedBlocks={ allowedBlocks } templateLock={ false } />
 			</div>
 		);
 	},

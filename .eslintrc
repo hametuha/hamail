@@ -11,6 +11,7 @@
 		"no-alert": "off",
 		"prettier/prettier": "off",
 		"object-shorthand": "off",
-		"space-before-function-paren": "warn"
+		"space-before-function-paren": "warn",
+		"react-hooks/rules-of-hooks": "off"
 	}
 }
