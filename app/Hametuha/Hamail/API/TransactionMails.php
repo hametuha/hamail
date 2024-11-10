@@ -6,11 +6,14 @@ namespace Hametuha\Hamail\API;
 use Hametuha\Hamail\Pattern\Singleton;
 use Hametuha\Hamail\Service\TemplateSelector;
 use Hametuha\Hamail\Ui\SettingsScreen;
+use Hametuha\Hamail\Utility\ApiUtility;
 
 /**
  * Transaction mail API
  */
 class TransactionMails extends Singleton {
+
+	use ApiUtility;
 
 	/**
 	 * {@inheritDoc}
@@ -73,6 +76,7 @@ class TransactionMails extends Singleton {
 		// Send as admin.
 		if ( wp_verify_nonce( filter_input( INPUT_POST, '_hamailadminnonce' ), 'hamail_as_admin' ) ) {
 			update_post_meta( $post_id, '_hamail_as_admin', filter_input( INPUT_POST, 'hamail_as_admin' ) );
+			update_post_meta( $post_id, '_unsubscribe_group', filter_input( INPUT_POST, 'unsubscribe_group' ) );
 		}
 		// Save meta data.
 		if ( wp_verify_nonce( filter_input( INPUT_POST, '_hamail_recipients' ), 'hamail_recipients' ) ) {
@@ -321,10 +325,31 @@ class TransactionMails extends Singleton {
 				<?php esc_html_e( 'Send as Site Admin', 'hamail' ); ?>
 			</label>
 		<?php endif; ?>
+		<hr />
+		<h4><label for="unsubscribe-group"><?php esc_html_e( 'Unsubscribe', 'hamail' ); ?></label></h4>
+		<select name="unsubscribe_group" id="unsubscribe-group">
+			<?php
+			$options = [ '' => __( 'Not Set', 'hamail' ) ];
+			$group   = $this->get_unsubscribe_group();
+			foreach ( $group as $item ) {
+				$options[ $item['id'] ] = $item['name'] . ( $item['is_admin'] ? __( 'Default', 'hamail' ) : '' );
+			}
+			foreach ( $options as $value => $label ) {
+				printf(
+					'<option value="%s" %s>%s</option>',
+					esc_attr( $value ),
+					selected( get_post_meta( $post->ID, '_unsubscribe_group', true ), $value, false ),
+					esc_html( $label )
+				);
+			}
+			?>
+		</select>
+		<p class="description"><?php esc_html_e( 'このメールを受け取り拒否するグループを指定できます。',  'hamail' ); ?></p>
 		<?php
 		$logs = get_post_meta( $post->ID, '_hamail_log' );
 		if ( $logs ) :
 			?>
+			<hr />
 			<h4><?php esc_html_e( 'Error Logs', 'hamail' ); ?></h4>
 			<?php foreach ( $logs as $log ) : ?>
 			<pre class="hamail-success-log"><?php echo nl2br( esc_html( $log ) ); ?></pre>
