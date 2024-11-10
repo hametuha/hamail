@@ -397,6 +397,7 @@ class MarketingTemplate extends Singleton {
 		] );
 		wp_reset_postdata();
 		$body = apply_filters( 'hamail_marketing_body', $body, $post, $format );
+		$body = hamail_apply_css_to_body( $body, $format );
 		// Replace body and subject.
 		return $this->replace( $string, $subject, $body );
 	}

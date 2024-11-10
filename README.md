@@ -26,11 +26,17 @@ No more long **to** or BCCs.
 - Marketing Email creator
 - Periodical Email(experimental)
 
+### Enter API Key
+
+You need [SendGrid API Key](https://sendgrid.com/docs/Classroom/Send/How_Emails_Are_Sent/api_keys.html).
+
+For more details, go to hamail setting screen.
+
 ## Installation
 
 ### From Plugin Repository
 
-Click install and activate it.
+Search "hamail" in WordPress admin screen. Click install and activate it.
 
 ### From GitHub
 
@@ -47,12 +53,6 @@ composer install
 npm run package
 </pre>
 
-### Enter API Key
-
-You need [SendGrid API Key](https://sendgrid.com/docs/Classroom/Send/How_Emails_Are_Sent/api_keys.html).
-
-For more details, go to hamail setting screen.
-
 ## FAQ
 
 ### Where can I get supported?
@@ -60,6 +60,10 @@ For more details, go to hamail setting screen.
 To get supported, please go to [Support Forum](https://wordpress.org/support/plugin/hamail/).
 
 ## Changelog
+
+### 2.6.0
+
+* Add layout block( `&lt;table&gt;` tag) because some email client does not support grid/flex layout.
 
 ### 2.5.1
 

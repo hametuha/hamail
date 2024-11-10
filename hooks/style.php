@@ -59,17 +59,37 @@ function hamail_allowed_block_types( $allowed_blocks, $editor_context ) {
 			return [
 				'core/paragraph',
 				'core/list',
+				'core/list-item',
 				'core/heading',
 				'core/image',
 				'core/spacer',
+				'core/quote',
 				'core/separator',
 				'core/shortcode',
 				'core/html',
 				'core/buttons',
 				'core/button',
+				'core/group',
+				'hamail/col',
+				'hamail/row',
+				'hamail/table',
 			];
 		default:
 			return $allowed_blocks;
 	}
 }
 add_filter( 'allowed_block_types_all', 'hamail_allowed_block_types', 10, 2 );
+
+/**
+ * Register block.
+ *
+ * @return void
+ */
+function hamail_register_block() {
+	register_block_type( 'hamail/table', [
+		'editor_script_handles' => ['hamail-block-table'],
+		'editor_style_handles'  => ['hamail-block-table'],
+		'style_handles'         => ['hamail-block-table-view'],
+	] );
+}
+add_action( 'init', 'hamail_register_block' );

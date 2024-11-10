@@ -684,6 +684,9 @@ function hamail_is_sending( $flag = null ) {
  */
 function hamail_get_mail_css() {
 	$css_path = [];
+	// Defautl style of plugin.
+	$css_path[] = plugin_dir_path( __DIR__ ) . '/assets/css/hamail-mail-layout.css';
+	// Theme css.
 	foreach ( [ get_template_directory(), get_stylesheet_directory() ] as $dir ) {
 		$css = $dir . '/hamail.css';
 		if ( file_exists( $css ) ) {
