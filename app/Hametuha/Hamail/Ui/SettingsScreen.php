@@ -314,7 +314,7 @@ class SettingsScreen extends Singleton {
 												'<option value="%s" %s>%s</option>',
 												esc_attr( $group['id'] ),
 												selected( (string) $group['id'], get_option( 'hamail_default_unsubscribe_group' ), false ),
-												esc_html( $group['name'] ),
+												esc_html( $group['name'] )
 											);
 										}
 										$input .= '</select>';
