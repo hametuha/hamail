@@ -64,6 +64,7 @@ To get supported, please go to [Support Forum](https://wordpress.org/support/plu
 ### 2.6.0
 
 * Add layout block( `&lt;table&gt;` tag) because some email client does not support grid/flex layout.
+* Each transaction mail can specify unsubscribe group.
 
 ### 2.5.1
 

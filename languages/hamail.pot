@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Hamail\n"
-"POT-Creation-Date: 2024-11-01 00:22+0900\n"
+"POT-Creation-Date: 2024-11-10 16:58+0900\n"
 "PO-Revision-Date: 2017-01-06 18:58+0900\n"
 "Last-Translator: Takahashi Fumiki <takahashi.fumiki@hametuha.co.jp>\n"
 "Language-Team: Takahashi Fumiki <takahashi.fumiki@hametuha.co.jp>\n"
@@ -22,202 +22,233 @@ msgstr ""
 "X-Poedit-SearchPathExcluded-1: node_modules\n"
 "X-Poedit-SearchPathExcluded-2: wordpress\n"
 
-#: app/Hametuha/Hamail/API/DynamicEmails.php:58
-#: app/Hametuha/Hamail/API/DynamicEmails.php:63
+#: app/Hametuha/Hamail/API/DynamicEmails.php:59
+#: app/Hametuha/Hamail/API/DynamicEmails.php:64
 msgid "Dynamic Emails"
 msgstr ""
 
-#: app/Hametuha/Hamail/API/DynamicEmails.php:65
+#: app/Hametuha/Hamail/API/DynamicEmails.php:66
 msgid "Dynamic Emails are the email sent programmatically."
 msgstr ""
 
-#: app/Hametuha/Hamail/API/DynamicEmails.php:70
+#: app/Hametuha/Hamail/API/DynamicEmails.php:71
 msgid "Name"
 msgstr ""
 
-#: app/Hametuha/Hamail/API/DynamicEmails.php:71
+#: app/Hametuha/Hamail/API/DynamicEmails.php:72
 msgid "Condition"
 msgstr ""
 
-#: app/Hametuha/Hamail/API/DynamicEmails.php:72
-#: app/Hametuha/Hamail/API/DynamicEmails.php:94
+#: app/Hametuha/Hamail/API/DynamicEmails.php:73
+#: app/Hametuha/Hamail/API/DynamicEmails.php:95
 msgid "Active"
 msgstr ""
 
-#: app/Hametuha/Hamail/API/DynamicEmails.php:97
+#: app/Hametuha/Hamail/API/DynamicEmails.php:98
 msgid "Inactive"
 msgstr ""
 
-#: app/Hametuha/Hamail/API/DynamicEmails.php:129
+#: app/Hametuha/Hamail/API/DynamicEmails.php:130
 msgid "Dynamic email key"
 msgstr ""
 
-#: app/Hametuha/Hamail/API/DynamicEmails.php:165
+#: app/Hametuha/Hamail/API/DynamicEmails.php:166
 #, php-format
 msgid "%s is activated."
 msgstr ""
 
-#: app/Hametuha/Hamail/API/DynamicEmails.php:168
-#: app/Hametuha/Hamail/API/DynamicEmails.php:189
+#: app/Hametuha/Hamail/API/DynamicEmails.php:169
+#: app/Hametuha/Hamail/API/DynamicEmails.php:190
 msgid "Undefined error occurred."
 msgstr ""
 
-#: app/Hametuha/Hamail/API/DynamicEmails.php:186
+#: app/Hametuha/Hamail/API/DynamicEmails.php:187
 #, php-format
 msgid "%s is deactivated."
 msgstr ""
 
-#: app/Hametuha/Hamail/API/MarketingEmail.php:101
+#: app/Hametuha/Hamail/API/MarketingEmail.php:102
 msgid "Either Unsubscribe group or custom URL is required."
 msgstr ""
 
-#: app/Hametuha/Hamail/API/MarketingEmail.php:103
+#: app/Hametuha/Hamail/API/MarketingEmail.php:104
 msgid "Unsubscribe group should be numerice."
 msgstr ""
 
-#: app/Hametuha/Hamail/API/MarketingEmail.php:107
+#: app/Hametuha/Hamail/API/MarketingEmail.php:108
 msgid "Sender is required."
 msgstr ""
 
-#: app/Hametuha/Hamail/API/MarketingEmail.php:111
+#: app/Hametuha/Hamail/API/MarketingEmail.php:112
 msgid "Post content is empty. This will be mail body."
 msgstr ""
 
-#: app/Hametuha/Hamail/API/MarketingEmail.php:115
+#: app/Hametuha/Hamail/API/MarketingEmail.php:116
 msgid "Post title is empty. This will be mail subject."
 msgstr ""
 
-#: app/Hametuha/Hamail/API/MarketingEmail.php:120
+#: app/Hametuha/Hamail/API/MarketingEmail.php:121
 msgid "Target is required."
 msgstr ""
 
-#: app/Hametuha/Hamail/API/MarketingEmail.php:338
+#: app/Hametuha/Hamail/API/MarketingEmail.php:339
 msgid "Marketing Setting"
 msgstr ""
 
-#: app/Hametuha/Hamail/API/MarketingEmail.php:339
+#: app/Hametuha/Hamail/API/MarketingEmail.php:340
 msgid "Available Fields"
 msgstr ""
 
-#: app/Hametuha/Hamail/API/MarketingEmail.php:358
+#: app/Hametuha/Hamail/API/MarketingEmail.php:341
+msgid "Marketing Logs"
+msgstr ""
+
+#: app/Hametuha/Hamail/API/MarketingEmail.php:360
 msgid "Valid email marketing will be sent after you publish or schedule."
 msgstr ""
 
-#: app/Hametuha/Hamail/API/MarketingEmail.php:364
+#: app/Hametuha/Hamail/API/MarketingEmail.php:366
 msgid "Sender ID"
 msgstr ""
 
-#: app/Hametuha/Hamail/API/MarketingEmail.php:373
+#: app/Hametuha/Hamail/API/MarketingEmail.php:375
 msgid "Target Group"
 msgstr ""
 
-#: app/Hametuha/Hamail/API/MarketingEmail.php:382
+#: app/Hametuha/Hamail/API/MarketingEmail.php:384
 #, php-format
 msgctxt "list gorup"
 msgid "List: %s"
 msgstr ""
 
-#: app/Hametuha/Hamail/API/MarketingEmail.php:385
+#: app/Hametuha/Hamail/API/MarketingEmail.php:387
 msgid "All Recipients"
 msgstr ""
 
-#: app/Hametuha/Hamail/API/MarketingEmail.php:398
+#: app/Hametuha/Hamail/API/MarketingEmail.php:400
 msgid "You have no list available."
 msgstr ""
 
-#: app/Hametuha/Hamail/API/MarketingEmail.php:419
+#: app/Hametuha/Hamail/API/MarketingEmail.php:421
+#: app/Hametuha/Hamail/API/TransactionMails.php:329
 msgid "Unsubscribe"
 msgstr ""
 
-#: app/Hametuha/Hamail/API/MarketingEmail.php:421
+#: app/Hametuha/Hamail/API/MarketingEmail.php:423
 msgid "Specify unsubscribe group for this marketing email. Custom URL priors."
 msgstr ""
 
-#: app/Hametuha/Hamail/API/MarketingEmail.php:425
+#: app/Hametuha/Hamail/API/MarketingEmail.php:427
+#: app/Hametuha/Hamail/Ui/SettingsScreen.php:232
 msgid "Unsubscribe Group"
 msgstr ""
 
-#: app/Hametuha/Hamail/API/MarketingEmail.php:429
+#: app/Hametuha/Hamail/API/MarketingEmail.php:431
 msgid "Failed to get unsubscribe groups."
 msgstr ""
 
-#: app/Hametuha/Hamail/API/MarketingEmail.php:434
+#: app/Hametuha/Hamail/API/MarketingEmail.php:436
 msgid "Please Select"
 msgstr ""
 
-#: app/Hametuha/Hamail/API/MarketingEmail.php:441
+#: app/Hametuha/Hamail/API/MarketingEmail.php:443
+#: app/Hametuha/Hamail/Ui/SettingsScreen.php:326
 msgid "(Default)"
 msgstr ""
 
-#: app/Hametuha/Hamail/API/MarketingEmail.php:451
+#: app/Hametuha/Hamail/API/MarketingEmail.php:453
 msgid "Custom Unsubscribe URL"
 msgstr ""
 
-#: app/Hametuha/Hamail/API/MarketingEmail.php:457
+#: app/Hametuha/Hamail/API/MarketingEmail.php:459
 msgid "Template"
 msgstr ""
 
-#: app/Hametuha/Hamail/API/MarketingEmail.php:461
-#: app/Hametuha/Hamail/Ui/MarketingTemplate.php:201
+#: app/Hametuha/Hamail/API/MarketingEmail.php:463
+#: app/Hametuha/Hamail/Ui/MarketingTemplate.php:216
 msgid "Plain Text"
 msgstr ""
 
-#: app/Hametuha/Hamail/API/MarketingEmail.php:471
-#: app/Hametuha/Hamail/API/MarketingEmail.php:477
+#: app/Hametuha/Hamail/API/MarketingEmail.php:473
+#: app/Hametuha/Hamail/API/MarketingEmail.php:479
+#: app/Hametuha/Hamail/API/TransactionMails.php:335
 msgid "Default"
 msgstr ""
 
-#: app/Hametuha/Hamail/API/MarketingEmail.php:486
+#: app/Hametuha/Hamail/API/MarketingEmail.php:488
 #, php-format
 msgctxt "Preview link"
 msgid "Preview %s"
 msgstr ""
 
-#: app/Hametuha/Hamail/API/MarketingEmail.php:506
+#: app/Hametuha/Hamail/API/MarketingEmail.php:509
+#, php-format
+msgid ""
+"You can put custom fields in brace format like %s. Default value is fallback "
+"if the recipient has no field."
+msgstr ""
+
+#: app/Hametuha/Hamail/API/MarketingEmail.php:516
 msgid "Failed to get custom fields. Please check API key is valid."
 msgstr ""
 
-#: app/Hametuha/Hamail/API/MarketingEmail.php:512
+#: app/Hametuha/Hamail/API/MarketingEmail.php:522
 msgid "Place Holder"
 msgstr ""
 
-#: app/Hametuha/Hamail/API/MarketingEmail.php:513
+#: app/Hametuha/Hamail/API/MarketingEmail.php:523
 msgid "Type"
 msgstr ""
 
-#: app/Hametuha/Hamail/API/MarketingEmail.php:514
+#: app/Hametuha/Hamail/API/MarketingEmail.php:524
 msgid "Reserved"
 msgstr ""
 
-#: app/Hametuha/Hamail/API/MarketingEmail.php:525
+#: app/Hametuha/Hamail/API/MarketingEmail.php:535
 msgid "Please copy this as place holder."
 msgstr ""
 
-#: app/Hametuha/Hamail/API/MarketingEmail.php:526
+#: app/Hametuha/Hamail/API/MarketingEmail.php:536
 msgid "Default Value"
 msgstr ""
 
-#: app/Hametuha/Hamail/API/MarketingEmail.php:527
+#: app/Hametuha/Hamail/API/MarketingEmail.php:537
 msgid "Copy"
 msgstr ""
 
-#: app/Hametuha/Hamail/API/MarketingEmail.php:580
+#: app/Hametuha/Hamail/API/MarketingEmail.php:558
+msgid "No logs found."
+msgstr ""
+
+#: app/Hametuha/Hamail/API/MarketingEmail.php:561
+msgid "Displaying recent 20 error logs."
+msgstr ""
+
+#: app/Hametuha/Hamail/API/MarketingEmail.php:620
 msgid "Marketing Email"
 msgstr ""
 
-#: app/Hametuha/Hamail/API/MarketingEmail.php:606
+#: app/Hametuha/Hamail/API/MarketingEmail.php:635
+msgid "Marketing Category"
+msgstr ""
+
+#: app/Hametuha/Hamail/API/MarketingEmail.php:640
+msgid "Used as marketing category."
+msgstr ""
+
+#: app/Hametuha/Hamail/API/MarketingEmail.php:664
 msgid "Marketing post ID."
 msgstr ""
 
-#: app/Hametuha/Hamail/API/MarketingEmail.php:639
+#: app/Hametuha/Hamail/API/MarketingEmail.php:697
 msgid "Campaign dose not exist."
 msgstr ""
 
-#: app/Hametuha/Hamail/API/MarketingEmail.php:663
+#: app/Hametuha/Hamail/API/MarketingEmail.php:721
 msgid "Campaign is deleted from SendGrid."
 msgstr ""
 
-#: app/Hametuha/Hamail/API/MarketingEmail.php:667
+#: app/Hametuha/Hamail/API/MarketingEmail.php:725
 msgid "Method not allowd."
 msgstr ""
 
@@ -234,6 +265,112 @@ msgstr ""
 
 #: app/Hametuha/Hamail/API/Reply.php:125
 msgid "Reply"
+msgstr ""
+
+#: app/Hametuha/Hamail/API/TransactionMails.php:42
+msgid "Transaction Mail"
+msgstr ""
+
+#: app/Hametuha/Hamail/API/TransactionMails.php:127
+msgid "Submit"
+msgstr ""
+
+#: app/Hametuha/Hamail/API/TransactionMails.php:129
+msgctxt "submit-label"
+msgid "Schedule"
+msgstr ""
+
+#: app/Hametuha/Hamail/API/TransactionMails.php:137
+#: app/Hametuha/Hamail/Ui/ListTable/RecipientsColumn.php:36
+msgid "Recipients"
+msgstr ""
+
+#: app/Hametuha/Hamail/API/TransactionMails.php:139
+msgid "Sending Status"
+msgstr ""
+
+#: app/Hametuha/Hamail/API/TransactionMails.php:148
+msgid "Available Placeholders"
+msgstr ""
+
+#: app/Hametuha/Hamail/API/TransactionMails.php:165
+msgid "You can use placeholders below in mail body and subject."
+msgstr ""
+
+#: app/Hametuha/Hamail/API/TransactionMails.php:171
+msgid "Placeholder"
+msgstr ""
+
+#: app/Hametuha/Hamail/API/TransactionMails.php:172
+msgid "Result Value(Example)"
+msgstr ""
+
+#: app/Hametuha/Hamail/API/TransactionMails.php:217
+msgid "This mail has been sent already. Any change won't be saved."
+msgstr ""
+
+#: app/Hametuha/Hamail/API/TransactionMails.php:222
+msgid "Roles"
+msgstr ""
+
+#: app/Hametuha/Hamail/API/TransactionMails.php:236
+msgid "User Group"
+msgstr ""
+
+#: app/Hametuha/Hamail/API/TransactionMails.php:252
+msgid "User group is not available."
+msgstr ""
+
+#: app/Hametuha/Hamail/API/TransactionMails.php:260
+msgid "User"
+msgstr ""
+
+#: app/Hametuha/Hamail/API/TransactionMails.php:263
+msgctxt "hamail-user-search"
+msgid "Search Target:"
+msgstr ""
+
+#: app/Hametuha/Hamail/API/TransactionMails.php:278
+msgid "Type and search users..."
+msgstr ""
+
+#: app/Hametuha/Hamail/API/TransactionMails.php:287
+msgid "Specified Address"
+msgstr ""
+
+#: app/Hametuha/Hamail/API/TransactionMails.php:289
+msgid "Enter comma separated mail address"
+msgstr ""
+
+#: app/Hametuha/Hamail/API/TransactionMails.php:311
+#, php-format
+msgid "This message was sent at %1$s as %2$s."
+msgstr ""
+
+#: app/Hametuha/Hamail/API/TransactionMails.php:313
+msgid "Site Admin"
+msgstr ""
+
+#: app/Hametuha/Hamail/API/TransactionMails.php:320
+msgid "This message is not sent yet."
+msgstr ""
+
+#: app/Hametuha/Hamail/API/TransactionMails.php:325
+msgid "Send as Site Admin"
+msgstr ""
+
+#: app/Hametuha/Hamail/API/TransactionMails.php:332
+#: app/Hametuha/Hamail/Service/TemplateSelector.php:262
+#: app/Hametuha/Hamail/Ui/SettingsScreen.php:311
+msgid "Not Set"
+msgstr ""
+
+#: app/Hametuha/Hamail/API/TransactionMails.php:347
+msgid "このメールを受け取り拒否するグループを指定できます。"
+msgstr ""
+
+#: app/Hametuha/Hamail/API/TransactionMails.php:353
+msgid "Error Logs"
 msgstr ""
 
 #: app/Hametuha/Hamail/API/UserSync.php:96
@@ -463,55 +600,59 @@ msgid "This post type is not supported."
 msgstr ""
 
 #: app/Hametuha/Hamail/Service/TemplateSelector.php:30
-#: app/Hametuha/Hamail/Ui/MarketingTemplate.php:111
+#: app/Hametuha/Hamail/Ui/MarketingTemplate.php:112
 msgid "Mail Template"
 msgstr ""
 
-#: app/Hametuha/Hamail/Service/TemplateSelector.php:67
+#: app/Hametuha/Hamail/Service/TemplateSelector.php:76
 msgid "Default template is not set."
 msgstr ""
 
-#: app/Hametuha/Hamail/Service/TemplateSelector.php:81
+#: app/Hametuha/Hamail/Service/TemplateSelector.php:90
 msgid ""
 "Default template is set, but failed to retrieve the data. It might be "
 "deleted on SendGrid."
 msgstr ""
 
-#: app/Hametuha/Hamail/Service/TemplateSelector.php:84
+#: app/Hametuha/Hamail/Service/TemplateSelector.php:93
 #, php-format
 msgid "Default template is %s"
 msgstr ""
 
-#: app/Hametuha/Hamail/Service/TemplateSelector.php:132
+#: app/Hametuha/Hamail/Service/TemplateSelector.php:109
+#: app/Hametuha/Hamail/Ui/MarketingTemplate.php:245
+msgid "Preview"
+msgstr ""
+
+#: app/Hametuha/Hamail/Service/TemplateSelector.php:131
+msgid "No template is set."
+msgstr ""
+
+#: app/Hametuha/Hamail/Service/TemplateSelector.php:149
+msgid "Failed to retrieve template."
+msgstr ""
+
+#: app/Hametuha/Hamail/Service/TemplateSelector.php:213
 msgid "Failed to retrieve templates list."
 msgstr ""
 
-#: app/Hametuha/Hamail/Service/TemplateSelector.php:143
+#: app/Hametuha/Hamail/Service/TemplateSelector.php:224
 #, php-format
 msgctxt "template-label"
 msgid "%1$s(%2$s)"
 msgstr ""
 
-#: app/Hametuha/Hamail/Service/TemplateSelector.php:174
+#: app/Hametuha/Hamail/Service/TemplateSelector.php:256
 msgid "No template found."
 msgstr ""
 
-#: app/Hametuha/Hamail/Service/TemplateSelector.php:180
+#: app/Hametuha/Hamail/Service/TemplateSelector.php:262
 msgctxt "hamail"
 msgid "Default"
 msgstr ""
 
-#: app/Hametuha/Hamail/Service/TemplateSelector.php:180
-msgid "Not Set"
-msgstr ""
-
-#: app/Hametuha/Hamail/Service/TemplateSelector.php:186
+#: app/Hametuha/Hamail/Service/TemplateSelector.php:268
 msgid "No Template"
-msgstr ""
-
-#: app/Hametuha/Hamail/Ui/ListTable/RecipientsColumn.php:36
-#: hooks/sender.php:140
-msgid "Recipients"
 msgstr ""
 
 #: app/Hametuha/Hamail/Ui/ListTable/RecipientsColumn.php:39
@@ -531,82 +672,317 @@ msgstr ""
 msgid "Marketing Template"
 msgstr ""
 
-#: app/Hametuha/Hamail/Ui/MarketingTemplate.php:112
+#: app/Hametuha/Hamail/Ui/MarketingTemplate.php:113
 msgid "Template Type"
 msgstr ""
 
-#: app/Hametuha/Hamail/Ui/MarketingTemplate.php:161
+#: app/Hametuha/Hamail/Ui/MarketingTemplate.php:162
 #, php-format
 msgid "%s will be replaced with mail subject."
 msgstr ""
 
-#: app/Hametuha/Hamail/Ui/MarketingTemplate.php:167
+#: app/Hametuha/Hamail/Ui/MarketingTemplate.php:168
 #, php-format
 msgid "%s will be replaced with mail body."
 msgstr ""
 
-#: app/Hametuha/Hamail/Ui/MarketingTemplate.php:169
-#: app/Hametuha/Hamail/Ui/MarketingTemplate.php:176
+#: app/Hametuha/Hamail/Ui/MarketingTemplate.php:170
+#: app/Hametuha/Hamail/Ui/MarketingTemplate.php:177
 msgctxt "Required input element"
 msgid "Required"
 msgstr ""
 
-#: app/Hametuha/Hamail/Ui/MarketingTemplate.php:174
+#: app/Hametuha/Hamail/Ui/MarketingTemplate.php:175
 #, php-format
-msgid "%s will be replaced with unsubscribing link."
-msgstr ""
-
-#: app/Hametuha/Hamail/Ui/MarketingTemplate.php:181
-msgid "Tips:"
+msgid ""
+"%s will be replaced with unsubscribing URL. Alternatively, you can use "
+"<code>&lt;%%asm_group_unsubscribe_raw_url%%&gt;</code>."
 msgstr ""
 
 #: app/Hametuha/Hamail/Ui/MarketingTemplate.php:182
+#, php-format
+msgid "%s will be replaced with excerpt. Use one for pre-header text.."
+msgstr ""
+
+#: app/Hametuha/Hamail/Ui/MarketingTemplate.php:187
+msgid "Replaced with the users of subscribing list page."
+msgstr ""
+
+#: app/Hametuha/Hamail/Ui/MarketingTemplate.php:188
+msgid ""
+"Replaced with global unsubscribe URL. This is optional and not recommended. "
+"Use unsubscribe groups."
+msgstr ""
+
+#: app/Hametuha/Hamail/Ui/MarketingTemplate.php:196
+msgid "Tips:"
+msgstr ""
+
+#: app/Hametuha/Hamail/Ui/MarketingTemplate.php:197
 msgid ""
 "Creating HTML mail template is difficult. You can create a designed HTML "
 "campaign with WYSIWYG in Sendgrid and copy its HTML."
 msgstr ""
 
-#: app/Hametuha/Hamail/Ui/MarketingTemplate.php:195
+#: app/Hametuha/Hamail/Ui/MarketingTemplate.php:210
 msgid "Marketing Email requires either HTML or Text."
 msgstr ""
 
-#: app/Hametuha/Hamail/Ui/MarketingTemplate.php:215
+#: app/Hametuha/Hamail/Ui/MarketingTemplate.php:230
 msgid "Use as default"
 msgstr ""
 
-#: app/Hametuha/Hamail/Ui/MarketingTemplate.php:230
-msgid "Preview"
-msgstr ""
-
-#: app/Hametuha/Hamail/Ui/MarketingTemplate.php:248
+#: app/Hametuha/Hamail/Ui/MarketingTemplate.php:263
 msgid "Post ID of marketing template to preview."
 msgstr ""
 
-#: app/Hametuha/Hamail/Ui/MarketingTemplate.php:259
+#: app/Hametuha/Hamail/Ui/MarketingTemplate.php:274
 msgid "Mail subject."
 msgstr ""
 
-#: app/Hametuha/Hamail/Ui/MarketingTemplate.php:260
+#: app/Hametuha/Hamail/Ui/MarketingTemplate.php:275
 msgid "Re: Hello from {%first_name | Guest%}"
 msgstr ""
 
-#: app/Hametuha/Hamail/Ui/MarketingTemplate.php:264
+#: app/Hametuha/Hamail/Ui/MarketingTemplate.php:279
 msgid "Mail Body."
 msgstr ""
 
-#: app/Hametuha/Hamail/Ui/MarketingTemplate.php:265
+#: app/Hametuha/Hamail/Ui/MarketingTemplate.php:280
 msgid ""
 "Hi, {%1$first_name | Guest%}!\n"
 "You are now member of our site. Please click the link below.\n"
 "{%2$url%}"
 msgstr ""
 
-#: app/Hametuha/Hamail/Ui/MarketingTemplate.php:280
+#: app/Hametuha/Hamail/Ui/MarketingTemplate.php:295
 msgid "Post ID of marketing email."
 msgstr ""
 
-#: app/Hametuha/Hamail/Ui/MarketingTemplate.php:293
+#: app/Hametuha/Hamail/Ui/MarketingTemplate.php:308
 msgid "Preview format. \"text\" or \"html\""
+msgstr ""
+
+#: app/Hametuha/Hamail/Ui/SettingsScreen.php:42
+msgid "Mail Marketing"
+msgstr ""
+
+#: app/Hametuha/Hamail/Ui/SettingsScreen.php:56
+msgid "Settings"
+msgstr ""
+
+#: app/Hametuha/Hamail/Ui/SettingsScreen.php:69
+msgid "Hamail Setting"
+msgstr ""
+
+#: app/Hametuha/Hamail/Ui/SettingsScreen.php:82
+msgid "Test Mail"
+msgstr ""
+
+#: app/Hametuha/Hamail/Ui/SettingsScreen.php:86
+msgid "You can test email after setting up SendGrid API key."
+msgstr ""
+
+#: app/Hametuha/Hamail/Ui/SettingsScreen.php:92
+msgid ""
+"Mail sent successfully. Please check how it looks like on your mail client."
+msgstr ""
+
+#: app/Hametuha/Hamail/Ui/SettingsScreen.php:97
+msgid "Try sending mail via SendGrid."
+msgstr ""
+
+#: app/Hametuha/Hamail/Ui/SettingsScreen.php:106
+msgid "Subject"
+msgstr ""
+
+#: app/Hametuha/Hamail/Ui/SettingsScreen.php:115
+msgid "Mail to"
+msgstr ""
+
+#: app/Hametuha/Hamail/Ui/SettingsScreen.php:123
+msgid "Mail Body"
+msgstr ""
+
+#: app/Hametuha/Hamail/Ui/SettingsScreen.php:131
+msgid "Send mail"
+msgstr ""
+
+#: app/Hametuha/Hamail/Ui/SettingsScreen.php:147
+#, php-format
+msgid "No API key is set. Please go to <a href=\"%s\">Setting Page</a>."
+msgstr ""
+
+#: app/Hametuha/Hamail/Ui/SettingsScreen.php:161
+msgid ""
+"Hamail is now <strong>debug mode</strong>. SendGrid API will never used. To "
+"disabled debug mode, change <code>define( 'HAMAIL_DEBUG', false )</code> in "
+"your wp-config.php."
+msgstr ""
+
+#: app/Hametuha/Hamail/Ui/SettingsScreen.php:166
+msgid ""
+"WordPress debug mode <code>WP_DEBUG</code> detected. If this is development "
+"production, please consider <code>define( 'HAMAIL_DEBUG', true )</code> in "
+"your wp-config.php. Hamail may sent real email to your users via Web API "
+"even if you don't have local mail server!"
+msgstr ""
+
+#: app/Hametuha/Hamail/Ui/SettingsScreen.php:192
+msgid "SendGrid API Setting"
+msgstr ""
+
+#: app/Hametuha/Hamail/Ui/SettingsScreen.php:193
+msgid ""
+"Setting value for Hamail. Please enter SendGrid API key. Mail Send "
+"permission is minimal requirement."
+msgstr ""
+
+#: app/Hametuha/Hamail/Ui/SettingsScreen.php:198
+msgid "SendGrid API key"
+msgstr ""
+
+#: app/Hametuha/Hamail/Ui/SettingsScreen.php:203
+msgid "Default Mail From"
+msgstr ""
+
+#: app/Hametuha/Hamail/Ui/SettingsScreen.php:208
+msgid "wp_mail function"
+msgstr ""
+
+#: app/Hametuha/Hamail/Ui/SettingsScreen.php:209
+msgid ""
+"Hamail can override all mail sent with <code>wp_mail</code> function. SMTP "
+"API works fine with other plugins that send emails(e.g. WooCommerce or "
+"Contact Form 7)."
+msgstr ""
+
+#: app/Hametuha/Hamail/Ui/SettingsScreen.php:213
+msgid "Template ID"
+msgstr ""
+
+#: app/Hametuha/Hamail/Ui/SettingsScreen.php:216
+#, php-format
+msgid ""
+"Default template is used when you choose \"%3$s\". For more detail, see <a "
+"href=\"%1$s\" target=\"_blank\">SendGrid API doc</a>. This feature work only "
+"with legacy templates. If you have none, create one via <a href=\"%2$s\" "
+"target=\"_blank\" rel=\"noopener noreferrer\">SendGrind Legacy Templates</a>."
+msgstr ""
+
+#: app/Hametuha/Hamail/Ui/SettingsScreen.php:219
+#: app/Hametuha/Hamail/Ui/SettingsScreen.php:290
+msgid "Override with Template"
+msgstr ""
+
+#: app/Hametuha/Hamail/Ui/SettingsScreen.php:224
+msgid "Default Unsubscribe Group"
+msgstr ""
+
+#: app/Hametuha/Hamail/Ui/SettingsScreen.php:226
+#, php-format
+msgid "You can choose default unsubscribe group. This affects <code>%s</code>."
+msgstr ""
+
+#: app/Hametuha/Hamail/Ui/SettingsScreen.php:234
+#, php-format
+msgid ""
+"You can choose unsubscribe group to display if you set <code>%s</code> in "
+"your email. This helps in case you have multiple list in your SendGrid "
+"account."
+msgstr ""
+
+#: app/Hametuha/Hamail/Ui/SettingsScreen.php:253
+msgid "If SendGrid API key is valid, you can set template."
+msgstr ""
+
+#: app/Hametuha/Hamail/Ui/SettingsScreen.php:267
+#, php-format
+msgid "Stylesheet %s will be applied to your mail body."
+msgstr ""
+
+#: app/Hametuha/Hamail/Ui/SettingsScreen.php:273
+msgid ""
+"If you put <code>hamail.css</code> in your theme's directory, they will be "
+"applied to mail body as inline css."
+msgstr ""
+
+#: app/Hametuha/Hamail/Ui/SettingsScreen.php:291
+msgid "Use SMTP API for wp_mail()"
+msgstr ""
+
+#: app/Hametuha/Hamail/Ui/SettingsScreen.php:292
+msgid "Keep defaut"
+msgstr ""
+
+#: app/Hametuha/Hamail/Ui/SettingsScreen.php:302
+msgid "No API key is set."
+msgstr ""
+
+#: app/Hametuha/Hamail/Ui/SettingsScreen.php:364
+msgid "List Sync"
+msgstr ""
+
+#: app/Hametuha/Hamail/Ui/SettingsScreen.php:365
+msgid "To sync your user list to SendGrid, choose list and conditions."
+msgstr ""
+
+#: app/Hametuha/Hamail/Ui/SettingsScreen.php:368
+msgid "List to sync"
+msgstr ""
+
+#: app/Hametuha/Hamail/Ui/SettingsScreen.php:371
+msgid "If you have no lists, please make it first on SendGrid."
+msgstr ""
+
+#: app/Hametuha/Hamail/Ui/SettingsScreen.php:383
+msgid "Fields Mapping"
+msgstr ""
+
+#: app/Hametuha/Hamail/Ui/SettingsScreen.php:389
+msgid "Put CSV here in 2 lines."
+msgstr ""
+
+#: app/Hametuha/Hamail/Ui/SettingsScreen.php:395
+msgid ""
+"Write in CSV format. Line 1 is SendGrid, Line 2 is your WordPress. Absent "
+"fields are ignored."
+msgstr ""
+
+#: app/Hametuha/Hamail/Ui/SettingsScreen.php:396
+msgid ""
+"WordPress <code>site</code> field is required for multiple site. You can add "
+"or edit custom fields on SendGrid."
+msgstr ""
+
+#: app/Hametuha/Hamail/Ui/SettingsScreen.php:399
+msgid "CSV Preview"
+msgstr ""
+
+#: app/Hametuha/Hamail/Ui/SettingsScreen.php:411
+msgid "Available Fields(* is default): "
+msgstr ""
+
+#: app/Hametuha/Hamail/Ui/SettingsScreen.php:420
+msgid "Available Fields: "
+msgstr ""
+
+#: app/Hametuha/Hamail/Ui/SettingsScreen.php:421
+msgid ""
+"User object property(ex. <code>user_email</code>, <code>ID</code>) and "
+"user_meta key. <code>role</code> is also available."
+msgstr ""
+
+#: app/Hametuha/Hamail/Ui/SettingsScreen.php:427
+msgid "SendGrid is not connected."
+msgstr ""
+
+#: app/Hametuha/Hamail/Ui/SettingsScreen.php:432
+msgid "Site Specific Field"
+msgstr ""
+
+#: app/Hametuha/Hamail/Ui/SettingsScreen.php:436
+msgid "This field will determine which user to put into list."
 msgstr ""
 
 #: app/Hametuha/Hamail/Utility/ApiUtility.php:106
@@ -617,30 +993,38 @@ msgstr ""
 msgid "Users"
 msgstr ""
 
-#: functions/mail.php:135
+#: functions/mail.php:131
 msgid "The user dose not exist."
+msgstr ""
+
+#: functions/mail.php:140
+msgid "First Name"
+msgstr ""
+
+#: functions/mail.php:141
+msgid "Last Name"
 msgstr ""
 
 #: functions/mail.php:251
 msgid "Site Owner"
 msgstr ""
 
-#: functions/mail.php:356
+#: functions/mail.php:357
 msgid "No recipient set."
 msgstr ""
 
-#: functions/mail.php:743
+#: functions/mail.php:760
 msgctxt "prefix-dt"
 msgid "# "
 msgstr ""
 
-#: functions/mail.php:749
+#: functions/mail.php:766
 #, php-format
 msgctxt "prefix-ol"
 msgid "%d. "
 msgstr ""
 
-#: functions/mail.php:752
+#: functions/mail.php:769
 msgctxt "prefix-ul"
 msgid "- "
 msgstr ""
@@ -694,296 +1078,32 @@ msgstr ""
 #: hamail.php:52
 #, php-format
 msgid ""
-"[Hamail] PHP auto loader %s is missing. Did you run <code>composer install</"
+"[Hamail] PHP autoloader %s is missing. Did you run <code>composer install</"
 "code>?"
 msgstr ""
 
-#: hooks/marketing.php:14
-msgid "Marketing Category"
+#: assets/js/hamail-block-table.js:1 src/js/hamail-block-table.js:12
+msgid "Layout Table"
 msgstr ""
 
-#: hooks/marketing.php:20
-msgid "Used as marketing category."
+#: assets/js/hamail-block-table.js:1 src/js/hamail-block-table.js:18
+msgid "Table tag for email layout."
 msgstr ""
 
-#: hooks/sender.php:24
-msgid "Submit"
+#: assets/js/hamail-block-table.js:1 src/js/hamail-block-table.js:47
+msgid "Layout Table Row"
 msgstr ""
 
-#: hooks/sender.php:26
-msgctxt "submit-label"
-msgid "Schedule"
+#: assets/js/hamail-block-table.js:1 src/js/hamail-block-table.js:53
+msgid "tr tag for email layout."
 msgstr ""
 
-#: hooks/sender.php:41
-msgid "Transaction Mail"
+#: assets/js/hamail-block-table.js:1 src/js/hamail-block-table.js:84
+msgid "Layout Table Column"
 msgstr ""
 
-#: hooks/sender.php:122
-msgid "Available Placeholders"
-msgstr ""
-
-#: hooks/sender.php:142
-msgid "Sending Status"
-msgstr ""
-
-#: hooks/sender.php:157
-msgid "You can use placeholders below in mail body and subject."
-msgstr ""
-
-#: hooks/sender.php:163
-msgid "Placeholder"
-msgstr ""
-
-#: hooks/sender.php:164
-msgid "Result Value(Example)"
-msgstr ""
-
-#: hooks/sender.php:205
-msgid "This mail has been sent already. Any change won't be saved."
-msgstr ""
-
-#: hooks/sender.php:209
-msgid "Roles"
-msgstr ""
-
-#: hooks/sender.php:223
-msgid "User Group"
-msgstr ""
-
-#: hooks/sender.php:239
-msgid "User group is not available."
-msgstr ""
-
-#: hooks/sender.php:247
-msgid "User"
-msgstr ""
-
-#: hooks/sender.php:250
-msgctxt "hamail-user-search"
-msgid "Search Target:"
-msgstr ""
-
-#: hooks/sender.php:265
-msgid "Type and search users..."
-msgstr ""
-
-#: hooks/sender.php:274
-msgid "Specified Address"
-msgstr ""
-
-#: hooks/sender.php:276
-msgid "Enter comma separated mail address"
-msgstr ""
-
-#: hooks/sender.php:298
-#, php-format
-msgid "This message was sent at %1$s as %2$s."
-msgstr ""
-
-#: hooks/sender.php:300
-msgid "Site Admin"
-msgstr ""
-
-#: hooks/sender.php:307
-msgid "This message is not sent yet."
-msgstr ""
-
-#: hooks/sender.php:312
-msgid "Send as Site Admin"
-msgstr ""
-
-#: hooks/sender.php:319
-msgid "Error Logs"
-msgstr ""
-
-#: hooks/settings.php:17
-#, php-format
-msgid "No API key is set. Please go to <a href=\"%s\">Setting Page</a>."
-msgstr ""
-
-#: hooks/settings.php:31
-msgid ""
-"Hamail is now <strong>debug mode</strong>. SendGrid API will never used. To "
-"disabled debug mode, change <code>define( 'HAMAIL_DEBUG', false )</code> in "
-"your wp-config.php."
-msgstr ""
-
-#: hooks/settings.php:36
-msgid ""
-"WordPress debug mode <code>WP_DEBUG</code> detected. If this is development "
-"production, please consider <code>define( 'HAMAIL_DEBUG', true )</code> in "
-"your wp-config.php. Hamail may sent real email to your users via Web API "
-"even if you don't have local mail server!"
-msgstr ""
-
-#: hooks/settings.php:56 hooks/settings.php:61
-msgid "Hamail Setting"
-msgstr ""
-
-#: hooks/settings.php:74
-msgid "Test Mail"
-msgstr ""
-
-#: hooks/settings.php:78
-msgid "You can test email after setting up SendGrid API key."
-msgstr ""
-
-#: hooks/settings.php:84
-msgid ""
-"Mail sent successfully. Please check how it looks like on your mail client."
-msgstr ""
-
-#: hooks/settings.php:89
-msgid "Try sending mail via SendGrid."
-msgstr ""
-
-#: hooks/settings.php:98
-msgid "Subject"
-msgstr ""
-
-#: hooks/settings.php:107
-msgid "Mail to"
-msgstr ""
-
-#: hooks/settings.php:115
-msgid "Mail Body"
-msgstr ""
-
-#: hooks/settings.php:123
-msgid "Send mail"
-msgstr ""
-
-#: hooks/settings.php:141
-msgid "SendGrid API Setting"
-msgstr ""
-
-#: hooks/settings.php:142
-msgid ""
-"Setting value for Hamail. Please enter SendGrid API key. Mail Send "
-"permission is minimal requirement."
-msgstr ""
-
-#: hooks/settings.php:146
-msgid "SendGrid API key"
-msgstr ""
-
-#: hooks/settings.php:147
-msgid "Default Mail From"
-msgstr ""
-
-#: hooks/settings.php:148
-msgid "wp_mail function"
-msgstr ""
-
-#: hooks/settings.php:148
-msgid ""
-"Hamail can override all mail sent with <code>wp_mail</code> function. SMTP "
-"works fine with other plugins."
-msgstr ""
-
-#: hooks/settings.php:150
-msgid "Template ID"
-msgstr ""
-
-#: hooks/settings.php:153
-#, php-format
-msgid ""
-"If Template ID is set, all your default mail will be HTML. For more detail, "
-"see <a href=\"%s\" target=\"_blank\">SendGrid API doc</a>."
-msgstr ""
-
-#: hooks/settings.php:172
-msgid "If SendGrid API key is valid, you can set template."
-msgstr ""
-
-#: hooks/settings.php:187
-#, php-format
-msgid "Stylesheet %s will be applied to your mail body."
-msgstr ""
-
-#: hooks/settings.php:193
-msgid ""
-"If you put <code>hamail.css</code> in your theme's directory, they will be "
-"applied to mail body as inline css."
-msgstr ""
-
-#: hooks/settings.php:210
-msgid "Override with Template"
-msgstr ""
-
-#: hooks/settings.php:211
-msgid "Use SMTP API for wp_mail()"
-msgstr ""
-
-#: hooks/settings.php:212
-msgid "Keep defaut"
-msgstr ""
-
-#: hooks/settings.php:240
-msgid "List Sync"
-msgstr ""
-
-#: hooks/settings.php:241
-msgid "To sync your user list to SendGrid, choose list and conditions."
-msgstr ""
-
-#: hooks/settings.php:244
-msgid "List to sync"
-msgstr ""
-
-#: hooks/settings.php:247
-msgid "If you have no lists, please make it first on SendGrid."
-msgstr ""
-
-#: hooks/settings.php:259
-msgid "Fields Mapping"
-msgstr ""
-
-#: hooks/settings.php:265
-msgid "Put CSV here in 2 lines."
-msgstr ""
-
-#: hooks/settings.php:271
-msgid ""
-"Write in CSV format. Line 1 is SendGrid, Line 2 is your WordPress. Absent "
-"fields are ignored."
-msgstr ""
-
-#: hooks/settings.php:272
-msgid ""
-"WordPress <code>site</code> field is required for multiple site. You can add "
-"or edit custom fields on SendGrid."
-msgstr ""
-
-#: hooks/settings.php:275
-msgid "CSV Preview"
-msgstr ""
-
-#: hooks/settings.php:287
-msgid "Available Fields(* is default): "
-msgstr ""
-
-#: hooks/settings.php:296
-msgid "Available Fields: "
-msgstr ""
-
-#: hooks/settings.php:297
-msgid ""
-"User object property(ex. <code>user_email</code>, <code>ID</code>) and "
-"user_meta key. <code>role</code> is also available."
-msgstr ""
-
-#: hooks/settings.php:303
-msgid "SendGrid is not connected."
-msgstr ""
-
-#: hooks/settings.php:308
-msgid "Site Specific Field"
-msgstr ""
-
-#: hooks/settings.php:312
-msgid "This field will determine which user to put into list."
+#: assets/js/hamail-block-table.js:1 src/js/hamail-block-table.js:90
+msgid "td tag for email layout."
 msgstr ""
 
 #: assets/js/hamail-incsearch.js:1 src/js/hamail-incsearch.js:276
