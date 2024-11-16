@@ -89,8 +89,11 @@ class UserDataGenerator extends Singleton {
 	 * @return bool|\WP_Error
 	 */
 	public function to_path( $path ) {
-		if ( empty( $path ) || ! is_dir( $path ) || ! is_writable( $path ) ) {
-			return new \WP_Error( 'hamail_api_error', __( 'Directory must exist and be writable.', 'hamail' ) );
+		if ( ! str_contains( 'php://', $path ) ) {
+			$dir = dirname( $path );
+			if ( empty( $dir ) || ! is_dir( $dir ) || ! is_writable( $dir ) ) {
+				return new \WP_Error( 'hamail_api_error', __( 'Directory must exist and be writable.', 'hamail' ) );
+			}
 		}
 		$handle = new \SplFileObject( $path, 'w' );
 		$fields = hamail_fields_array();
@@ -147,9 +150,12 @@ class UserDataGenerator extends Singleton {
 			$body = <<<TXT
 Failed to generate CSV.
 
+{$path}
+
 TXT;
 
 			$body .= implode( "\r\n", $result->get_error_messages() );
+			error_log( $body );
 		} else {
 			$body = <<<TXT
 CSV is generated successfully.
