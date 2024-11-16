@@ -79,6 +79,45 @@ class SettingsScreen extends Singleton {
 
 			<hr/>
 
+			<h2><?php esc_html_e( 'Export Users CSV', 'hamail' ); ?></h2>
+
+			<?php if ( ! hamail_enabled() ) : ?>
+				<p class="description">
+					<?php esc_html_e( 'To export user list, please enter SendGrid API Key', 'hamail' ); ?>
+				</p>
+			<?php else : ?>
+				<p class="description">
+					<?php esc_html_e( 'Export users as CSV with the field format above.', 'hamail' ); ?>
+				</p>
+				<?php
+				if ( filter_input( INPUT_GET, 'csv_geerated' ) ) {
+
+				}
+				?>
+				<form method="post" action="<?php echo rest_url( 'hamail/v1/users/data' ); ?>" target="hamail-csv-downloader">
+					<?php
+					wp_nonce_field( 'wp_rest' );
+					?>
+					<table class="form-table">
+						<tr>
+							<th><label for="path"><?php esc_html_e( 'Server Path', 'hamail' ); ?></label></th>
+							<td>
+								<input type="text" name="path" id="path" class="regular-text" value="" placeholder="e.g. <?php echo esc_attr( dirname( ABSPATH ) . '/tmp' ); ?>"/>
+								<p class="description">
+									<?php
+									printf( esc_html__( 'If set, the CSV will be generated as %s in the specified directory. If the generation succeeds, send notification to admin email.', 'hamail' ), '<code>user-csv-yyyymmddHHiiss.csv</code>' );
+									esc_html_e( 'If your host\'s resource is enough(e.g. no timeout), leave this option empty.', 'hamail' )
+									?>
+								</p>
+							</td>
+						</tr>
+					</table>
+					<?php submit_button( 'Download' ); ?>
+				</form>
+				<iframe id="hamail-csv-downloader" name="hamail-csv-downloader" height="0" onload="console.log( this );"></iframe>
+			<?php endif; ?>
+			<hr />
+
 			<h2><?php esc_html_e( 'Test Mail', 'hamail' ); ?></h2>
 
 			<?php if ( ! hamail_enabled() ) : ?>
@@ -326,7 +365,7 @@ class SettingsScreen extends Singleton {
 												$name .= __( '(Default)', 'hamail' );
 											}
 											$unsubscribe_group = (array) get_option( 'hamail_unsubscribe_group', [] );
-											$input .= sprintf(
+											$input            .= sprintf(
 												'<label style="display: block; margin: 1em 0;"><input type="checkbox" name="hamail_unsubscribe_group[]" value="%s" %s/> %s<br /><span class="description">%s</span></label>',
 												esc_attr( $group['id'] ),
 												checked( in_array( (string) $group['id'], $unsubscribe_group, true ), true, false ),

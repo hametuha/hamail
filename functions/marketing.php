@@ -248,7 +248,7 @@ function hamail_fields_to_save( WP_User $user ) {
 	}
 	$key = get_option( 'hamail_site_key' );
 	if ( $key ) {
-		$applied_fields[ $key ] = $key;
+		$applied_fields[ $key ] = home_url();
 	}
 	if ( $applied_fields ) {
 		/**
