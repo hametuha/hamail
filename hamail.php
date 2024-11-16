@@ -62,7 +62,7 @@ function hamail_plugins_loaded( $plugin ) {
 			}
 		}
 		// Transaction mail Sender
-		\Hametuha\Hamail\API\TransactionMails::get_instance();
+		Hametuha\Hamail\API\TransactionMails::get_instance();
 		// Setting Screen
 		Hametuha\Hamail\Ui\SettingsScreen::get_instance();
 		// Dynamic emails.
@@ -73,6 +73,8 @@ function hamail_plugins_loaded( $plugin ) {
 		Hametuha\Hamail\Ui\ListTable\RecipientsColumn::get_instance();
 		// Enable user sync.
 		Hametuha\Hamail\API\UserSync::get_instance();
+		// Enable CSV user
+		Hametuha\Hamail\API\UserDataGenerator::get_instance();
 		// Register command for CLI.
 		if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			WP_CLI::add_command( 'hamail', Hametuha\Hamail\Commands\HamailCommands::class );
