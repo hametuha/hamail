@@ -325,10 +325,11 @@ class SettingsScreen extends Singleton {
 											if ( $group['is_default'] ) {
 												$name .= __( '(Default)', 'hamail' );
 											}
+											$unsubscribe_group = (array) get_option( 'hamail_unsubscribe_group', [] );
 											$input .= sprintf(
 												'<label style="display: block; margin: 1em 0;"><input type="checkbox" name="hamail_unsubscribe_group[]" value="%s" %s/> %s<br /><span class="description">%s</span></label>',
 												esc_attr( $group['id'] ),
-												checked( in_array( (string) $group['id'], get_option( 'hamail_unsubscribe_group', [] ), true ), true, false ),
+												checked( in_array( (string) $group['id'], $unsubscribe_group, true ), true, false ),
 												esc_html( $name ),
 												esc_html( $group['description'] )
 											);
