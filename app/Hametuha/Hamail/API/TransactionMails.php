@@ -152,7 +152,6 @@ class TransactionMails extends Singleton {
 		}
 	}
 
-
 	/**
 	 * Show placeholders
 	 *
@@ -184,6 +183,7 @@ class TransactionMails extends Singleton {
 		</div>
 		<?php
 	}
+
 	/**
 	 * User search selector.
 	 *
@@ -218,8 +218,9 @@ class TransactionMails extends Singleton {
 				</p>
 			<?php endif; ?>
 
-			<div class="hamail-address-roles">
-				<h4 class="hamail-address-title"><?php esc_html_e( 'Roles', 'hamail' ); ?></h4>
+			<div class="hamail-address-filter">
+				<h4 class="hamail-address-title"><?php esc_html_e( 'Filter Users', 'hamail' ); ?></h4>
+				<h5><?php esc_html_e( 'Roles', 'hamail' ); ?></h5>
 				<?php foreach ( get_editable_roles() as $key => $role ) : ?>
 					<label class="inline-block">
 						<input type="checkbox" name="hamail_roles[]"
@@ -229,8 +230,6 @@ class TransactionMails extends Singleton {
 					</label>
 				<?php endforeach; ?>
 			</div>
-
-			<hr />
 
 			<div class="hamail-address-user-group">
 				<h4 class="hamail-address-title"><?php esc_html_e( 'User Group', 'hamail' ); ?></h4>
@@ -291,6 +290,7 @@ class TransactionMails extends Singleton {
 				<textarea class="hamail-address-textarea" name="hamail_raw_address"
 							placeholder="foo@example.com,var@example.com" rows="3"
 							id="hamail_raw_address"><?php echo esc_textarea( get_post_meta( $post->ID, '_hamail_raw_address', true ) ); ?></textarea>
+				<p><?php esc_html_e( 'Recipients: ', 'csl' ); ?><span id="hamail-address-counter">0</span></p>
 			</div>
 		</div><!-- //.hamail-address -->
 		<?php
@@ -327,7 +327,7 @@ class TransactionMails extends Singleton {
 		<?php endif; ?>
 		<hr />
 		<h4><label for="unsubscribe-group"><?php esc_html_e( 'Unsubscribe', 'hamail' ); ?></label></h4>
-		<select name="unsubscribe_group" id="unsubscribe-group">
+		<select name="unsubscribe_group" id="unsubscribe-group" style="box-sizing: border-box;">
 			<?php
 			$options = [ '' => __( 'Not Set', 'hamail' ) ];
 			$group   = $this->get_unsubscribe_group();
