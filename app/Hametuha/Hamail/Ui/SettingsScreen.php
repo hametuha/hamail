@@ -269,10 +269,7 @@ class SettingsScreen extends Singleton {
 				],
 				'hamail_unsubscribe_group'         => [
 					__( 'Unsubscribe Group', 'hamail' ),
-					sprintf(
-						__( 'You can choose unsubscribe group to display if you set <code>%s</code> in your email. This helps in case you have multiple list in your SendGrid account.', 'hamail' ),
-						esc_html( '<%asm_preferences_url%>' )
-					),
+					esc_html__( 'Optional. This helps in case you have multiple list in your SendGrid account. If you choose one, subscription links will be automatically added to your email. For design perfection, choose nothing or add CSS for additional HTML.', 'hamail' ),
 					'',
 				],
 			] as $key => $labels
