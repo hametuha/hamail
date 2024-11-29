@@ -4,12 +4,18 @@
  * @handle hamail-block-table
  */
 
-div[data-type="hamail/tabel"] {
+div[data-type="hamail/table"] {
 	// This is the parent container for the table rows.
 	> .wp-block > .block-editor-inner-blocks > .block-editor-block-list__layout {
 		display: flex;
 		flex-flow: column;
 		align-items: center;
+		min-height: 2em;
+		padding: 0.5em 0.5em 2em;
+		border: 1px solid #ddd;
+		> .wp-block {
+			width: 100%;
+		}
 	}
 }
 
@@ -17,14 +23,24 @@ div[data-type="hamail/row"] {
 	// This is the parent container for the table rows.
 	> .wp-block > .block-editor-inner-blocks > .block-editor-block-list__layout {
 		display: flex;
+		flex: 1 0 100%;
 		flex-wrap: nowrap;
 		align-items: flex-start;
+		min-height: 2em;
+		padding: 0.5em;
+		border: 1px solid #ddd;
+		> .wp-block {
+			flex: 1;
+		}
 	}
 }
 
 div[data-type="hamail/col"] {
 	// This is the parent container for the table rows.
 	> .wp-block > .block-editor-inner-blocks > .block-editor-block-list__layout {
-		flex: 1;
+		min-height: 2em;
+		min-width: 5em;
+		padding: 0.5em;
+		border: 1px solid #ddd;
 	}
 }

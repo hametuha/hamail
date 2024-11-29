@@ -255,7 +255,7 @@ class TemplateSelector extends Singleton {
 		} elseif ( empty( $templates ) ) {
 			return new \WP_Error( 'hamail_template_error', __( 'No template found.', 'hamail' ) );
 		}
-		$select     = sprintf( '<select id="%1$s" name="%1$s">', esc_attr( $name ) );
+		$select     = sprintf( '<select id="%1$s" name="%1$s" style="max-width: 100%%; box-sizing: border-box;">', esc_attr( $name ) );
 		$pull_downs = [
 			[
 				'id'    => '',

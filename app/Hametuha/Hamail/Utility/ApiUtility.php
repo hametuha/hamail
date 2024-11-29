@@ -116,4 +116,21 @@ trait ApiUtility {
 			] );
 		}
 	}
+
+	/**
+	 * Log error.
+	 *
+	 * @param string $message Error message.
+	 */
+	protected function log( $message ) {
+		$messaage = sprintf(
+			'[HAMAIL %s] %s %s',
+			date_i18n( \DateTIme::ATOM ),
+			$_SERVER['REQUEST_URI'] ?? 'URL_UNKNOWN',
+			$message
+		);
+		if ( WP_DEBUG && defined( 'WP_DEBUG_LOG' ) && WP_DEBUG_LOG ) {
+			error_log( $message );
+		}
+	}
 }
