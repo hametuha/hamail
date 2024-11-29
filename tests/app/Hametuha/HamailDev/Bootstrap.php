@@ -5,6 +5,7 @@ namespace Hametuha\HamailDev;
 
 use Hametuha\Hamail\Pattern\Singleton;
 use Hametuha\Hamail\Pattern\UserGroup;
+use Hametuha\HamailDev\Filters\GmailUsers;
 use Hametuha\HamailDev\Groups\TagAuthor;
 use Hametuha\HamailDev\Stab\WeeklyReport;
 
@@ -41,6 +42,8 @@ class Bootstrap extends Singleton {
 			$atts = shortcode_atts( [], $atts, 'hamail-date' );
 			return sprintf( '<p>This email #%d created at %s</p>', get_the_ID(), get_the_date() );
 		} );
+		// Register user filter.
+		GmailUsers::get_instance();
 	}
 
 	/**

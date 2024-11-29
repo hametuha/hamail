@@ -61,6 +61,10 @@ To get supported, please go to [Support Forum](https://wordpress.org/support/plu
 
 ## Changelog
 
+### 2.7.0
+
+* Enhance user filter.
+
 ### 2.6.0
 
 * Add layout block( `&lt;table&gt;` tag) because some email client does not support grid/flex layout.

@@ -3,6 +3,7 @@
 namespace Hametuha\Hamail\API;
 
 
+use Hametuha\Hamail\API\Helper\UserFilter;
 use Hametuha\Hamail\Pattern\Singleton;
 use Hametuha\Hamail\Service\TemplateSelector;
 use Hametuha\Hamail\Ui\SettingsScreen;
@@ -19,8 +20,9 @@ class TransactionMails extends Singleton {
 	 * {@inheritDoc}
 	 */
 	protected function init() {
-		// Initialize template selctor.
+		// Initialize template selector.
 		TemplateSelector::get_instance();
+		UserFilter::get_instance();
 		add_action( 'add_meta_boxes', [ $this, 'add_meta_boxes' ] );
 		add_action( 'init', [ $this, 'register_mail_post_type' ] );
 		// Save post meta.
@@ -83,6 +85,8 @@ class TransactionMails extends Singleton {
 			// Save roles.
 			$roles = implode( ',', array_filter( filter_input( INPUT_POST, 'hamail_roles', FILTER_DEFAULT, FILTER_FORCE_ARRAY ) ?? [] ) );
 			update_post_meta( $post->ID, '_hamail_roles', $roles );
+			// Save filters.
+			update_post_meta( $post->ID, '_hamail_user_filter', $_POST['hamail_user_filters'] ?? [] );
 			// Save groups.
 			$groups = implode( ',', array_filter( filter_input( INPUT_POST, 'hamail_user_groups', FILTER_DEFAULT, FILTER_FORCE_ARRAY ) ?? [] ) );
 			update_post_meta( $post->ID, '_hamail_user_groups', $groups );
@@ -211,86 +215,120 @@ class TransactionMails extends Singleton {
 			wp_nonce_field( 'hamail_recipients', '_hamail_recipients', false );
 		}
 		?>
-		<div class="hamail-address">
-			<?php if ( hamail_is_sent( $post ) ) : ?>
-				<p class="description">
-					<?php esc_html_e( 'This mail has been sent already. Any change won\'t be saved.', 'hamail' ); ?>
-				</p>
-			<?php endif; ?>
+		<?php if ( hamail_is_sent( $post ) ) : ?>
+			<p class="hamail-address-notice-sent">
+				<?php esc_html_e( 'This mail has been sent already. Any change won\'t be saved.', 'hamail' ); ?>
+			</p>
+		<?php endif; ?>
 
-			<div class="hamail-address-filter">
+		<div class="hamail-address">
+			<div class="hamail-address-group">
 				<h4 class="hamail-address-title"><?php esc_html_e( 'Filter Users', 'hamail' ); ?></h4>
+				<p class="hamail-filtered-users" style="text-align: right;">
+					<?php esc_html_e( 'Matching Recipients: ', 'hamail' ); ?>
+					<code id="hamail-user-filter-count"></code>
+				</p>
 				<h5><?php esc_html_e( 'Roles', 'hamail' ); ?></h5>
 				<?php foreach ( get_editable_roles() as $key => $role ) : ?>
 					<label class="inline-block">
 						<input type="checkbox" name="hamail_roles[]"
 								value="<?php echo esc_attr( $key ); ?>" <?php checked( hamail_has_role( $key, $post ) ); ?> />
 						<?php echo translate_user_role( $role['name'] ); ?>
-						<small>(<?php echo hamail_get_role_count( $key ); ?>)</small>
 					</label>
 				<?php endforeach; ?>
-			</div>
-
-			<div class="hamail-address-user-group">
-				<h4 class="hamail-address-title"><?php esc_html_e( 'User Group', 'hamail' ); ?></h4>
 				<?php
-				$groups = hamail_user_groups();
-				if ( $groups ) {
-					$post_groups = array_filter( explode( ',', get_post_meta( $post->ID, '_hamail_user_groups', true ) ) );
-					foreach ( $groups as $group ) {
-						printf(
-							'<label class="inline-block" title="%4$s"><input type="checkbox" name="hamail_user_groups[]" value="%1$s" %5$s /> %2$s <small>(%3$d)</small></label>',
-							esc_attr( $group->name ),
-							esc_html( $group->label ),
-							esc_html( $group->count ),
-							esc_attr( $group->description ),
-							checked( in_array( $group->name, $post_groups, true ), true, false )
-						);
+				// Display filters.
+				$filters = UserFilter::get_instance()->filters();
+				$current = UserFilter::get_instance()->get_filter( $post );
+				if ( ! empty( $filters ) ) {
+					foreach ( $filters as $filter ) {
+						printf( '<hr /><div class="hamail-user-filter" data-filter-id="%s"><h5>%s</h5>', esc_attr( $filter['id'] ), esc_html( $filter['label'] ) );
+						$type = 'radio' === $filter['type'] ? $filter['type'] : 'checkbox';
+						foreach ( $filter['options'] as $value => $label ) {
+							printf(
+								'<label class="inline-block"><input type="%5$s" name="hamail_user_filters[%1$s][]" value="%2$s" %3$s /> %4$s</label>',
+								esc_attr( $filter['id'] ),
+								esc_attr( $value ),
+								checked( ( ! empty( $current[ $filter['id'] ] ) && in_array( $value, $current[ $filter['id'] ], true ) ), true, false ),
+								esc_html( $label ),
+								esc_attr( $type )
+							);
+						}
+						echo '</div>';
 					}
-				} else {
-					printf( '<p class="description">%s</p>', esc_html__( 'User group is not available.', 'hamail' ) );
 				}
 				?>
+
 			</div>
 
-			<hr />
+			<div class="hamail-address-group">
+				<h4><?php esc_html_e( 'Specify Users', 'hamail' ); ?></h4>
 
-			<div class="hamail-address-users">
-				<h4 class="hamail-address-title"><?php esc_html_e( 'User', 'hamail' ); ?></h4>
-				<div class="hamail-search-wrapper" id="hamail-search-users">
-					<div class="hamail-search-type">
-						<span class="hamail-search-type-label"><?php echo esc_html_x( 'Search Target:', 'hamail-user-search', 'hamail' ); ?></span>
-						<?php $checked = true; foreach ( hamail_recipients_group() as $search ) : ?>
-							<label class="inline-block">
-								<input type="radio" name="hamail_search_action" id="<?php echo esc_attr( $search['id'] ); ?>"
-										value="<?php echo esc_attr( $search['endpoint'] ); ?>" <?php checked( $checked ); ?> />
-								<?php echo esc_html( $search['label'] ); ?>
-							</label>
-							<?php
-							$checked = false;
-						endforeach;
-						?>
-					</div>
-					<input class="hamail-search-value" type="hidden" name="hamail_recipients_id"
-							value="<?php echo esc_attr( get_post_meta( $post->ID, '_hamail_recipients_id', true ) ); ?>" />
-					<input type="text" class="regular-text hamail-search-field" value=""
-							placeholder="<?php esc_attr_e( 'Type and search users...', 'hamail' ); ?>" />
-					<ul class="hamail-search-list"></ul>
+				<div class="hamail-address-user-group">
+					<h5 class="hamail-address-title"><?php esc_html_e( 'User Group', 'hamail' ); ?></h5>
+					<?php
+					$groups = hamail_user_groups();
+					if ( $groups ) {
+						$post_groups = array_filter( explode( ',', get_post_meta( $post->ID, '_hamail_user_groups', true ) ) );
+						foreach ( $groups as $group ) {
+							printf(
+								'<label class="inline-block" title="%4$s"><input type="checkbox" name="hamail_user_groups[]" value="%1$s" %5$s /> %2$s <small>(%3$d)</small></label>',
+								esc_attr( $group->name ),
+								esc_html( $group->label ),
+								esc_html( $group->count ),
+								esc_attr( $group->description ),
+								checked( in_array( $group->name, $post_groups, true ), true, false )
+							);
+						}
+					} else {
+						printf( '<p class="description">%s</p>', esc_html__( 'User group is not available.', 'hamail' ) );
+					}
+					?>
 				</div>
-			</div>
 
-			<hr />
+				<hr/>
+
+				<div class="hamail-address-users">
+					<h5 class="hamail-address-title"><?php esc_html_e( 'User', 'hamail' ); ?></h5>
+					<div class="hamail-search-wrapper" id="hamail-search-users">
+						<div class="hamail-search-type">
+							<span
+								class="hamail-search-type-label"><?php echo esc_html_x( 'Search Target:', 'hamail-user-search', 'hamail' ); ?></span>
+							<?php $checked = true;
+							foreach ( hamail_recipients_group() as $search ) : ?>
+								<label class="inline-block">
+									<input type="radio" name="hamail_search_action"
+										   id="<?php echo esc_attr( $search[ 'id' ] ); ?>"
+										   value="<?php echo esc_attr( $search[ 'endpoint' ] ); ?>" <?php checked( $checked ); ?> />
+									<?php echo esc_html( $search[ 'label' ] ); ?>
+								</label>
+								<?php
+								$checked = false;
+							endforeach;
+							?>
+						</div>
+						<input class="hamail-search-value" type="hidden" name="hamail_recipients_id"
+							   value="<?php echo esc_attr( get_post_meta( $post->ID, '_hamail_recipients_id', true ) ); ?>"/>
+						<input type="text" class="regular-text hamail-search-field" value=""
+							   placeholder="<?php esc_attr_e( 'Type and search users...', 'hamail' ); ?>"/>
+						<ul class="hamail-search-list"></ul>
+					</div>
+				</div>
+
+				<hr/>
 
 
-			<div class="hamail-address-raw">
-				<h4 class="hamail-address-title"><?php _e( 'Specified Address', 'hamail' ); ?></h4>
-				<label for="hamail_raw_address" class="block">
-					<?php _e( 'Enter comma separated mail address', 'hamail' ); ?>
-				</label>
-				<textarea class="hamail-address-textarea" name="hamail_raw_address"
-							placeholder="foo@example.com,var@example.com" rows="3"
-							id="hamail_raw_address"><?php echo esc_textarea( get_post_meta( $post->ID, '_hamail_raw_address', true ) ); ?></textarea>
-				<p><?php esc_html_e( 'Recipients: ', 'csl' ); ?><span id="hamail-address-counter">0</span></p>
+				<div class="hamail-address-raw">
+					<h5 class="hamail-address-title"><?php _e( 'Specified Address', 'hamail' ); ?></h5>
+					<label for="hamail_raw_address" class="block">
+						<?php _e( 'Enter comma separated mail address', 'hamail' ); ?>
+					</label>
+					<textarea class="hamail-address-textarea" name="hamail_raw_address"
+							  placeholder="foo@example.com,var@example.com" rows="3"
+							  id="hamail_raw_address"><?php echo esc_textarea( get_post_meta( $post->ID, '_hamail_raw_address', true ) ); ?></textarea>
+					<p><?php esc_html_e( 'Recipients: ', 'csl' ); ?><span id="hamail-address-counter">0</span></p>
+				</div>
+
 			</div>
 		</div><!-- //.hamail-address -->
 		<?php
@@ -332,7 +370,7 @@ class TransactionMails extends Singleton {
 			$options = [ '' => __( 'Not Set', 'hamail' ) ];
 			$group   = $this->get_unsubscribe_group();
 			foreach ( $group as $item ) {
-				$options[ $item['id'] ] = $item['name'] . ( $item['is_admin'] ? __( 'Default', 'hamail' ) : '' );
+				$options[ $item['id'] ] = $item['name'] . ( $item['is_default'] ? __( '(Default)', 'hamail' ) : '' );
 			}
 			foreach ( $options as $value => $label ) {
 				printf(

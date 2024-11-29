@@ -558,20 +558,21 @@ function hamail_get_message_recipients( $post = null ) {
 	foreach ( $emails as $email ) {
 		$to[] = $email;
 	}
-	// Roles.
-	$roles = array_filter( array_map( 'trim', explode( ',', get_post_meta( $post->ID, '_hamail_roles', true ) ) ) );
-	if ( $roles ) {
-		$query = new WP_User_Query( [
-			'role__in' => $roles,
-			'number'   => - 1,
-			'fields'   => 'ID',
-		] );
+	// Filter users.
+	$roles   = array_filter( array_map( 'trim', explode( ',', get_post_meta( $post->ID, '_hamail_roles', true ) ) ) );
+	$filters = \Hametuha\Hamail\API\Helper\UserFilter::get_instance()->get_filter( $post );
+	$query   = \Hametuha\Hamail\API\Helper\UserFilter::get_instance()->user_query( [
+		'count_total' => false,
+		'number'      => -1,
+		'fields'      => 'ID',
+	], $roles, $filters );
+	if ( $query ) {
 		foreach ( $query->get_results() as $user_id ) {
 			$to[] = $user_id;
 		}
 	}
 	// Groups.
-	$groups = array_filter( array_map( 'trim', explode( ',', get_post_meta( $post->ID, '_hamail_user_groups', true ) ) ) );
+	$groups = array_values( array_filter( array_map( 'trim', explode( ',', get_post_meta( $post->ID, '_hamail_user_groups', true ) ) ) ) );
 	if ( $groups ) {
 		$user_groups = hamail_user_groups();
 		foreach ( $groups as $group ) {
@@ -586,9 +587,9 @@ function hamail_get_message_recipients( $post = null ) {
 		}
 	}
 	// Users.
-	$user_ids = array_filter( array_map( 'trim', explode( ',', get_post_meta( $post->ID, '_hamail_recipients_id', true ) ) ), function ( $user_id ) {
+	$user_ids = array_values( array_filter( array_map( 'trim', explode( ',', get_post_meta( $post->ID, '_hamail_recipients_id', true ) ) ), function ( $user_id ) {
 		return is_numeric( $user_id ) && ( 0 < $user_id );
-	} );
+	} ) );
 	if ( $user_ids ) {
 		$query = new WP_User_Query( [
 			'include' => $user_ids,
