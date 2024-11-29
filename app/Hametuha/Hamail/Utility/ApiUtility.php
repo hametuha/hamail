@@ -123,7 +123,7 @@ trait ApiUtility {
 	 * @param string $message Error message.
 	 */
 	protected function log( $message ) {
-		$messaage =	sprintf(
+		$messaage = sprintf(
 			'[HAMAIL %s] %s %s',
 			date_i18n( \DateTIme::ATOM ),
 			$_SERVER['REQUEST_URI'] ?? 'URL_UNKNOWN',

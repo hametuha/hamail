@@ -23,21 +23,21 @@ abstract class UserFilterPattern extends Singleton {
 	 *
 	 * @return string
 	 */
-	abstract public function id():string;
+	abstract public function id(): string;
 
 	/**
 	 * Label of this filter.
 	 *
 	 * @return string
 	 */
-	abstract public function description():string;
+	abstract public function description(): string;
 
 	/**
 	 * Key value pairs of options.
 	 *
 	 * @return array<string,string>
 	 */
-	abstract public function options():array;
+	abstract public function options(): array;
 
 	/**
 	 * Register filters.
@@ -75,7 +75,7 @@ abstract class UserFilterPattern extends Singleton {
 	 * @return array
 	 */
 	public function user_args( $args, $key, $values = [], $original_args = [] ) {
-		if ( $key !== $this->id() || empty( $values )) {
+		if ( $key !== $this->id() || empty( $values ) ) {
 			return $args;
 		}
 		return $this->convert_users( $args, $values, $original_args );

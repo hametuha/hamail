@@ -294,13 +294,15 @@ class TransactionMails extends Singleton {
 						<div class="hamail-search-type">
 							<span
 								class="hamail-search-type-label"><?php echo esc_html_x( 'Search Target:', 'hamail-user-search', 'hamail' ); ?></span>
-							<?php $checked = true;
-							foreach ( hamail_recipients_group() as $search ) : ?>
+							<?php
+							$checked = true;
+							foreach ( hamail_recipients_group() as $search ) :
+								?>
 								<label class="inline-block">
 									<input type="radio" name="hamail_search_action"
-										   id="<?php echo esc_attr( $search[ 'id' ] ); ?>"
-										   value="<?php echo esc_attr( $search[ 'endpoint' ] ); ?>" <?php checked( $checked ); ?> />
-									<?php echo esc_html( $search[ 'label' ] ); ?>
+											id="<?php echo esc_attr( $search['id'] ); ?>"
+											value="<?php echo esc_attr( $search['endpoint'] ); ?>" <?php checked( $checked ); ?> />
+									<?php echo esc_html( $search['label'] ); ?>
 								</label>
 								<?php
 								$checked = false;
@@ -308,9 +310,9 @@ class TransactionMails extends Singleton {
 							?>
 						</div>
 						<input class="hamail-search-value" type="hidden" name="hamail_recipients_id"
-							   value="<?php echo esc_attr( get_post_meta( $post->ID, '_hamail_recipients_id', true ) ); ?>"/>
+								value="<?php echo esc_attr( get_post_meta( $post->ID, '_hamail_recipients_id', true ) ); ?>"/>
 						<input type="text" class="regular-text hamail-search-field" value=""
-							   placeholder="<?php esc_attr_e( 'Type and search users...', 'hamail' ); ?>"/>
+								placeholder="<?php esc_attr_e( 'Type and search users...', 'hamail' ); ?>"/>
 						<ul class="hamail-search-list"></ul>
 					</div>
 				</div>
@@ -324,8 +326,8 @@ class TransactionMails extends Singleton {
 						<?php _e( 'Enter comma separated mail address', 'hamail' ); ?>
 					</label>
 					<textarea class="hamail-address-textarea" name="hamail_raw_address"
-							  placeholder="foo@example.com,var@example.com" rows="3"
-							  id="hamail_raw_address"><?php echo esc_textarea( get_post_meta( $post->ID, '_hamail_raw_address', true ) ); ?></textarea>
+								placeholder="foo@example.com,var@example.com" rows="3"
+								id="hamail_raw_address"><?php echo esc_textarea( get_post_meta( $post->ID, '_hamail_raw_address', true ) ); ?></textarea>
 					<p><?php esc_html_e( 'Recipients: ', 'csl' ); ?><span id="hamail-address-counter">0</span></p>
 				</div>
 

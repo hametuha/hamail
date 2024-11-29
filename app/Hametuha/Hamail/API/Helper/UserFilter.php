@@ -32,9 +32,9 @@ class UserFilter extends Singleton {
 		];
 		foreach ( $this->filters() as $filter ) {
 			$args[ $filter['id'] ] = [
-				'required' => false,
-				'default' => [],
-				'type' => 'array',
+				'required'          => false,
+				'default'           => [],
+				'type'              => 'array',
 				'validate_callback' => function ( $values ) use ( $filter ) {
 					$enums = array_keys( $filter['options'] );
 					foreach ( $values as $filter_value ) {
@@ -95,7 +95,7 @@ class UserFilter extends Singleton {
 	 */
 	public function filters() {
 		$filters = (array) apply_filters( 'hamail_user_filters', [] );
-		$filters = array_map( function( $filter ) {
+		$filters = array_map( function ( $filter ) {
 			$filter = (array) $filter;
 			return wp_parse_args( $filter, [
 				'id'      => '',
