@@ -347,7 +347,7 @@ function hamail_get_recipients_data( $recipients, $subject = '', $body = '' ) {
  * @param array           $attachments
  * @param int             $asm_id If set, unsubscribe group will be this.
  *
- * @return bool|WP_Error
+ * @return true|string[]|WP_Error If API returns message IDs, return array of message IDs. If error, return WP_Error. Else true.
  */
 function hamail_simple_mail( $recipients, $subject, $body, $additional_headers = [], $attachments = [], $asm_id = 0 ) {
 	// Parse recipients.
@@ -451,6 +451,7 @@ function hamail_simple_mail( $recipients, $subject, $body, $additional_headers =
 	$errors      = new WP_Error();
 	$slots_total = 0;
 	$sent_total  = 0;
+	$message_ids = [];
 	foreach ( $recipients_slots as $index => $recipients_group ) {
 		try {
 			// Create mail instance.
@@ -518,6 +519,11 @@ function hamail_simple_mail( $recipients, $subject, $body, $additional_headers =
 			// Get response.
 			$code = $response->statusCode();
 			if ( preg_match( '#2[\d]{2}#u', $code ) ) {
+				// Status 2x2, so this is OK. Save message ID for post.
+				$message_id = $response->headers(true)['X-Message-Id'] ?? '';
+				if ( $message_id ) {
+					$message_ids[] = $message_id;
+				}
 				continue;
 			} else {
 				$error          = json_decode( $response->body() );
@@ -533,7 +539,7 @@ function hamail_simple_mail( $recipients, $subject, $body, $additional_headers =
 	}
 	$errors_messages = $errors->get_error_messages();
 	if ( empty( $errors_messages ) ) {
-		return true;
+		return $message_ids ?: true;
 	} else {
 		return $errors;
 	}
@@ -671,6 +677,10 @@ function hamail_send_message( $post = null, $force = false ) {
 		}
 		return $result;
 	} else {
+		// If result is array, these are message IDs.
+		if ( is_array( $result ) ) {
+			update_post_meta( $post->ID, '_hamail_message_ids', $result );
+		}
 		update_post_meta( $post->ID, '_hamail_sent', current_time( 'mysql' ) );
 		return true;
 	}

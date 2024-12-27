@@ -354,6 +354,22 @@ class TransactionMails extends Singleton {
 				) )
 				?>
 			</p>
+			<p>
+				<label for="hamail-message-ids"><?php esc_html_e( 'Message ID', 'hamail' ); ?></label>
+				<?php
+				$message_ids = array_filter( (array) get_post_meta( $post->ID, '_hamail_message_ids', true ) );
+				printf(
+					'<textarea id="hamail-message-ids" name="hamail_message_ids" rows="3" class="widefat" readonly placeholder="%s">%s</textarea>',
+					esc_attr__( 'No message ID', 'hamail' ),
+					esc_textarea( implode( "\n", $message_ids ) )
+				);
+				?>
+				<span class="description">
+					<?php
+					printf( 'Message IDs are set if the message is actually sent via SendGrid. This works for filtering activity logs.' );
+					?>
+				</span>
+			</p>
 		<?php else : ?>
 			<?php wp_nonce_field( 'hamail_as_admin', '_hamailadminnonce', false ); ?>
 			<p class="description">

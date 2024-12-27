@@ -482,6 +482,26 @@ HTML;
 	}
 
 	/**
+	 * Get message activities
+	 *
+	 * @synopsis <message_id>
+	 * @param array $args
+	 * @return void
+	 */
+	public function activities( $args ) {
+		list( $message_id ) = $args;
+		$client = hamail_client();
+		$response = $client->client->messages()->_( $message_id )->get();
+		if ( '200' !== $response->statusCode() ) {
+			$body = json_decode( $response->body(), true );
+			\WP_CLI::error( implode( "\n", array_map( function( $error ) {
+				return $error['message'];
+			}, $body['errors'] ) ) );
+		}
+		var_dump( $response );
+	}
+
+	/**
 	 * Getter.
 	 *
 	 * @param string $name
