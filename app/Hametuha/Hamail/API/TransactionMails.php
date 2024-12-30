@@ -29,6 +29,8 @@ class TransactionMails extends Singleton {
 		add_action( 'save_post_hamail', [ $this, 'save_post_id' ], 10, 2 );
 		// Save post and send mail.
 		add_action( 'save_post_hamail', [ $this, 'save_post_and_send_mail' ], 11, 2 );
+		// Scheduled post.
+		add_action( 'transition_post_status', [ $this, 'send_email_for_scheduled_post' ], 20, 3 );
 	}
 
 	/**
@@ -112,6 +114,30 @@ class TransactionMails extends Singleton {
 		if ( 'publish' === $post->post_status && ! hamail_is_sent( $post ) ) {
 			hamail_send_message( $post );
 		}
+	}
+
+	/**
+	 * Send email for scheduled post.
+	 *
+	 * @see wp_publish_post()
+	 * @param string $new_status
+	 * @param string $old_status
+	 * @param \WP_Post $post
+	 */
+	public function send_email_for_scheduled_post( $new_status, $old_status, $post ) {
+		if ( 'hamail' !== $post->post_type) {
+			return;
+		}
+		if ( 'publish' !== $new_status || 'future' !== $old_status ) {
+			// This is not scheduled post publication.
+			return;
+		}
+		if ( hamail_is_sent( $post ) ) {
+			// Don't know why, but this post is already sent.
+			return;
+		}
+		// Send mail.
+		hamail_send_message( $post );
 	}
 
 	/**
