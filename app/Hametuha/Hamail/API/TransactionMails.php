@@ -3,6 +3,7 @@
 namespace Hametuha\Hamail\API;
 
 
+use Hametuha\Hamail\API\Helper\RecipientsList;
 use Hametuha\Hamail\API\Helper\UserFilter;
 use Hametuha\Hamail\Pattern\Singleton;
 use Hametuha\Hamail\Service\TemplateSelector;
@@ -23,12 +24,15 @@ class TransactionMails extends Singleton {
 		// Initialize template selector.
 		TemplateSelector::get_instance();
 		UserFilter::get_instance();
+		RecipientsList::get_instance();
 		add_action( 'add_meta_boxes', [ $this, 'add_meta_boxes' ] );
 		add_action( 'init', [ $this, 'register_mail_post_type' ] );
 		// Save post meta.
 		add_action( 'save_post_hamail', [ $this, 'save_post_id' ], 10, 2 );
 		// Save post and send mail.
 		add_action( 'save_post_hamail', [ $this, 'save_post_and_send_mail' ], 11, 2 );
+		// Scheduled post.
+		add_action( 'transition_post_status', [ $this, 'send_email_for_scheduled_post' ], 20, 3 );
 	}
 
 	/**
@@ -112,6 +116,30 @@ class TransactionMails extends Singleton {
 		if ( 'publish' === $post->post_status && ! hamail_is_sent( $post ) ) {
 			hamail_send_message( $post );
 		}
+	}
+
+	/**
+	 * Send email for scheduled post.
+	 *
+	 * @see wp_publish_post()
+	 * @param string $new_status
+	 * @param string $old_status
+	 * @param \WP_Post $post
+	 */
+	public function send_email_for_scheduled_post( $new_status, $old_status, $post ) {
+		if ( 'hamail' !== $post->post_type ) {
+			return;
+		}
+		if ( 'publish' !== $new_status || 'future' !== $old_status ) {
+			// This is not scheduled post publication.
+			return;
+		}
+		if ( hamail_is_sent( $post ) ) {
+			// Don't know why, but this post is already sent.
+			return;
+		}
+		// Send mail.
+		hamail_send_message( $post );
 	}
 
 	/**
@@ -220,6 +248,14 @@ class TransactionMails extends Singleton {
 				<?php esc_html_e( 'This mail has been sent already. Any change won\'t be saved.', 'hamail' ); ?>
 			</p>
 		<?php endif; ?>
+
+
+		<p style="text-align: right;">
+			<a href="<?php echo esc_url( wp_nonce_url( rest_url( 'hamail/v1/recipients/' . $post->ID ), 'wp_rest' ) ); ?>"
+				class="button" target="_blank" rel="noopener noreferrer">
+				<?php esc_html_e( 'Check Recipients in CSV', 'hamail' ); ?>
+			</a>
+		</p>
 
 		<div class="hamail-address">
 			<div class="hamail-address-group">
@@ -353,6 +389,22 @@ class TransactionMails extends Singleton {
 					get_post_meta( $post->ID, '_hamail_as_admin', true ) ? __( 'Site Admin', 'hamail' ) : get_the_author_meta( 'display_name', $post->post_author )
 				) )
 				?>
+			</p>
+			<p>
+				<label for="hamail-message-ids"><?php esc_html_e( 'Message ID', 'hamail' ); ?></label>
+				<?php
+				$message_ids = array_filter( (array) get_post_meta( $post->ID, '_hamail_message_ids', true ) );
+				printf(
+					'<textarea id="hamail-message-ids" name="hamail_message_ids" rows="3" class="widefat" readonly placeholder="%s">%s</textarea>',
+					esc_attr__( 'No message ID', 'hamail' ),
+					esc_textarea( implode( "\n", $message_ids ) )
+				);
+				?>
+				<span class="description">
+					<?php
+					printf( 'Message IDs are set if the message is actually sent via SendGrid. This works for filtering activity logs.' );
+					?>
+				</span>
 			</p>
 		<?php else : ?>
 			<?php wp_nonce_field( 'hamail_as_admin', '_hamailadminnonce', false ); ?>

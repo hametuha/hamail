@@ -1,12 +1,14 @@
 /*!
  * Hametuha user selector
  *
- * @deps hamail-incsearch, wp-api-fetch
+ * @deps hamail-incsearch, wp-api-fetch, wp-i18n, wp-hooks
  */
 
 const $ = jQuery;
 const { ItemsController } = wp.hamail;
 const { apiFetch } = wp;
+const { addFilter } = wp.hooks;
+const { __ } = wp.i18n;
 
 $( document ).ready( function() {
 	// User selector.
@@ -82,4 +84,25 @@ $( document ).ready( function() {
 	updateUserFilterCount();
 	$( 'input[name="hamail_roles[]"]' ).on( 'click', updateUserFilterCount );
 	$( 'input[name^="hamail_user_filters"]' ).on( 'click', updateUserFilterCount );
+} );
+
+// Add filter to override text.
+// https://developer.wordpress.org/block-editor/reference-guides/filters/i18n-filters/
+addFilter( 'i18n.gettext_default', 'hamail/override-editor-label', ( translation, text ) => {
+	switch ( text ) {
+		case 'Publish':
+			return __( 'Send', 'hamail' );
+		case 'Schedule':
+			return __( 'Schedule', 'hamail' );
+		case 'Excerpt':
+			return __( 'Pre-header Text', 'hamail' );
+		case 'Add an excerpt…':
+			return __( 'Add pre-header text', 'hamail' );
+		case 'Edit excerpt':
+			return __( 'Edit pre-header text', 'hamail' );
+		case 'Learn more about manual excerpts':
+			return __( 'Excerpt is used for pre-header text in email.', 'hamail' );
+		default:
+			return translation;
+	}
 } );
