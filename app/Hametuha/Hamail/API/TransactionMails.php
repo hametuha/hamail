@@ -127,7 +127,7 @@ class TransactionMails extends Singleton {
 	 * @param \WP_Post $post
 	 */
 	public function send_email_for_scheduled_post( $new_status, $old_status, $post ) {
-		if ( 'hamail' !== $post->post_type) {
+		if ( 'hamail' !== $post->post_type ) {
 			return;
 		}
 		if ( 'publish' !== $new_status || 'future' !== $old_status ) {
@@ -252,7 +252,7 @@ class TransactionMails extends Singleton {
 
 		<p style="text-align: right;">
 			<a href="<?php echo esc_url( wp_nonce_url( rest_url( 'hamail/v1/recipients/' . $post->ID ), 'wp_rest' ) ); ?>"
-			   class="button" target="_blank" rel="noopener noreferrer">
+				class="button" target="_blank" rel="noopener noreferrer">
 				<?php esc_html_e( 'Check Recipients in CSV', 'hamail' ); ?>
 			</a>
 		</p>

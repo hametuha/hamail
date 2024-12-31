@@ -520,7 +520,7 @@ function hamail_simple_mail( $recipients, $subject, $body, $additional_headers =
 			$code = $response->statusCode();
 			if ( preg_match( '#2[\d]{2}#u', $code ) ) {
 				// Status 2x2, so this is OK. Save message ID for post.
-				$message_id = $response->headers(true)['X-Message-Id'] ?? '';
+				$message_id = $response->headers( true )['X-Message-Id'] ?? '';
 				if ( $message_id ) {
 					$message_ids[] = $message_id;
 				}

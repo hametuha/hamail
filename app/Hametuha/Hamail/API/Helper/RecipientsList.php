@@ -25,12 +25,12 @@ class RecipientsList extends Singleton {
 	public function rest_api_init() {
 		register_rest_route( 'hamail/v1', '/recipients/(?P<post_id>\d+)', [
 			[
-				'methods' => 'GET',
-				'args' => [
+				'methods'             => 'GET',
+				'args'                => [
 					'post_id' => [
 						'required'          => true,
 						'type'              => 'integer',
-						'validate_callback' => function( $param ) {
+						'validate_callback' => function ( $param ) {
 							$post = get_post( $param );
 							return ( $post && 'hamail' === $post->post_type );
 						},
@@ -51,7 +51,7 @@ class RecipientsList extends Singleton {
 	public function callback( $request ) {
 		$post       = get_post( $request->get_param( 'post_id' ) );
 		$recipients = hamail_get_message_recipients( $post );
-		if ( empty ( $recipients ) ) {
+		if ( empty( $recipients ) ) {
 			return new \WP_Error( 'hamail_invalid_email', __( 'No recipients are listed in this post.', 'hamail' ) );
 		}
 		// Send HTTP headers.
