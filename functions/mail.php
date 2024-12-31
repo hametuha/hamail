@@ -546,11 +546,11 @@ function hamail_simple_mail( $recipients, $subject, $body, $additional_headers =
 }
 
 /**
- * Get recipients.
+ * Get recipients of specified mail.
  *
  * @param null|int|WP_Post $post
  *
- * @return array ID or email.
+ * @return array<int, int|string> ID or email.
  */
 function hamail_get_message_recipients( $post = null ) {
 	$post = get_post( $post );

@@ -3,6 +3,7 @@
 namespace Hametuha\Hamail\API;
 
 
+use Hametuha\Hamail\API\Helper\RecipientsList;
 use Hametuha\Hamail\API\Helper\UserFilter;
 use Hametuha\Hamail\Pattern\Singleton;
 use Hametuha\Hamail\Service\TemplateSelector;
@@ -23,6 +24,7 @@ class TransactionMails extends Singleton {
 		// Initialize template selector.
 		TemplateSelector::get_instance();
 		UserFilter::get_instance();
+		RecipientsList::get_instance();
 		add_action( 'add_meta_boxes', [ $this, 'add_meta_boxes' ] );
 		add_action( 'init', [ $this, 'register_mail_post_type' ] );
 		// Save post meta.
@@ -246,6 +248,14 @@ class TransactionMails extends Singleton {
 				<?php esc_html_e( 'This mail has been sent already. Any change won\'t be saved.', 'hamail' ); ?>
 			</p>
 		<?php endif; ?>
+
+
+		<p style="text-align: right;">
+			<a href="<?php echo esc_url( wp_nonce_url( rest_url( 'hamail/v1/recipients/' . $post->ID ), 'wp_rest' ) ); ?>"
+			   class="button" target="_blank" rel="noopener noreferrer">
+				<?php esc_html_e( 'Check Recipients in CSV', 'hamail' ); ?>
+			</a>
+		</p>
 
 		<div class="hamail-address">
 			<div class="hamail-address-group">
