@@ -364,7 +364,7 @@ class TransactionMails extends Singleton {
 					<textarea class="hamail-address-textarea" name="hamail_raw_address"
 								placeholder="foo@example.com,var@example.com" rows="3"
 								id="hamail_raw_address"><?php echo esc_textarea( get_post_meta( $post->ID, '_hamail_raw_address', true ) ); ?></textarea>
-					<p><?php esc_html_e( 'Recipients: ', 'csl' ); ?><span id="hamail-address-counter">0</span></p>
+					<p><?php esc_html_e( 'Recipients: ', 'hamail' ); ?><span id="hamail-address-counter">0</span></p>
 				</div>
 
 			</div>
@@ -402,7 +402,7 @@ class TransactionMails extends Singleton {
 				?>
 				<span class="description">
 					<?php
-					printf( 'Message IDs are set if the message is actually sent via SendGrid. This works for filtering activity logs.' );
+					esc_html_e( 'Message IDs are set if the message is actually sent via SendGrid. This works for filtering activity logs.', 'hamail' );
 					?>
 				</span>
 			</p>
