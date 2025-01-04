@@ -74,7 +74,7 @@ class RecipientsList extends Singleton {
 			}
 			if ( $user ) {
 				// User exists.
-				$output->fputcsv( [ $user->user_email, $user->display_name, $id_or_email, implode( '/', $user->roles ), 'True' ] );
+				$output->fputcsv( [ $user->user_email, $user->display_name, $user->ID, implode( '/', $user->roles ), 'True' ] );
 			} else {
 				if ( is_numeric( $id_or_email ) ) {
 					// This is ID, but no user found.
