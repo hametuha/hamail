@@ -3,7 +3,7 @@
 namespace Hametuha\HamailDev\Filters;
 
 
-use Hametuha\Hamail\Pattern\UserFilterPattern;
+use Hametuha\Hamail\Pattern\Filters\UserFilterPattern;
 
 /**
  * Gmail users.

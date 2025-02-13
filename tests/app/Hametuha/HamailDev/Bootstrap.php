@@ -6,6 +6,7 @@ namespace Hametuha\HamailDev;
 use Hametuha\Hamail\Pattern\Singleton;
 use Hametuha\Hamail\Pattern\UserGroup;
 use Hametuha\HamailDev\Filters\GmailUsers;
+use Hametuha\HamailDev\Filters\RegisteredUsers;
 use Hametuha\HamailDev\Groups\TagAuthor;
 use Hametuha\HamailDev\Stab\WeeklyReport;
 
@@ -44,6 +45,7 @@ class Bootstrap extends Singleton {
 		} );
 		// Register user filter.
 		GmailUsers::get_instance();
+		RegisteredUsers::get_instance();
 	}
 
 	/**

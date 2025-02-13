@@ -279,17 +279,7 @@ class TransactionMails extends Singleton {
 				if ( ! empty( $filters ) ) {
 					foreach ( $filters as $filter ) {
 						printf( '<hr /><div class="hamail-user-filter" data-filter-id="%s"><h5>%s</h5>', esc_attr( $filter['id'] ), esc_html( $filter['label'] ) );
-						$type = 'radio' === $filter['type'] ? $filter['type'] : 'checkbox';
-						foreach ( $filter['options'] as $value => $label ) {
-							printf(
-								'<label class="inline-block"><input type="%5$s" name="hamail_user_filters[%1$s][]" value="%2$s" %3$s /> %4$s</label>',
-								esc_attr( $filter['id'] ),
-								esc_attr( $value ),
-								checked( ( ! empty( $current[ $filter['id'] ] ) && in_array( $value, $current[ $filter['id'] ], true ) ), true, false ),
-								esc_html( $label ),
-								esc_attr( $type )
-							);
-						}
+						do_action( 'hamail_user_filter_rendering', $filter, $current[ $filter['id'] ] ?? [] );
 						echo '</div>';
 					}
 				}
