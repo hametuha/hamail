@@ -54,6 +54,14 @@ $( document ).ready( function() {
 			$( div ).find( 'input[type="checkbox"]:checked, input[type="radio"]:checked' ).each( function( j, input ) {
 				filter.values.push( $( input ).val() );
 			} );
+			$( div ).find( 'input' ).each( function( j, input ) {
+				if ( -1 < [ 'url', 'text', 'date', 'email', 'password' ].indexOf( $( input ).attr( 'type' ) ) ) {
+					// Add filter not empty.
+					if ( $( input ).val() ) {
+						filter.values.push( $( input ).val() );
+					}
+				}
+			} );
 			if ( 0 < filter.values.length ) {
 				request.filters.push( filter );
 			}
@@ -83,7 +91,7 @@ $( document ).ready( function() {
 	};
 	updateUserFilterCount();
 	$( 'input[name="hamail_roles[]"]' ).on( 'click', updateUserFilterCount );
-	$( 'input[name^="hamail_user_filters"]' ).on( 'click', updateUserFilterCount );
+	$( 'input[name^="hamail_user_filters"]' ).on( 'click keyup blur change', updateUserFilterCount );
 } );
 
 // Add filter to override text.

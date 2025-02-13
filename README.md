@@ -59,7 +59,15 @@ npm run package
 
 To get supported, please go to [Support Forum](https://wordpress.org/support/plugin/hamail/).
 
+### Is there any documentation?
+
+We have [Wiki on GitHub](https://github.com/hametuha/hamail/wiki). Please check it out.
+
 ## Changelog
+
+### 2.7.3
+
+* Add filter base class `Hametuha\Hamail\Pattern\Filters\UserFilterInputPattern` for user filter.
 
 ### 2.7.0
 

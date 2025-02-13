@@ -31,11 +31,9 @@ class UserFilter extends Singleton {
 			],
 		];
 		foreach ( $this->filters() as $filter ) {
-			$args[ $filter['id'] ] = [
-				'required'          => false,
-				'default'           => [],
-				'type'              => 'array',
-				'validate_callback' => function ( $values ) use ( $filter ) {
+			$validate_callback = apply_filters( 'hamail_user_filter_validate_callback', null, $filter['id'] );
+			if ( ! is_callable( $validate_callback ) ) {
+				$validate_callback = function ( $values ) use ( $filter ) {
 					$enums = array_keys( $filter['options'] );
 					foreach ( $values as $filter_value ) {
 						if ( ! in_array( $filter_value, $enums, true ) ) {
@@ -44,7 +42,13 @@ class UserFilter extends Singleton {
 						}
 					}
 					return true;
-				},
+				};
+			}
+			$args[ $filter['id'] ] = [
+				'required'          => false,
+				'default'           => [],
+				'type'              => 'array',
+				'validate_callback' => $validate_callback,
 			];
 		}
 		register_rest_route( 'hamail/v1', '/users/filter', [
