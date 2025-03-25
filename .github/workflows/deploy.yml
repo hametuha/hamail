@@ -3,7 +3,7 @@ name: Deploy Plugin
 on:
   push:
     tags:
-      - '*'
+      - '*.*.*'
 
 jobs:
   pre_release:
@@ -30,15 +30,14 @@ jobs:
 
       - name: Export Upload URL
         id: export
-        run: echo "::set-output name=upload_url::${{ steps.create_release.outputs.upload_url }}"
-
+        run: echo "upload_url=${{ steps.create_release.outputs.upload_url }}" >> "$GITHUB_OUTPUT"
 
   release:
     name: Build Plugin
     needs: pre_release
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@main
 
       - name: Confirm
         run: echo ${{ needs.pre_release.outputs.upload_url }}
@@ -53,7 +52,7 @@ jobs:
 
 
       - name: Install NPM
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
 
@@ -81,6 +80,9 @@ jobs:
     name: Deploy WordPress.org
     needs: pre_release
     runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://wordpress.org/plugins/hamail/
     steps:
       - uses: actions/checkout@main
 
@@ -92,9 +94,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-
       - name: Install NPM
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
 

@@ -63,7 +63,15 @@ To get supported, please go to [Support Forum](https://wordpress.org/support/plu
 
 We have [Wiki on GitHub](https://github.com/hametuha/hamail/wiki). Please check it out.
 
+### How can I contribute?
+
+We have [GitHub Repository](https://github.com/hametuha/hamail). Issues and Pull Requests are welcomed.
+
 ## Changelog
+
+### 2.7.4
+
+* Add notification for mail template. Legacy template lacks some features for ASM/Unsubscribe group.
 
 ### 2.7.3
 
