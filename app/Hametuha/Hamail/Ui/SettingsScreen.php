@@ -69,7 +69,7 @@ class SettingsScreen extends Singleton {
 				<?php esc_html_e( 'Hamail Setting', 'hamail' ); ?>
 			</h2>
 
-			<form method="post" action="options.php">
+			<form method="post" action="<?php echo esc_url( admin_url( 'options.php' ) ); ?>">
 				<?php
 				settings_fields( 'hamail-setting' );
 				do_settings_sections( 'hamail-setting' );
@@ -89,11 +89,6 @@ class SettingsScreen extends Singleton {
 				<p class="description">
 					<?php esc_html_e( 'Export users as CSV with the field format above.', 'hamail' ); ?>
 				</p>
-				<?php
-				if ( filter_input( INPUT_GET, 'csv_geerated' ) ) {
-
-				}
-				?>
 				<form method="post" action="<?php echo rest_url( 'hamail/v1/users/data' ); ?>" target="hamail-csv-downloader">
 					<?php
 					wp_nonce_field( 'wp_rest' );
@@ -197,7 +192,7 @@ class SettingsScreen extends Singleton {
 			if ( hamail_is_debug() ) {
 				printf(
 					'<div class="notice notice-info"><p>%s</p></div>',
-					wp_kses_post( __( 'Hamail is now <strong>debug mode</strong>. SendGrid API will never used. To disabled debug mode, change <code>define( \'HAMAIL_DEBUG\', false )</code> in your wp-config.php.', 'hamail' ) )
+					wp_kses_post( __( 'Hamail is now <strong>debug mode</strong>. SendGrid API will never be used. To disable debug mode, change <code>define( \'HAMAIL_DEBUG\', false )</code> in your wp-config.php.', 'hamail' ) )
 				);
 			} elseif ( WP_DEBUG ) {
 				printf(
@@ -269,7 +264,7 @@ class SettingsScreen extends Singleton {
 				],
 				'hamail_unsubscribe_group'         => [
 					__( 'Unsubscribe Group', 'hamail' ),
-					esc_html__( 'Optional. This helps in case you have multiple list in your SendGrid account. If you choose one, subscription links will be automatically added to your email. For design perfection, choose nothing or add CSS for additional HTML.', 'hamail' ),
+					esc_html__( 'Optional. This helps in case you have multiple list in your SendGrid account. If you choose one, subscription links will be automatically added to your email. For design perfection, choose nothing or add CSS for additional HTML. This is available in future update.', 'hamail' ),
 					'',
 				],
 			] as $key => $labels
