@@ -351,7 +351,7 @@ function hamail_get_recipients_data( $recipients, $subject = '', $body = '' ) {
  * Recipients can be
  * 1. array of email addresses or User IDs.
  * 2. a single email address or user ID.
- * 3. array of associative arrays, key for email addresses or User IDs and value for extra data(finaly parsed as substitutions).
+ * 3. array of associative arrays, key for email addresses or User IDs and value for extra data(finally parsed as substitutions).
  *
  * @param string|int|array $recipients An array of email addresses or a single email address.
  * @param string           $subject
