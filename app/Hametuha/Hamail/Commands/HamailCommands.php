@@ -504,6 +504,8 @@ HTML;
 	/**
 	 * Get recipients list of specified transaction email.
 	 *
+	 * This is for debugging purpose.
+	 *
 	 * @synopsis <post_id>
 	 * @param array $args
 	 *

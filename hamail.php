@@ -25,13 +25,9 @@ define( 'HAMAIL_INIT', __FILE__ );
 /**
  * Initialize hamail
  *
- * @param string $plugin
+ * @access private
  */
-function hamail_plugins_loaded( $plugin ) {
-	if ( basename( $plugin ) !== basename( __FILE__ ) ) {
-		return;
-	}
-
+function hamail_plugins_loaded() {
 	// Get version number.
 	$info = get_file_data( __FILE__, [
 		'version'     => 'Version',
@@ -92,4 +88,4 @@ function hamail_plugins_loaded( $plugin ) {
 		} );
 	}
 }
-add_action( 'plugin_loaded', 'hamail_plugins_loaded' );
+add_action( 'plugins_loaded', 'hamail_plugins_loaded' );

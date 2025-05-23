@@ -7,3 +7,4 @@ wp-dependencies.json
 hamail-userdata.csv
 /hamail.css
 /*.csv
+/*.cache
