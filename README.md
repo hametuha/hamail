@@ -2,9 +2,7 @@
 
 Tags: email, sendgrid, marketing  
 Contributors: Takahashi_Fumiki, hametuha  
-Tested up to: 6.6  
-Requires at least: 5.9  
-Requires PHP: 7.2  
+Tested up to: 6.8  
 Stable Tag: nightly  
 License: GPLv3 or later  
 License URI: http://www.gnu.org/licenses/gpl-3.0.txt
@@ -68,6 +66,10 @@ We have [Wiki on GitHub](https://github.com/hametuha/hamail/wiki). Please check 
 We have [GitHub Repository](https://github.com/hametuha/hamail). Issues and Pull Requests are welcomed.
 
 ## Changelog
+
+### 2.7.5
+
+* Bugfix: fix transaction email error in case duplicated email address.
 
 ### 2.7.4
 

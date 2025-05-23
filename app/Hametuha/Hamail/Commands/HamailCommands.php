@@ -502,6 +502,28 @@ HTML;
 	}
 
 	/**
+	 * Get recipients list of specified transaction email.
+	 *
+	 * This is for debugging purpose.
+	 *
+	 * @synopsis <post_id>
+	 * @param array $args
+	 *
+	 * @return void
+	 */
+	public function recipients( $args ) {
+		list( $post_id ) = $args;
+		$post            = get_post( $post_id );
+		if ( ! $post || 'hamail' !== $post->post_type ) {
+			\WP_CLI::error( __( 'No message found.', 'hamail' ) );
+		}
+		$recipients = hamail_get_message_recipients( $post );
+		print_r( $recipients );
+		$data = hamail_get_recipients_data( $recipients );
+		print_r( $data );
+	}
+
+	/**
 	 * Getter.
 	 *
 	 * @param string $name

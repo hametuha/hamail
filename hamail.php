@@ -1,16 +1,18 @@
 <?php
 /**
-Plugin Name: Hamail
-Plugin URI: https://wordpress.org/plugins/hamail/
-Description: A WordPress plugin for sending e-mail via SendGrid.
-Author: Hametuha INC.
-Version: nightly
-Author URI: https://hametuha.co.jp/
-License: GPL3 or later
-License URI: https://www.gnu.org/licenses/gpl-3.0.html
-Text Domain: hamail
-Domain Path: /languages
-*/
+ * Plugin Name: Hamail
+ * Plugin URI: https://wordpress.org/plugins/hamail/
+ * Description: A WordPress plugin for sending e-mail via SendGrid.
+ * Author: Hametuha INC.
+ * Version: nightly
+ * Requires at least: 5.9
+ * Requires PHP: 7.2
+ * Author URI: https://hametuha.co.jp/
+ * License: GPL3 or later
+ * License URI: https://www.gnu.org/licenses/gpl-3.0.html
+ * Text Domain: hamail
+ * Domain Path: /languages
+ */
 
 defined( 'ABSPATH' ) or die();
 
@@ -23,13 +25,9 @@ define( 'HAMAIL_INIT', __FILE__ );
 /**
  * Initialize hamail
  *
- * @param string $plugin
+ * @access private
  */
-function hamail_plugins_loaded( $plugin ) {
-	if ( basename( $plugin ) !== basename( __FILE__ ) ) {
-		return;
-	}
-
+function hamail_plugins_loaded() {
 	// Get version number.
 	$info = get_file_data( __FILE__, [
 		'version'     => 'Version',
@@ -90,4 +88,4 @@ function hamail_plugins_loaded( $plugin ) {
 		} );
 	}
 }
-add_action( 'plugin_loaded', 'hamail_plugins_loaded' );
+add_action( 'plugins_loaded', 'hamail_plugins_loaded' );

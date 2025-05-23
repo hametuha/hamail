@@ -254,15 +254,23 @@ function hamail_guest_name( $email = '' ) {
 /**
  * Get recipients data.
  *
- * @param array $recipients
+ * @param array<int, int|string> $recipients List of IDs or emails.
  * @param string $subject
  * @param string $body
  *
  * @return array Array of associative arrays of recipients and data.
  */
 function hamail_get_recipients_data( $recipients, $subject = '', $body = '' ) {
-	if ( array_keys( $recipients ) === range( 0, count( $recipients ) - 1 ) ) {
-		// This is flat array.
+	// Check if recipients is flat array.
+	$is_flat_array = true;
+	foreach ( $recipients as $value ) {
+		if ( is_array( $value ) ) {
+			$is_flat_array = false;
+			break;
+		}
+	}
+	if ( $is_flat_array ) {
+		// If this is flat array, convert to associative array.
 		$to_be = [];
 		foreach ( $recipients as $id_or_email ) {
 			$to_be[ $id_or_email ] = [];
@@ -340,18 +348,29 @@ function hamail_get_recipients_data( $recipients, $subject = '', $body = '' ) {
 /**
  * Send single mail
  *
- * @param string|string[] $recipients
- * @param string          $subject
- * @param string          $body
- * @param array           $additional_headers
- * @param array           $attachments
- * @param int             $asm_id If set, unsubscribe group will be this.
+ * Recipients can be
+ * 1. array of email addresses or User IDs.
+ * 2. a single email address or user ID.
+ * 3. array of associative arrays, key for email addresses or User IDs and value for extra data(finally parsed as substitutions).
+ *
+ * @param string|int|array $recipients An array of email addresses or a single email address.
+ * @param string           $subject
+ * @param string           $body
+ * @param array            $additional_headers
+ * @param array            $attachments
+ * @param int              $asm_id If set, unsubscribe group will be this.
  *
  * @return true|string[]|WP_Error If API returns message IDs, return array of message IDs. If error, return WP_Error. Else true.
  */
 function hamail_simple_mail( $recipients, $subject, $body, $additional_headers = [], $attachments = [], $asm_id = 0 ) {
 	// Parse recipients.
-	$recipients     = (array) $recipients;
+	if ( is_string( $recipients ) ) {
+		$recipients = array_values( array_filter( array_map( 'trim', explode( ',', $recipients ) ) ) );
+	} elseif ( is_int( $recipients ) ) {
+		$recipients = [ $recipients ];
+	} elseif ( ! is_array( $recipients ) ) {
+		return new WP_Error( 'invalid_recipients', __( 'Invalid recipients.', 'hamail' ) );
+	}
 	$recipient_data = hamail_get_recipients_data( $recipients, $subject, $body );
 	if ( ! $recipient_data ) {
 		return new WP_Error( 'no_recipients', __( 'No recipient set.', 'hamail' ) );
@@ -550,7 +569,7 @@ function hamail_simple_mail( $recipients, $subject, $body, $additional_headers =
  *
  * @param null|int|WP_Post $post
  *
- * @return array<int, int|string> ID or email.
+ * @return array<int, int|string> An array consists of ID or email.
  */
 function hamail_get_message_recipients( $post = null ) {
 	$post = get_post( $post );
@@ -606,14 +625,23 @@ function hamail_get_message_recipients( $post = null ) {
 			$to[] = $user_id;
 		}
 	}
-	// Unique.
-	$to = array_unique( $to );
+	/**
+	 * hamail_message_recipients
+	 *
+	 * Filter for the recipients of transaction emails.
+	 * Return array should be unique and sequential.
+	 *
+	 * @param array<int, int|string> $to Array of email addresses or user IDs.
+	 * @param WP_Post $post The post object.
+	 */
 	$to = apply_filters( 'hamail_message_recipients', $to, $post );
-	return $to;
+	// Ensure values are unique and sequential.
+	// array_unique() preserves keys, which can create non-sequential indices.
+	return array_values( array_unique( $to ) );
 }
 
 /**
- * Send message
+ * Send transactional email.
  *
  * @param null|int|WP_Post $post
  * @param bool              $force If true, send email if it's already sent or not-published.

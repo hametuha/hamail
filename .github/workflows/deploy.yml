@@ -63,7 +63,10 @@ jobs:
         run: bash bin/clean.sh
 
       - name: Create Zip
-        run: zip -r hamail.zip ./
+        run: |
+          mkdir ${{ github.event.repository.name }}
+          rsync -av --exclude=${{ github.event.repository.name }} --exclude=.git ./ ./${{ github.event.repository.name }}/
+          zip -r ./${{ github.event.repository.name }}.${{ github.ref_name }}.zip ./${{ github.event.repository.name }}
 
       - name: Upload Release Zip
         id: upload-release-asset
@@ -72,8 +75,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.pre_release.outputs.upload_url }}
-          asset_path: ./hamail.zip
-          asset_name: hamail.zip
+          asset_path: ./${{ github.event.repository.name }}.${{ github.ref_name }}.zip
+          asset_name: ${{ github.event.repository.name }}.${{ github.ref_name }}.zip
           asset_content_type: application/zip
 
   wp_org:
