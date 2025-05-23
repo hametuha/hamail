@@ -67,6 +67,10 @@ We have [GitHub Repository](https://github.com/hametuha/hamail). Issues and Pull
 
 ## Changelog
 
+### 2.7.7
+
+* Bugfix: Restore Marketing API.
+
 ### 2.7.5
 
 * Bugfix: fix transaction email error in case duplicated email address.

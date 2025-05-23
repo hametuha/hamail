@@ -61,6 +61,8 @@ function hamail_plugins_loaded() {
 		}
 		// Transaction mail Sender
 		Hametuha\Hamail\API\TransactionMails::get_instance();
+		// Marketing Email.
+		Hametuha\Hamail\API\MarketingEmail::get_instance();
 		// Setting Screen
 		Hametuha\Hamail\Ui\SettingsScreen::get_instance();
 		// Dynamic emails.

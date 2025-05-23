@@ -5,7 +5,7 @@
  */
 
 const { apiFetch, data } = wp;
-const { Component, render } = wp.element;
+const { Component, render, createRoot } = wp.element;
 const { Button, Spinner } = wp.components;
 const { __ } = wp.i18n;
 
@@ -42,7 +42,7 @@ class MarketingStatus extends Component {
 					data.dispatch( 'core/notices' ).removeNotice(
 						res.notice.id
 					);
-				}, 3000 );
+				}, 10000 );
 			} );
 	}
 
@@ -169,7 +169,7 @@ class MarketingStatus extends Component {
 								{ __( 'See in SendGrid', 'hamail' ) }
 							</a>
 							<Button
-								isTeritary={ true }
+								variant="tertiary"
 								onClick={ () => this.unSync() }
 								className="text-sg-grid"
 								isBusy={ loading }
@@ -182,7 +182,7 @@ class MarketingStatus extends Component {
 					<p className="description text-sg-red">
 						{ __( 'This marketing is not syncing.', 'hamail' ) }
 						<Button
-							isTeritary={ true }
+							variant="tertiary"
 							onClick={ () => this.sync() }
 							isBusy={ loading }
 						>
@@ -197,7 +197,16 @@ class MarketingStatus extends Component {
 }
 
 const wrapper = document.getElementById( 'hamail-marketing-info' );
-render(
-	<MarketingStatus post_id={ wrapper.dataset.id }></MarketingStatus>,
-	wrapper
-);
+if ( createRoot ) {
+	// React >= 18
+	const container = createRoot( wrapper );
+	container.render(
+		<MarketingStatus post_id={ wrapper.dataset.id }></MarketingStatus>
+	);
+} else {
+	// React < 18
+	render(
+		<MarketingStatus post_id={ wrapper.dataset.id }></MarketingStatus>,
+		wrapper
+	);
+}
