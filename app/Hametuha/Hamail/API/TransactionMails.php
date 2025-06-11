@@ -23,6 +23,7 @@ class TransactionMails extends Singleton {
 	protected function init() {
 		// Initialize template selector.
 		TemplateSelector::get_instance();
+		UserSearch::get_instance();
 		UserFilter::get_instance();
 		RecipientsList::get_instance();
 		add_action( 'add_meta_boxes', [ $this, 'add_meta_boxes' ] );
@@ -83,6 +84,8 @@ class TransactionMails extends Singleton {
 		if ( wp_verify_nonce( filter_input( INPUT_POST, '_hamailadminnonce' ), 'hamail_as_admin' ) ) {
 			update_post_meta( $post_id, '_hamail_as_admin', filter_input( INPUT_POST, 'hamail_as_admin' ) );
 			update_post_meta( $post_id, '_unsubscribe_group', filter_input( INPUT_POST, 'unsubscribe_group' ) );
+			update_post_meta( $post_id, '_hamail_cc', filter_input( INPUT_POST, 'hamail_cc' ) );
+			update_post_meta( $post_id, '_hamail_bcc', filter_input( INPUT_POST, 'hamail_bcc' ) );
 		}
 		// Save meta data.
 		if ( wp_verify_nonce( filter_input( INPUT_POST, '_hamail_recipients' ), 'hamail_recipients' ) ) {
@@ -114,7 +117,10 @@ class TransactionMails extends Singleton {
 	public function save_post_and_send_mail( $post_id, $post ) {
 		// Try sending mail.
 		if ( 'publish' === $post->post_status && ! hamail_is_sent( $post ) ) {
-			hamail_send_message( $post );
+			$result = hamail_send_message( $post );
+			if ( is_wp_error( $result ) ) {
+				error_log( sprintf( 'HAMAIL_ERROR: %s', $result->get_error_message() ) );
+			}
 		}
 	}
 
@@ -130,7 +136,7 @@ class TransactionMails extends Singleton {
 		if ( 'hamail' !== $post->post_type ) {
 			return;
 		}
-		if ( 'publish' !== $new_status || 'future' !== $old_status ) {
+		if ( 'publish' !== $new_status || ! in_array( $old_status, [ 'future', 'pending' ], true ) ) {
 			// This is not scheduled post publication.
 			return;
 		}
@@ -139,7 +145,10 @@ class TransactionMails extends Singleton {
 			return;
 		}
 		// Send mail.
-		hamail_send_message( $post );
+		$result = hamail_send_message( $post );
+		if ( is_wp_error( $result ) ) {
+			error_log( sprintf( 'HAMAIL_ERROR: %s', $result->get_error_message() ) );
+		}
 	}
 
 	/**
@@ -407,6 +416,18 @@ class TransactionMails extends Singleton {
 				<?php esc_html_e( 'Send as Site Admin', 'hamail' ); ?>
 			</label>
 		<?php endif; ?>
+		<hr />
+		<p>
+			<strong><label for="hamail-cc">CC</label></strong><br />
+			<textarea class="widefat" rows="2" name="hamail_cc" id="hamail-cc"><?php echo esc_textarea( get_post_meta( $post->ID, '_hamail_cc', true ) ); ?></textarea>
+		</p>
+		<p>
+			<strong><label for="hamail-bcc">BCC</label></strong>
+			<textarea class="widefat" rows="2" name="hamail_bcc" id="hamail-bcc"><?php echo esc_textarea( get_post_meta( $post->ID, '_hamail_bcc', true ) ); ?></textarea>
+		</p>
+		<p class="description">
+			<?php esc_html_e( 'You can set CC and BCC addresses in CSV format.', 'hamail' ); ?>
+		</p>
 		<hr />
 		<h4><label for="unsubscribe-group"><?php esc_html_e( 'Unsubscribe', 'hamail' ); ?></label></h4>
 		<select name="unsubscribe_group" id="unsubscribe-group" style="box-sizing: border-box;">
