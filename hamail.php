@@ -73,6 +73,8 @@ function hamail_plugins_loaded() {
 		Hametuha\Hamail\Ui\ListTable\RecipientsColumn::get_instance();
 		// Enable user sync.
 		Hametuha\Hamail\API\UserSync::get_instance();
+		// Enable user search API.
+		Hametuha\Hamail\API\UserSearch::get_instance();
 		// Enable CSV user
 		Hametuha\Hamail\API\UserDataGenerator::get_instance();
 		// Register command for CLI.
