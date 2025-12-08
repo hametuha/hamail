@@ -21,7 +21,8 @@
 		"lint:js": "wp-scripts lint-js './src/js/**/*.js'",
 		"format:js": "eslint --fix ./src/js",
 		"format:css": "stylelint --fix ./src/scss",
-		"watch": "npm-watch"
+		"watch": "npm-watch",
+		"prepare": "husky"
 	},
 	"repository": {
 		"type": "git",
@@ -47,6 +48,7 @@
 		"@wordpress/env": "^10.0.0",
 		"@wordpress/scripts": "^31.1.0",
 		"cssnano": "^7.0.1",
+		"husky": "^9.1.7",
 		"npm-watch": "^0.13.0",
 		"postcss-cli": "^11.0.0"
 	},

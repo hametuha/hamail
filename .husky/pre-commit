@@ -1,0 +1,22 @@
+#!/bin/sh
+
+# Get staged files
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACMR)
+
+# Check for PHP files
+if echo "$STAGED_FILES" | grep -qE '\.php$'; then
+  echo "Running composer lint..."
+  composer lint
+fi
+
+# Check for JS files
+if echo "$STAGED_FILES" | grep -qE '\.js$'; then
+  echo "Running npm lint:js..."
+  npm run lint:js
+fi
+
+# Check for SCSS files
+if echo "$STAGED_FILES" | grep -qE '\.scss$'; then
+  echo "Running npm lint:css..."
+  npm run lint:css
+fi
