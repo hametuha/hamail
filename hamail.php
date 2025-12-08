@@ -5,7 +5,7 @@
  * Description: A WordPress plugin for sending e-mail via SendGrid.
  * Author: Hametuha INC.
  * Version: nightly
- * Requires at least: 5.9
+ * Requires at least: 6.6
  * Requires PHP: 7.4
  * Author URI: https://hametuha.co.jp/
  * License: GPL3 or later

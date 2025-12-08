@@ -1,25 +1,25 @@
 {
-    "name": "hametuha/hamail",
-    "description": "A WordPress plugin to send email",
-    "type": "plugin",
-    "license": "GPL-3.0-or-later",
-    "scripts": {
-        "test": "phpunit",
-        "lint": "phpcs --standard=phpcs.ruleset.xml",
-        "lint:csv": "phpcs --standard=phpcs.ruleset.xml --report=csv | column -s , -t",
+	"name": "hametuha/hamail",
+	"description": "A WordPress plugin to send email",
+	"type": "plugin",
+	"license": "GPL-3.0-or-later",
+	"scripts": {
+		"test": "phpunit",
+		"lint": "phpcs --standard=phpcs.ruleset.xml",
+		"lint:csv": "phpcs --standard=phpcs.ruleset.xml --report=csv | column -s , -t",
 		"fix": "phpcbf --standard=phpcs.ruleset.xml"
 	},
-    "authors": [
-        {
-            "name": "hametuha",
-            "email": "info@hametuha.co.jp"
-        }
-    ],
-    "minimum-stability": "stable",
-	"repositories":[
+	"authors": [
 		{
-			"type":"composer",
-			"url":"https://wpackagist.org",
+			"name": "hametuha",
+			"email": "info@hametuha.co.jp"
+		}
+	],
+	"minimum-stability": "stable",
+	"repositories": [
+		{
+			"type": "composer",
+			"url": "https://wpackagist.org",
 			"only": [
 				"wpackagist-plugin/*",
 				"wpackagist-theme/*"
@@ -27,28 +27,28 @@
 		}
 	],
 	"require": {
-        "php": ">=7.2.34",
-        "sendgrid/sendgrid": "^7.9",
-        "tijsverkoyen/css-to-inline-styles": "^2.2"
-    },
-    "require-dev": {
-        "phpunit/phpunit": "^6|^7|^8|^9",
-		"yoast/phpunit-polyfills": "^2.0|^3.0",
-        "wp-coding-standards/wpcs": "^3.0",
-        "wpackagist-plugin/contact-form-7": "^5.9",
-        "wpackagist-plugin/jetpack": "^13.9",
-        "wpackagist-plugin/flamingo": "^2.5"
-    },
-    "autoload": {
-        "psr-0": {
-            "Hametuha\\Hamail": "app"
-        }
-    },
-    "autoload-dev": {
-        "psr-0": {
-            "Hametuha\\HamailDev": "tests/app"
-        }
-    },
+		"php": ">=7.4",
+		"sendgrid/sendgrid": "^7.9",
+		"tijsverkoyen/css-to-inline-styles": "^2.2"
+	},
+	"require-dev": {
+		"phpunit/phpunit": "^8|^9",
+		"yoast/phpunit-polyfills": "^3.0",
+		"wp-coding-standards/wpcs": "^3.0",
+		"wpackagist-plugin/contact-form-7": "^5.9",
+		"wpackagist-plugin/jetpack": "^13.9",
+		"wpackagist-plugin/flamingo": "^2.5"
+	},
+	"autoload": {
+		"psr-0": {
+			"Hametuha\\Hamail": "app"
+		}
+	},
+	"autoload-dev": {
+		"psr-0": {
+			"Hametuha\\HamailDev": "tests/app"
+		}
+	},
 	"extra": {
 		"installer-paths": {
 			"vendor/wp-plugins/{$name}/": [
@@ -56,13 +56,13 @@
 			]
 		}
 	},
-    "config": {
-        "allow-plugins": {
-            "dealerdirect/phpcodesniffer-composer-installer": true,
-            "composer/installers": true
-        },
+	"config": {
+		"allow-plugins": {
+			"dealerdirect/phpcodesniffer-composer-installer": true,
+			"composer/installers": true
+		},
 		"platform": {
-			"php": "7.2.34"
+			"php": "7.4"
 		}
-    }
+	}
 }
