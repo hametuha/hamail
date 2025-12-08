@@ -67,6 +67,10 @@ We have [GitHub Repository](https://github.com/hametuha/hamail). Issues and Pull
 
 ## Changelog
 
+### 2.8.0
+
+* Bump WordPress and PHP version.
+
 ### 2.7.7
 
 * Bugfix: Restore Marketing API.

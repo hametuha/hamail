@@ -5,6 +5,7 @@
 .git
 .github
 .gitignore
+.husky
 .node-version
 .phpcs.xml
 .wordpress-org

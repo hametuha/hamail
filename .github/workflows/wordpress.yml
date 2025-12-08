@@ -10,8 +10,8 @@ jobs:
     name: PHP Unit Test
     strategy:
       matrix:
-        php: [ '7.2', '7.4', '8.1' ] # PHP versions to check.
-        wp: [ 'latest', '5.9' ]      # WordPress version to check.
+        php: [ '7.4', '8.2' ] # PHP versions to check.
+        wp: [ 'latest', '6.6' ]      # WordPress version to check.
     uses: tarosky/workflows/.github/workflows/wp-unit-test.yml@main
     with:
       php_version: ${{ matrix.php }}
@@ -21,13 +21,13 @@ jobs:
     name: PHP Syntax Check
     uses: tarosky/workflows/.github/workflows/phpcs.yml@main
     with:
-      version: 8.0
+      version: 7.4
 
   php-lint:
     name: PHP Syntax Check for Plugin Directory
     uses: tarosky/workflows/.github/workflows/phplint.yml@main
     with:
-      php_versions: '["7.2", "8.0", "8.2"]'
+      php_versions: '["7.4", "8.2"]'
 
   assets:
     name: Check JS and CSS syntax

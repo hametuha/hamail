@@ -5,8 +5,8 @@
  * Description: A WordPress plugin for sending e-mail via SendGrid.
  * Author: Hametuha INC.
  * Version: nightly
- * Requires at least: 5.9
- * Requires PHP: 7.2
+ * Requires at least: 6.6
+ * Requires PHP: 7.4
  * Author URI: https://hametuha.co.jp/
  * License: GPL3 or later
  * License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -73,6 +73,8 @@ function hamail_plugins_loaded() {
 		Hametuha\Hamail\Ui\ListTable\RecipientsColumn::get_instance();
 		// Enable user sync.
 		Hametuha\Hamail\API\UserSync::get_instance();
+		// Enable user search API.
+		Hametuha\Hamail\API\UserSearch::get_instance();
 		// Enable CSV user
 		Hametuha\Hamail\API\UserDataGenerator::get_instance();
 		// Register command for CLI.
