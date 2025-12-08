@@ -22,6 +22,6 @@ add_action( 'pre_get_comments', function ( $query ) {
 	if ( ! is_array( $type_not_in ) ) {
 		$type_not_in = [];
 	}
-	$type_not_in[] = 'hamail-log';
+	$type_not_in[]                     = 'hamail-log';
 	$query->query_vars['type__not_in'] = $type_not_in;
 } );
