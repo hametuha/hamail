@@ -44,6 +44,7 @@
 	},
 	"homepage": "https://github.com/hametuha/hamail#readme",
 	"devDependencies": {
+		"@babel/runtime": "^7.28.4",
 		"@kunoichi/grab-deps": "^3.0.0",
 		"@wordpress/env": "^10.0.0",
 		"@wordpress/scripts": "^31.1.0",
