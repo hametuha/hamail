@@ -47,7 +47,7 @@
 		"@babel/runtime": "^7.28.4",
 		"@kunoichi/grab-deps": "^3.0.0",
 		"@wordpress/env": "^10.0.0",
-		"@wordpress/scripts": "^31.1.0",
+		"@wordpress/scripts": "^31.6.0",
 		"cssnano": "^7.0.1",
 		"husky": "^9.1.7",
 		"npm-watch": "^0.13.0",
