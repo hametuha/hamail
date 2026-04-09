@@ -15,6 +15,9 @@ composer.lock
 package-lock.json
 package.json
 phpcs.ruleset.xml
+phpstan.neon
+phpstan-baseline.neon
+phpstan-bootstrap.php
 phpunit.xml.dist
 README.md
 stylelint.config.js
