@@ -165,6 +165,22 @@ class SettingsScreen extends Singleton {
 					<?php submit_button( __( 'Send mail', 'hamail' ) ); ?>
 				</form>
 			<?php endif; ?>
+
+			<hr />
+
+			<h2><?php esc_html_e( 'Volatile Custom Fields', 'hamail' ); ?></h2>
+			<p class="description">
+				<?php
+				printf(
+					// translators: %s is plugin name.
+					wp_kses_post( __( 'These custom fields represent send/schedule state and should not be carried over when a post is duplicated. If you use a plugin like %s, copy the keys below into its "Do not copy these fields" setting.', 'hamail' ) ),
+					'<a href="https://wordpress.org/plugins/duplicate-post/" target="_blank" rel="noopener noreferrer">Yoast Duplicate Post</a>'
+				);
+				?>
+			</p>
+			<p>
+				<code><?php echo esc_html( implode( ', ', hamail_volatile_meta_keys() ) ); ?></code>
+			</p>
 		</div><!-- //.wrap -->
 		<?php
 	}
