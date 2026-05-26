@@ -67,6 +67,10 @@ We have [GitHub Repository](https://github.com/hametuha/hamail). Issues and Pull
 
 ## Changelog
 
+### 2.8.1
+
+* Add `hamail_volatile_meta_keys()` function and filter to list custom fields (e.g. `_hamail_sent`, `_hamail_marketing_id`) that should not be carried over when duplicating posts. The list is also shown on the Hamail dashboard so you can configure plugins like Yoast Duplicate Post.
+
 ### 2.8.0
 
 * Bump WordPress and PHP version.
