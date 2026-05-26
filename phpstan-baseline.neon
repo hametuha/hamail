@@ -1,0 +1,349 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^PHPDoc tag @return has invalid value \(array\<array\{id\:string, label\:string,options\:array\<string,string\>\}, type\:string\>\)\: Unexpected token "\:", expected ''\>'' at offset 109 on line 4$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: app/Hametuha/Hamail/API/Helper/UserFilter.php
+
+		-
+			message: '#^Access to an undefined property WP_Post\:\:\$_is_default\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Hametuha/Hamail/API/MarketingEmail.php
+
+		-
+			message: '#^Call to an undefined method SendGrid\\Client\:\:contactdb\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: app/Hametuha/Hamail/API/MarketingEmail.php
+
+		-
+			message: '#^If condition is always true\.$#'
+			identifier: if.alwaysTrue
+			count: 1
+			path: app/Hametuha/Hamail/API/MarketingEmail.php
+
+		-
+			message: '#^Method Hametuha\\Hamail\\API\\MarketingEmail\:\:get_logs\(\) should return array\<array\{id\: int, author\: int, content\: string, date\: string\}\> but returns array\<array\{id\: string, author\: string, content\: string, date\: string\}\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Hametuha/Hamail/API/MarketingEmail.php
+
+		-
+			message: '#^Parameter \#1 \$name of method SendGrid\\Client\:\:_\(\) expects string\|null, int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Hametuha/Hamail/API/MarketingEmail.php
+
+		-
+			message: '#^Parameter \#1 \$text of function esc_attr expects string, int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Hametuha/Hamail/API/MarketingEmail.php
+
+		-
+			message: '#^Call to an undefined method SendGrid\\Client\:\:contactdb\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: app/Hametuha/Hamail/API/TransactionMails.php
+
+		-
+			message: '#^Parameter \#1 \$query of class WP_User_Query constructor expects array\{blog_id\?\: int, role\?\: array\<string\>\|string, role__in\?\: array\<string\>, role__not_in\?\: array\<string\>, meta_key\?\: array\<string\>\|string, meta_value\?\: array\<string\>\|string, meta_compare\?\: string, meta_compare_key\?\: string, \.\.\.\}\|null, array\{include\: non\-empty\-list\<non\-falsy\-string&numeric\-string\>\} given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Hametuha/Hamail/API/TransactionMails.php
+
+		-
+			message: '#^Parameter \#2 \$user_id of function get_the_author_meta expects int\|false, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Hametuha/Hamail/API/TransactionMails.php
+
+		-
+			message: '#^Call to function is_wp_error\(\) with bool will always evaluate to false\.$#'
+			identifier: function.impossibleType
+			count: 1
+			path: app/Hametuha/Hamail/API/UserDataGenerator.php
+
+		-
+			message: '#^Parameter \#3 \$args of function wp_schedule_single_event expects list\<mixed\>, array\{path\: mixed\} given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Hametuha/Hamail/API/UserDataGenerator.php
+
+		-
+			message: '#^If condition is always true\.$#'
+			identifier: if.alwaysTrue
+			count: 1
+			path: app/Hametuha/Hamail/API/UserSearch.php
+
+		-
+			message: '#^Call to an undefined method SendGrid\\Client\:\:contactdb\(\)\.$#'
+			identifier: method.notFound
+			count: 10
+			path: app/Hametuha/Hamail/API/UserSync.php
+
+		-
+			message: '#^Negated boolean expression is always false\.$#'
+			identifier: booleanNot.alwaysFalse
+			count: 1
+			path: app/Hametuha/Hamail/API/UserSync.php
+
+		-
+			message: '#^PHPDoc tag @param has invalid value \(\\stdClass old_user_data\)\: Unexpected token "old_user_data", expected variable at offset 86 on line 5$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: app/Hametuha/Hamail/API/UserSync.php
+
+		-
+			message: '#^PHPDoc tag @param has invalid value \(array\|\\WP_Error\)\: Unexpected token "\\n\\t ", expected variable at offset 100 on line 5$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: app/Hametuha/Hamail/API/UserSync.php
+
+		-
+			message: '#^PHPDoc tag @param has invalid value \(int\|string User ID or email\.\)\: Unexpected token "User", expected variable at offset 56 on line 4$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: app/Hametuha/Hamail/API/UserSync.php
+
+		-
+			message: '#^Unreachable statement \- code above always terminates\.$#'
+			identifier: deadCode.unreachable
+			count: 1
+			path: app/Hametuha/Hamail/API/UserSync.php
+
+		-
+			message: '#^Call to an undefined method SendGrid\\Client\:\:messages\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Hametuha/Hamail/Commands/HamailCommands.php
+
+		-
+			message: '#^Call to method addRow\(\) on an unknown class cli\\Table\.$#'
+			identifier: class.notFound
+			count: 3
+			path: app/Hametuha/Hamail/Commands/HamailCommands.php
+
+		-
+			message: '#^Call to method display\(\) on an unknown class cli\\Table\.$#'
+			identifier: class.notFound
+			count: 3
+			path: app/Hametuha/Hamail/Commands/HamailCommands.php
+
+		-
+			message: '#^Call to method setHeaders\(\) on an unknown class cli\\Table\.$#'
+			identifier: class.notFound
+			count: 3
+			path: app/Hametuha/Hamail/Commands/HamailCommands.php
+
+		-
+			message: '#^Instantiated class cli\\Table not found\.$#'
+			identifier: class.notFound
+			count: 3
+			path: app/Hametuha/Hamail/Commands/HamailCommands.php
+
+		-
+			message: '#^Parameter \#2 \$exit of static method WP_CLI\:\:error\(\) expects bool\|int, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Hametuha/Hamail/Commands/HamailCommands.php
+
+		-
+			message: '#^Parameter \#2 \.\.\.\$values of function sprintf expects bool\|float\|int\|string\|null, Hametuha\\Hamail\\Pattern\\TransactionalEmail given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Hametuha/Hamail/Commands/HamailCommands.php
+
+		-
+			message: '#^PHPDoc tag @method has invalid value \(public \\WP_Error\|bool validate_callback\( \$values\:array \)\)\: Unexpected token "\|", expected ''\('' at offset 99 on line 5$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: app/Hametuha/Hamail/Pattern/Filters/UserFilterPattern.php
+
+		-
+			message: '#^Call to function is_string\(\) with string will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: app/Hametuha/Hamail/Pattern/ListTablePattern.php
+
+		-
+			message: '#^Parameter \#1 \$id of class Hametuha\\Hamail\\Model\\SearchResultItem constructor expects string, int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Hametuha/Hamail/Pattern/RecipientSelector.php
+
+		-
+			message: '#^PHPDoc tag @param has invalid value \(int\|null\|\\WP_Error\)\: Unexpected token "\\n\\t ", expected variable at offset 72 on line 4$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: app/Hametuha/Hamail/Service/Extractor.php
+
+		-
+			message: '#^Call to function is_wp_error\(\) with string will always evaluate to false\.$#'
+			identifier: function.impossibleType
+			count: 1
+			path: app/Hametuha/Hamail/Service/TemplateSelector.php
+
+		-
+			message: '#^Method Hametuha\\Hamail\\Service\\TemplateSelector\:\:get_template_pull_down\(\) should return string but returns WP_Error\.$#'
+			identifier: return.type
+			count: 2
+			path: app/Hametuha/Hamail/Service/TemplateSelector.php
+
+		-
+			message: '#^Parameter \#1 \$query of class WP_User_Query constructor expects array\{blog_id\?\: int, role\?\: array\<string\>\|string, role__in\?\: array\<string\>, role__not_in\?\: array\<string\>, meta_key\?\: array\<string\>\|string, meta_value\?\: array\<string\>\|string, meta_compare\?\: string, meta_compare_key\?\: string, \.\.\.\}\|null, array\{include\: non\-empty\-array\<int\<0, max\>, non\-falsy\-string\>, number\: \-1\} given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Hametuha/Hamail/Ui/ListTable/RecipientsColumn.php
+
+		-
+			message: '#^Cannot access property \$ID on string\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Hametuha/Hamail/Ui/MarketingTemplate.php
+
+		-
+			message: '#^If condition is always false\.$#'
+			identifier: if.alwaysFalse
+			count: 1
+			path: app/Hametuha/Hamail/Ui/MarketingTemplate.php
+
+		-
+			message: '#^Parameter \#1 \$post of method Hametuha\\Hamail\\Ui\\MarketingTemplate\:\:apply_template\(\) expects string, WP_Post\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Hametuha/Hamail/Ui/MarketingTemplate.php
+
+		-
+			message: '#^Parameter \#2 \$default of method Hametuha\\Hamail\\Ui\\MarketingTemplate\:\:get_templates\(\) expects false, true given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Hametuha/Hamail/Ui/MarketingTemplate.php
+
+		-
+			message: '#^Call to an undefined method SendGrid\\Client\:\:contactdb\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: app/Hametuha/Hamail/Ui/SettingsScreen.php
+
+		-
+			message: '#^Call to function is_wp_error\(\) with string will always evaluate to false\.$#'
+			identifier: function.impossibleType
+			count: 1
+			path: app/Hametuha/Hamail/Ui/SettingsScreen.php
+
+		-
+			message: '#^Cannot call method get_error_code\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Hametuha/Hamail/Ui/SettingsScreen.php
+
+		-
+			message: '#^Found usage of constant DOING_AJAX\. Use wp_doing_ajax\(\) instead\.$#'
+			identifier: phpstanWP.wpConstant.fetch
+			count: 1
+			path: app/Hametuha/Hamail/Ui/SettingsScreen.php
+
+		-
+			message: '#^Parameter \#6 \$callback of function add_submenu_page expects ''''\|\(callable\(\)\: mixed\), null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Hametuha/Hamail/Ui/SettingsScreen.php
+
+		-
+			message: '#^Function hamail_get_groups\(\) should return array\<Hametuha\\Hamail\\Pattern\\UserGroup\> but return statement is missing\.$#'
+			identifier: return.missing
+			count: 1
+			path: functions/groups.php
+
+		-
+			message: '#^PHPDoc tag @return has invalid value \(\\Hametuha\\Hamail\\Pattern\\UserGroup\[\];\)\: Unexpected token ";", expected TOKEN_HORIZONTAL_WS at offset 100 on line 5$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: functions/groups.php
+
+		-
+			message: '#^Call to function is_array\(\) with array will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: functions/mail.php
+
+		-
+			message: '#^Call to function is_array\(\) with int\|string will always evaluate to false\.$#'
+			identifier: function.impossibleType
+			count: 1
+			path: functions/mail.php
+
+		-
+			message: '#^Call to function is_array\(\) with non\-empty\-array\<non\-falsy\-string\> will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: functions/mail.php
+
+		-
+			message: '#^Call to function is_wp_error\(\) with array\{id\: int, email\: string, name\: string, substitutions\: array\|WP_Error, custom_args\: int\} will always evaluate to false\.$#'
+			identifier: function.impossibleType
+			count: 1
+			path: functions/mail.php
+
+		-
+			message: '#^Expected 2 @param tags, found 1\.$#'
+			identifier: paramTag.count
+			count: 1
+			path: functions/mail.php
+
+		-
+			message: '#^If condition is always true\.$#'
+			identifier: if.alwaysTrue
+			count: 1
+			path: functions/mail.php
+
+		-
+			message: '#^PHPDoc tag @param has invalid value \(null\|bool If true or false is passed, setting will be change\.\)\: Unexpected token "If", expected variable at offset 60 on line 4$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: functions/mail.php
+
+		-
+			message: '#^Parameter \#1 \$attachments of method SendGrid\\Mail\\Mail\:\:addAttachments\(\) expects array\<SendGrid\\Mail\\Attachment\>, list\<array\<string, string\>\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: functions/mail.php
+
+		-
+			message: '#^Parameter \#1 \$query of class WP_User_Query constructor expects array\{blog_id\?\: int, role\?\: array\<string\>\|string, role__in\?\: array\<string\>, role__not_in\?\: array\<string\>, meta_key\?\: array\<string\>\|string, meta_value\?\: array\<string\>\|string, meta_compare\?\: string, meta_compare_key\?\: string, \.\.\.\}\|null, array\{include\: non\-empty\-list\<numeric\-string\>, number\: \-1, fields\: ''ID''\} given\.$#'
+			identifier: argument.type
+			count: 1
+			path: functions/mail.php
+
+		-
+			message: '#^Parameter \#1 \$user_id of function get_userdata expects int, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: functions/mail.php
+
+		-
+			message: '#^Parameter \#2 \$subject of function preg_match expects string, int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: functions/mail.php
+
+		-
+			message: '#^Parameter \#3 \$filters of method Hametuha\\Hamail\\API\\Helper\\UserFilter\:\:user_query\(\) expects array\<string, array\<string\>\>, array\<array\<int, array\<string\>\|string\>\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: functions/mail.php
+
+		-
+			message: '#^Call to an undefined method SendGrid\\Client\:\:contactdb\(\)\.$#'
+			identifier: method.notFound
+			count: 7
+			path: functions/marketing.php
+
+		-
+			message: '#^Function hamail_get_recipient_id\(\) should return string but return statement is missing\.$#'
+			identifier: return.missing
+			count: 1
+			path: functions/marketing.php
