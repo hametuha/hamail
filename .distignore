@@ -20,8 +20,8 @@ phpstan-baseline.neon
 phpstan-bootstrap.php
 phpunit.xml.dist
 README.md
+src
 stylelint.config.js
-webpack.config.js
 wordpress
 bin
 tests
