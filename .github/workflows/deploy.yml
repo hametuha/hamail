@@ -7,6 +7,10 @@ on:
 jobs:
   wp_org:
     name: Deploy WordPress.org
+    # Skip non-version releases (e.g. the `ci-artifacts` release used by
+    # Playground preview uploads). The production environment also enforces
+    # a `*.*.*` tag policy as a second line of defense.
+    if: github.event.release.tag_name != 'ci-artifacts'
     runs-on: ubuntu-latest
     environment:
       name: production
