@@ -20,7 +20,7 @@ phpstan-baseline.neon
 phpstan-bootstrap.php
 phpunit.xml.dist
 README.md
-src
+/src
 stylelint.config.js
 wordpress
 bin
