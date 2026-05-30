@@ -2,7 +2,7 @@
 
 Tags: email, sendgrid, marketing  
 Contributors: Takahashi_Fumiki, hametuha  
-Tested up to: 6.8  
+Tested up to: 6.9  
 Stable Tag: nightly  
 License: GPLv3 or later  
 License URI: http://www.gnu.org/licenses/gpl-3.0.txt
@@ -66,6 +66,10 @@ We have [Wiki on GitHub](https://github.com/hametuha/hamail/wiki). Please check 
 We have [GitHub Repository](https://github.com/hametuha/hamail). Issues and Pull Requests are welcomed.
 
 ## Changelog
+
+### 2.8.2
+
+* Bugfix: wrong `.distignore` broke vendor directory.
 
 ### 2.8.1
 
