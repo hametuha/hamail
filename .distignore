@@ -22,7 +22,7 @@ phpunit.xml.dist
 README.md
 /src
 stylelint.config.js
-wordpress
+/wordpress
 bin
 tests
 hamail.php.bak
