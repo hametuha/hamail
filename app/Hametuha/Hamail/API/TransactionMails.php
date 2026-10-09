@@ -23,7 +23,6 @@ class TransactionMails extends Singleton {
 	protected function init() {
 		// Initialize template selector.
 		TemplateSelector::get_instance();
-		UserSearch::get_instance();
 		UserFilter::get_instance();
 		RecipientsList::get_instance();
 		add_action( 'add_meta_boxes', [ $this, 'add_meta_boxes' ] );

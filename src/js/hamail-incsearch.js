@@ -230,7 +230,6 @@ const ItemsController = Backbone.View.extend( {
 			ul,
 			item
 		) {
-			// console.log( item );
 			switch ( item.id ) {
 				case '__total__':
 				case '__next__':
@@ -263,7 +262,6 @@ const ItemsController = Backbone.View.extend( {
 			let hasNext = false;
 			let hasPrev = false;
 			const instance = this.$complete.autocomplete( 'instance' );
-			// console.log( items );
 			items.forEach( ( item ) => {
 				instance._renderItemData( ul, item );
 			} );

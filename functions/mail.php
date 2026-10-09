@@ -473,7 +473,7 @@ function hamail_simple_mail( $recipients, $subject, $body, $additional_headers =
 	$message_ids = [];
 	// CC & BCC
 	$cc  = ! empty( $headers['cc'] ) ? hamail_validate_email_csv( $headers['cc'] ) : [];
-	$bcc = ! empty( $headers['bcc'] ) ? hamail_validate_email_csv( $headers['bcc'] ) : [];
+	$bcc = ! empty( $headers['bcc'] ) ? array_values( array_diff( hamail_validate_email_csv( $headers['bcc'] ), $cc ) ) : [];
 	foreach ( $recipients_slots as $index => $recipients_group ) {
 		try {
 			// Create mail instance.
@@ -507,11 +507,16 @@ function hamail_simple_mail( $recipients, $subject, $body, $additional_headers =
 					$email           = new \SendGrid\Mail\To( $recipient['email'], $recipient['name'] );
 					$personalization->addTo( $email );
 					// Add CC and BCC if set.
+					// SendGrid rejects duplicated addresses among to, cc and bcc in a personalization.
 					foreach ( $cc as $cc_email ) {
-						$personalization->addCc( new SendGrid\Mail\Cc( $cc_email ) );
+						if ( 0 !== strcasecmp( $cc_email, $recipient['email'] ) ) {
+							$personalization->addCc( new SendGrid\Mail\Cc( $cc_email ) );
+						}
 					}
 					foreach ( $bcc as $bcc_email ) {
-						$personalization->addBcc( new SendGrid\Mail\Bcc( $bcc_email ) );
+						if ( 0 !== strcasecmp( $bcc_email, $recipient['email'] ) ) {
+							$personalization->addBcc( new SendGrid\Mail\Bcc( $bcc_email ) );
+						}
 					}
 					$personalization->setSubject( $subject );
 					foreach ( $recipient['substitutions'] as $key => $val ) {
