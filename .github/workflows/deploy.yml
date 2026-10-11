@@ -1,12 +1,15 @@
-name: Deploy Plugin
+name: Deploy to WordPress.org
 
 on:
   release:
     types: [published]
 
+permissions:
+  contents: write
+
 jobs:
-  wp_org:
-    name: Deploy WordPress.org
+  deploy:
+    name: Deploy to WordPress.org
     # Skip non-version releases (e.g. the `ci-artifacts` release used by
     # Playground preview uploads). The production environment also enforces
     # a `*.*.*` tag policy as a second line of defense.
@@ -16,26 +19,36 @@ jobs:
       name: production
       url: https://wordpress.org/plugins/hamail/
     steps:
-      - uses: actions/checkout@main
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Setup PHP with composer
+      - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: 7.4
           tools: composer
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Install NPM
+      - name: Setup Node.JS
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version-file: '.node-version'
 
-      - name: Build package.
-        run: bash bin/build.sh ${{ github.event.release.tag_name }}
+      - name: Install dependencies and build Assets
+        run: |
+          composer install --no-dev --prefer-dist
+          npm ci --ignore-scripts
+          npm run package
 
-      - name: WordPress Plugin Deploy
-        id: deploy
+      - name: Generate readme.txt
+        uses: tarosky/workflows/actions/wp-readme@main
+
+      - name: Versioning
+        uses: tarosky/workflows/actions/versioning@main
+        with:
+          version: ${{ github.event.release.tag_name }}
+          files: readme.txt,hamail.php
+
+      - name: Deploy to WordPress Directory
         uses: 10up/action-wordpress-plugin-deploy@stable
         with:
           generate-zip: true
@@ -45,8 +58,6 @@ jobs:
           SLUG: hamail
 
       - name: Upload Release Asset
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           files: ${{ github.workspace }}/${{ github.event.repository.name }}.zip
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
