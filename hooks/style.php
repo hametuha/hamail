@@ -70,6 +70,7 @@ function hamail_allowed_block_types( $allowed_blocks, $editor_context ) {
 				'core/buttons',
 				'core/button',
 				'core/group',
+				'core/block',
 				'hamail/col',
 				'hamail/row',
 				'hamail/table',
