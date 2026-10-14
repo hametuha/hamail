@@ -65,6 +65,10 @@ We have [Wiki on GitHub](https://github.com/hametuha/hamail/wiki). Please check 
 
 We have [GitHub Repository](https://github.com/hametuha/hamail). Issues and Pull Requests are welcomed.
 
+### Where do I report security bugs found in this plugin?
+
+Please do not post it publicly. Report security bugs through the [Patchstack Vulnerability Disclosure Program](https://patchstack.com/database/report/wordpress/plugin/hamail). The Patchstack team will assist you with verification, CVE assignment, and notify the developers of this plugin.
+
 ## Changelog
 
 ### 2.8.2
