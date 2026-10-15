@@ -19,7 +19,7 @@
 		"lint": "npm run lint:js && npm run lint:css",
 		"lint:css": "wp-scripts lint-style './src/scss/**/*.scss'",
 		"lint:js": "wp-scripts lint-js './src/js/**/*.js'",
-		"format:js": "eslint --fix ./src/js",
+		"format:js": "wp-scripts lint-js ./src/js --fix",
 		"format:css": "stylelint --fix ./src/scss",
 		"watch": "npm-watch",
 		"prepare": "husky"
@@ -32,10 +32,10 @@
 		"wordpress"
 	],
 	"engines": {
-		"node": ">20.18.0"
+		"node": "^22.22.2 || ^24.15.0"
 	},
 	"volta": {
-		"node": "20.18.0"
+		"node": "24.15.0"
 	},
 	"author": "Hametuha INC.",
 	"license": "GPL-3.0-or-later",
@@ -45,10 +45,11 @@
 	"homepage": "https://github.com/hametuha/hamail#readme",
 	"devDependencies": {
 		"@babel/runtime": "^7.28.4",
-		"@kunoichi/grab-deps": "^3.0.0",
+		"@kunoichi/grab-deps": "^3.2.1",
 		"@wordpress/env": "^10.0.0",
-		"@wordpress/scripts": "^31.1.0",
+		"@wordpress/scripts": "^36.1.0",
 		"cssnano": "^7.0.1",
+		"globals": "^17.13.0",
 		"husky": "^9.1.7",
 		"npm-watch": "^0.13.0",
 		"postcss-cli": "^11.0.0"
