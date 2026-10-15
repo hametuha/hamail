@@ -29,19 +29,19 @@
 	],
 	"require": {
 		"php": ">=7.4",
-		"sendgrid/sendgrid": "^8.1",
+		"sendgrid/sendgrid": "^7.9",
 		"tijsverkoyen/css-to-inline-styles": "^2.2"
 	},
 	"require-dev": {
 		"phpunit/phpunit": "^8|^9",
-		"yoast/phpunit-polyfills": "^4.0",
+		"yoast/phpunit-polyfills": "^3.0",
 		"wp-coding-standards/wpcs": "^3.0",
 		"phpstan/phpstan": "^2.1",
 		"szepeviktor/phpstan-wordpress": "^2.0",
 		"php-stubs/wordpress-stubs": "^6.9",
 		"php-stubs/wp-cli-stubs": "^2.10",
-		"wpackagist-plugin/contact-form-7": "^6.2",
-		"wpackagist-plugin/jetpack": "^16.3",
+		"wpackagist-plugin/contact-form-7": "^5.9",
+		"wpackagist-plugin/jetpack": "^13.9",
 		"wpackagist-plugin/flamingo": "^2.5"
 	},
 	"autoload": {
