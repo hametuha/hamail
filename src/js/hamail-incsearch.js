@@ -153,10 +153,26 @@ const ItemsController = Backbone.View.extend( {
 						return response.json();
 					} )
 					.then( ( response ) => {
-						callback( response );
+						if ( response && response.length === 0 ) {
+							callback( [ {
+								id: '__no_results__',
+								label: __( 'No matching items found', 'hamail' ),
+								type: 'message',
+							} ] );
+						} else {
+							callback( response );
+						}
 					} )
-					.catch( ( response ) => {
-						callback( response );
+					.catch( () => {
+						this.$complete.autocomplete( 'option', {
+							hasNext: false,
+							total: 0,
+						} );
+						callback( [ {
+							id: '__no_results__',
+							label: __( 'No matching items found', 'hamail' ),
+							type: 'message',
+						} ] );
 					} );
 			},
 			focus() {
@@ -224,6 +240,13 @@ const ItemsController = Backbone.View.extend( {
 							item.id.replace( /_/g, '' ),
 							item.label,
 						),
+					).appendTo( ul );
+				case '__no_results__':
+					return $(
+						sprintf(
+							'<li class="hamail-search-no-results"><div>%s</div></li>',
+							item.label
+						)
 					).appendTo( ul );
 				default:
 					return $(
