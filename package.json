@@ -34,9 +34,6 @@
 	"engines": {
 		"node": "^22.22.2 || ^24.15.0"
 	},
-	"volta": {
-		"node": "24.15.0"
-	},
 	"author": "Hametuha INC.",
 	"license": "GPL-3.0-or-later",
 	"bugs": {
