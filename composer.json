@@ -41,7 +41,7 @@
 		"php-stubs/wordpress-stubs": "^6.9",
 		"php-stubs/wp-cli-stubs": "^2.10",
 		"wpackagist-plugin/contact-form-7": "^5.9",
-		"wpackagist-plugin/jetpack": "^13.9",
+		"wpackagist-plugin/jetpack": "^16.3",
 		"wpackagist-plugin/flamingo": "^2.5"
 	},
 	"autoload": {
