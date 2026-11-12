@@ -183,6 +183,7 @@ const ItemsController = Backbone.View.extend( {
 				const curPage = instance.options.curPage;
 				switch ( ui.item.id ) {
 					case '__total__':
+					case '__no_results__':
 						return false;
 					case '__prev__':
 						if ( 1 < curPage ) {
@@ -245,8 +246,8 @@ const ItemsController = Backbone.View.extend( {
 					return $(
 						sprintf(
 							'<li class="hamail-search-no-results"><div>%s</div></li>',
-							item.label
-						)
+							item.label,
+						),
 					).appendTo( ul );
 				default:
 					return $(
