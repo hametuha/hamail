@@ -3,6 +3,7 @@
 namespace Hametuha\Hamail\API;
 
 
+use Hametuha\Hamail\Controller\PrivatePostsController;
 use Hametuha\Hamail\Pattern\Singleton;
 use Hametuha\Hamail\Ui\MarketingTemplate;
 use Hametuha\Hamail\Ui\SettingsScreen;
@@ -617,16 +618,17 @@ class MarketingEmail extends Singleton {
 		// Post type.
 		$hamail_post_type = get_post_type_object( 'hamail' );
 		$args             = apply_filters( 'hamail_marketing_post_type_arg', [
-			'label'             => __( 'Marketing Email', 'hamail' ),
-			'public'            => false,
-			'show_ui'           => true,
-			'show_in_rest'      => true,
-			'show_in_admin_bar' => false,
-			'show_in_menu'      => SettingsScreen::get_instance()->slug,
-			'menu_position'     => 21,
-			'supports'          => [ 'title', 'editor', 'author', 'excerpt' ],
-			'capability_type'   => 'page',
-			'taxonomies'        => [ hamail_marketing_category_taxonomy() ],
+			'label'                 => __( 'Marketing Email', 'hamail' ),
+			'public'                => false,
+			'show_ui'               => true,
+			'show_in_rest'          => true,
+			'rest_controller_class' => PrivatePostsController::class,
+			'show_in_admin_bar'     => false,
+			'show_in_menu'          => SettingsScreen::get_instance()->slug,
+			'menu_position'         => 21,
+			'supports'              => [ 'title', 'editor', 'author', 'excerpt' ],
+			'capability_type'       => 'page',
+			'taxonomies'            => [ hamail_marketing_category_taxonomy() ],
 		] );
 		register_post_type( self::POST_TYPE, $args );
 		// Taxonomy.
