@@ -1,6 +1,6 @@
 .browserslistrc
 .editorconfig
-.eslintrc
+eslint.config.mjs
 .distignore
 .git
 .github

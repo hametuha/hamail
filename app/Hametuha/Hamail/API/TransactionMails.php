@@ -5,6 +5,7 @@ namespace Hametuha\Hamail\API;
 
 use Hametuha\Hamail\API\Helper\RecipientsList;
 use Hametuha\Hamail\API\Helper\UserFilter;
+use Hametuha\Hamail\Controller\PrivatePostsController;
 use Hametuha\Hamail\Pattern\Singleton;
 use Hametuha\Hamail\Service\TemplateSelector;
 use Hametuha\Hamail\Ui\SettingsScreen;
@@ -45,15 +46,16 @@ class TransactionMails extends Singleton {
 			return;
 		}
 		$args = [
-			'label'           => __( 'Transaction Mail', 'hamail' ),
-			'public'          => false,
-			'show_ui'         => true,
-			'menu_icon'       => 'dashicons-buddicons-pm',
-			'supports'        => [ 'title', 'editor', 'author', 'excerpt' ],
-			'capability_type' => 'page',
-			'show_in_rest'    => true,
-			'show_in_menu'    => SettingsScreen::get_instance()->slug,
-			'menu_position'   => 20,
+			'label'                 => __( 'Transaction Mail', 'hamail' ),
+			'public'                => false,
+			'show_ui'               => true,
+			'menu_icon'             => 'dashicons-buddicons-pm',
+			'supports'              => [ 'title', 'editor', 'author', 'excerpt' ],
+			'capability_type'       => 'page',
+			'show_in_rest'          => true,
+			'rest_controller_class' => PrivatePostsController::class,
+			'show_in_menu'          => SettingsScreen::get_instance()->slug,
+			'menu_position'         => 20,
 		];
 		/**
 		 * Arguments for hamail custom post type.

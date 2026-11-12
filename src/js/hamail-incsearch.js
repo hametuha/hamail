@@ -77,7 +77,7 @@ const ItemsController = Backbone.View.extend( {
 			{
 				id: '',
 			},
-			options
+			options,
 		);
 		// Initialize with given value.
 		this.$el = $( '#' + this.options.id );
@@ -147,7 +147,7 @@ const ItemsController = Backbone.View.extend( {
 								'more' === response.headers.get( 'X-WP-Next' ),
 							total: parseInt(
 								response.headers.get( 'X-WP-Total' ),
-								10
+								10,
 							),
 						} );
 						return response.json();
@@ -228,7 +228,7 @@ const ItemsController = Backbone.View.extend( {
 		// Render item.
 		this.$complete.autocomplete( 'instance' )._renderItem = function(
 			ul,
-			item
+			item,
 		) {
 			switch ( item.id ) {
 				case '__total__':
@@ -238,8 +238,8 @@ const ItemsController = Backbone.View.extend( {
 						sprintf(
 							'<li class="hamail-search-nav %1$s"><div>%2$s</div></li>',
 							item.id.replace( /_/g, '' ),
-							item.label
-						)
+							item.label,
+						),
 					).appendTo( ul );
 				case '__no_results__':
 					return $(
@@ -250,14 +250,14 @@ const ItemsController = Backbone.View.extend( {
 					).appendTo( ul );
 				default:
 					return $(
-						sprintf( '<li><div>%s</div></li>', item.label )
+						sprintf( '<li><div>%s</div></li>', item.label ),
 					).appendTo( ul );
 			}
 		};
 		// Render Menu.
 		this.$complete.autocomplete( 'instance' )._renderMenu = (
 			ul,
-			items
+			items,
 		) => {
 			let hasNext = false;
 			let hasPrev = false;
@@ -283,7 +283,7 @@ const ItemsController = Backbone.View.extend( {
 						label: sprintf(
 							'<span class="hamail-search-result"> %1$d/%2$d </span>',
 							instance.options.curPage,
-							Math.ceil( instance.options.total / 10 )
+							Math.ceil( instance.options.total / 10 ),
 						),
 						type: 'nav',
 					},
@@ -296,13 +296,13 @@ const ItemsController = Backbone.View.extend( {
 				if ( hasPrev ) {
 					parts[ 0 ].label = sprintf(
 						'<span class="dashicons dashicons-arrow-left"></span> %s',
-						__( 'Previous', 'hamail' )
+						__( 'Previous', 'hamail' ),
 					);
 				}
 				if ( hasNext ) {
 					parts[ 2 ].label = sprintf(
 						'%s <span class="dashicons dashicons-arrow-right"></span>',
-						__( 'Next', 'hamail' )
+						__( 'Next', 'hamail' ),
 					);
 				}
 				parts.forEach( ( item ) => {
@@ -346,7 +346,7 @@ const ItemsController = Backbone.View.extend( {
 						const model = new Item( item );
 						this.collection.add( model );
 					},
-					this
+					this,
 				);
 			} )
 			.catch( () => {} )

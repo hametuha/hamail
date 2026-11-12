@@ -11,6 +11,6 @@ const $ = jQuery;
 $( () => {
 	wp.codeEditor.initialize(
 		document.getElementById( 'hamail-template-body' ),
-		HamailCodeEditor
+		HamailCodeEditor,
 	);
 } );

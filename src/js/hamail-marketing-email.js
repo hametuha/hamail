@@ -40,7 +40,7 @@ class MarketingStatus extends Component {
 			.then( ( res ) => {
 				setTimeout( () => {
 					data.dispatch( 'core/notices' ).removeNotice(
-						res.notice.id
+						res.notice.id,
 					);
 				}, 10000 );
 			} );
@@ -68,7 +68,7 @@ class MarketingStatus extends Component {
 							loading: false,
 						} );
 					} );
-			}
+			},
 		);
 	}
 
@@ -95,7 +95,7 @@ class MarketingStatus extends Component {
 							loading: false,
 						} );
 					} );
-			}
+			},
 		);
 	}
 
@@ -104,8 +104,8 @@ class MarketingStatus extends Component {
 			window.confirm(
 				__(
 					'This action removes syncing campaign draft from SendGrid. This is helpful for changing mail type(e.g. plain text to html). Are you sure?',
-					'hamail'
-				)
+					'hamail',
+				),
 			)
 		) {
 			this.setState(
@@ -131,7 +131,7 @@ class MarketingStatus extends Component {
 								loading: false,
 							} );
 						} );
-				}
+				},
 			);
 		}
 	}
@@ -201,12 +201,12 @@ if ( createRoot ) {
 	// React >= 18
 	const container = createRoot( wrapper );
 	container.render(
-		<MarketingStatus post_id={ wrapper.dataset.id }></MarketingStatus>
+		<MarketingStatus post_id={ wrapper.dataset.id }></MarketingStatus>,
 	);
 } else {
 	// React < 18
 	render(
 		<MarketingStatus post_id={ wrapper.dataset.id }></MarketingStatus>,
-		wrapper
+		wrapper,
 	);
 }
