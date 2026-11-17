@@ -103,7 +103,7 @@ trait ApiUtility {
 			// Success.
 			return $body;
 		} else {
-			$message = __( 'Sendgrid API returns error. Please try again.', 'namail' );
+			$message = __( 'Sendgrid API returns error. Please try again.', 'hamail' );
 			if ( ! empty( $body['errors'] ) ) {
 				$messages = [];
 				foreach ( $body['errors'] as $error ) {

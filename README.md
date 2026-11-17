@@ -2,7 +2,7 @@
 
 Tags: email, sendgrid, marketing  
 Contributors: Takahashi_Fumiki, hametuha  
-Tested up to: 6.9  
+Tested up to: 7.1  
 Stable Tag: nightly  
 License: GPLv3 or later  
 License URI: http://www.gnu.org/licenses/gpl-3.0.txt
@@ -70,6 +70,14 @@ We have [GitHub Repository](https://github.com/hametuha/hamail). Issues and Pull
 Please do not post it publicly. Report security bugs through the [Patchstack Vulnerability Disclosure Program](https://patchstack.com/database/report/wordpress/plugin/hamail). The Patchstack team will assist you with verification, CVE assignment, and notify the developers of this plugin.
 
 ## Changelog
+
+### 2.9.0
+
+* Security: Transaction mails (`hamail`) and marketing mails (`marketing-mail`) are no longer readable via REST API (`/wp/v2/hamail`, `/wp/v2/marketing-mail`) without edit capability. Previously, the subject and body of sent mails were readable by anyone. Please update as soon as possible.
+* Add CC and BCC fields to transaction mails.
+* Synced patterns (`core/block`) are now available in the mail editor.
+* Transaction mails are also sent when a pending post is published (e.g. approved by an editor), in addition to scheduled posts.
+* Incremental user search shows a message when no items are found.
 
 ### 2.8.2
 
