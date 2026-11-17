@@ -29,7 +29,7 @@
 	],
 	"require": {
 		"php": ">=7.4",
-		"sendgrid/sendgrid": "^7.9",
+		"sendgrid/sendgrid": "^8.1",
 		"tijsverkoyen/css-to-inline-styles": "^2.2"
 	},
 	"require-dev": {
