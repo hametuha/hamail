@@ -11,7 +11,6 @@
  * License: GPL3 or later
  * License URI: https://www.gnu.org/licenses/gpl-3.0.html
  * Text Domain: hamail
- * Domain Path: /languages
  */
 
 defined( 'ABSPATH' ) or die();
@@ -32,11 +31,9 @@ function hamail_plugins_loaded() {
 	$info = get_file_data( __FILE__, [
 		'version'     => 'Version',
 		'php_version' => 'PHP Version',
-		'domain'      => 'Text Domain',
 	] );
 
 	define( 'HAMAIL_VERSION', $info['version'] );
-	load_plugin_textdomain( $info['domain'], false, basename( __DIR__ ) . '/languages' );
 
 	try {
 		if ( version_compare( phpversion(), $info['php_version'], '<' ) ) {
